@@ -131,7 +131,7 @@ export default function NewSuggestionPage() {
                     <Input
                       id="nom"
                       type="text"
-                      placeholder="Jean Dupont"
+                      placeholder="Eru Eru Pita"
                       value={formData.nom}
                       onChange={(e) => handleInputChange('nom', e.target.value)}
                     />
@@ -144,7 +144,7 @@ export default function NewSuggestionPage() {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="jean.dupont@exemple.fr"
+                      placeholder="eru.pita@exemple.com"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                     />
@@ -155,7 +155,7 @@ export default function NewSuggestionPage() {
                     <Input
                       id="telephone"
                       type="tel"
-                      placeholder="06 12 34 56 78"
+                      placeholder="+237 699 12 34 56 78"
                       value={formData.telephone}
                       onChange={(e) => handleInputChange('telephone', e.target.value)}
                     />
