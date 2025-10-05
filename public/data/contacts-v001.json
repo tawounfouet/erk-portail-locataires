@@ -1,0 +1,116 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "lastUpdated": "2024-02-15",
+        "totalContacts": 10,
+        "types": ["Particulier", "Entreprise", "Association", "Administration"]
+    },
+    "contacts": [
+        {
+            "id": 1,
+            "last_name": "Ngoa",
+            "first_name": "Mboutman",
+            "type": "Particulier",
+            "email": "arsene.ngoa@email.com",
+            "phone_number": "+237 655 12 34 56",
+            "address": "Yaoundé, Cameroun",
+            "creation_date": "2025-01-10"
+        },
+        {
+            "id": 2,
+            "last_name": "Mballa",
+            "first_name": "Chantal",
+            "type": "Entreprise",
+            "email": "chantal.mballa@entreprise.cm",
+            "phone_number": "+237 677 89 01 23",
+            "address": "Douala, Cameroun",
+            "company": "Mballa SARL",
+            "creation_date": "2025-01-12"
+        },
+        {
+            "id": 3,
+            "last_name": "Kengne",
+            "first_name": "Patrice",
+            "type": "Particulier",
+            "email": "patrice.kengne@yahoo.fr",
+            "phone_number": "+237 690 45 67 89",
+            "address": "Bafoussam, Cameroun",
+            "creation_date": "2025-01-15"
+        },
+        {
+            "id": 4,
+            "last_name": "Tchouta",
+            "first_name": "Béatrice",
+            "type": "Association",
+            "email": "beatrice.tchouta@asso.org",
+            "phone_number": "+237 699 12 34 56",
+            "private": true,
+            "address": "Garoua, Cameroun",
+            "association": "AFAC",
+            "creation_date": "2025-01-18"
+        },
+        {
+            "id": 5,
+            "last_name": "Eru Eru",
+            "first_name": "Pita",
+            "type": "Particulier",
+            "email": "roger.fotso@gmail.com",
+            "phone_number": "+237 651 78 90 12",
+            "partage": false,
+            "address": "Limbe, Cameroun",
+            "creation_date": "2025-01-20"
+        },
+        {
+            "id": 6,
+            "last_name": "Ndjock",
+            "first_name": "Sylvie",
+            "type": "Entreprise",
+            "email": "sylvie.ndjock@business.cm",
+            "phone_number": "+237 678 34 56 78",
+            "address": "Kribi, Cameroun",
+            "company": "Ndjock Consulting",
+            "creation_date": "2025-01-22"
+        },
+        {
+            "id": 7,
+            "last_name": "Mbarga",
+            "first_name": "Alain",
+            "type": "Particulier",
+            "email": "alain.mbarga@hotmail.com",
+            "phone_number": "+237 692 90 12 34",
+            "address": "Ebolowa, Cameroun",
+            "creation_date": "2025-01-25"
+        },
+        {
+            "id": 8,
+            "last_name": "Zang",
+            "first_name": "Martine",
+            "type": "Particulier",
+            "email": "martine.zang@email.com",
+            "phone_number": "+237 655 56 78 90",
+            "address": "Buea, Cameroun",
+            "creation_date": "2025-01-28"
+        },
+        {
+            "id": 9,
+            "last_name": "Nguemo",
+            "first_name": "Didier",
+            "type": "Administration",
+            "email": "didier.nguemo@gov.cm",
+            "phone_number": "+237 677 12 34 56",
+            "address": "Yaoundé, Cameroun",
+            "administration": "MINHDU",
+            "creation_date": "2025-02-01"
+        },
+        {
+            "id": 10,
+            "last_name": "Mfoumou",
+            "first_name": "Estelle",
+            "type": "Particulier",
+            "email": "estelle.mfoumou@outlook.com",
+            "phone_number": "+237 690 78 90 12",
+            "address": "Maroua, Cameroun",
+            "creation_date": "2025-02-05"
+        }
+    ]
+}

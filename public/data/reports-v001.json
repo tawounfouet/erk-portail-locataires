@@ -1,0 +1,40 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "last_update": "2025-09-30",
+        "total_data_count": 3,
+        "type": "priority_levels"
+    },
+    "reports": [
+        {
+            "id": 1,
+            "category": "plomberie",
+            "title": "Fuite sous l'évier",
+            "description": "L'eau coule constamment sous l'évier de la cuisine",
+            "status": "en_cours",
+            "date": "2025-08-05",
+            "priority": "high",
+            "last_update": "2025-08-06"
+        },
+        {
+            "id": 2,
+            "category": "electricite",
+            "title": "Prise électrique défectueuse",
+            "description": "La prise près du lit ne fonctionne plus",
+            "status": "prise_en_charge",
+            "date": "2025-08-03",
+            "priority": "medium",
+            "last_update": "2025-08-05"
+        },
+        {
+            "id": 3,
+            "category": "porte",
+            "title": "Serrure bloquée",
+            "description": "Difficulté à ouvrir la porte d'entrée",
+            "status": "traite",
+            "date": "2025-07-28",
+            "priority": "medium",
+            "last_update": "2025-08-01"
+        }
+    ]
+}

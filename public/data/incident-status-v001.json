@@ -1,0 +1,65 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "lastUpdated": "2025-09-30",
+        "type": "priority_levels"
+    },
+    "incident-status": [
+        {
+            "order": 1,
+            "value": "recu",
+            "label": "Reçu",
+            "icon": "Clock",
+            "color": "text-blue-600 bg-blue-100",
+            "description": "La demande a été créée et est en attente de traitement"
+        },
+        {
+            "order": 2,
+            "value": "prise_en_charge",
+            "label": "Prise en charge",
+            "icon": "",
+            "color": "text-blue-600 bg-blue-100",
+            "description": "La demande a été créée et est en attente de traitement"
+        },
+        {
+            "order": 3,
+            "value": "confirme",
+            "label": "Confirmé",
+            "icon": "",
+            "color": "text-orange-600 bg-orange-100",
+            "description": "Un technicien a été assigné et intervient sur la demande"
+        },
+        {
+            "order": 4,
+            "value": "annule",
+            "label": "Annulé",
+            "icon": "",
+            "color": "text-orange-600 bg-orange-100",
+            "description": "Un technicien a été assigné et intervient sur la demande"
+        },
+        {
+            "order": 5,
+            "value": "en_cours",
+            "label": "En Cours",
+            "icon": "Clock",
+            "color": "text-orange-600 bg-orange-100",
+            "description": "Un technicien a été assigné et intervient sur la demande"
+        },
+        {
+            "order": 6,
+            "value": "traite",
+            "label": "Traité",
+            "icon": "AlertCircle",
+            "color": "text-green-600 bg-green-100",
+            "description": "La demande a été résolue et clôturée"
+        },
+        {
+            "order": 7,
+            "value": "cloture",
+            "label": "Cloturé",
+            "icon": "CheckCircle",
+            "color": "text-green-600 bg-green-100",
+            "description": "La demande a été résolue et clôturée"
+        }
+    ]
+}

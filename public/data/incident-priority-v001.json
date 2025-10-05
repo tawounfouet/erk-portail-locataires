@@ -1,0 +1,33 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "lastUpdated": "2025-09-30",
+        "type": "priority_levels"
+    },
+    "incident-priority": [
+        {
+            "level": 1,
+            "responseTime": 7,
+            "value": "low",
+            "label": "Faible",
+            "color": "text-green-600 bg-green-100",
+            "description": "Problème non urgent"
+        },
+        {
+            "level": 2,
+            "responseTime": 3,
+            "value": "medium",
+            "label": "Moyenne",
+            "color": "text-yellow-600 bg-yellow-100",
+            "description": "Problème à traiter sous peu"
+        },
+        {
+            "level": 3,
+            "responseTime": 1,
+            "value": "high",
+            "label": "Élevée",
+            "color": "text-red-600 bg-red-100",
+            "description": "Problème urgent nécessitant une attention immédiate"
+        }
+    ]
+}

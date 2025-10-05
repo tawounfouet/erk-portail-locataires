@@ -1,0 +1,33 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "lastUpdated": "2025-09-30",
+        "type": "priority_levels"
+    },
+    "incident-category": [
+        {
+            "value": "plomberie",
+            "label": "Plomberie"
+        },
+        {
+            "value": "electricite",
+            "label": "Électricité"
+        },
+        {
+            "value": "porte",
+            "label": "Porte"
+        },
+        {
+            "value": "chauffage",
+            "label": "Chauffage"
+        },
+        {
+            "value": "internet",
+            "label": "Internet"
+        },
+        {
+            "value": "autre",
+            "label": "Autre"
+        }
+    ]
+}

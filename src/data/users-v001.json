@@ -1,0 +1,36 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "simulation": true
+    },
+    "users": [
+        {
+            "id": "1",
+            "email": "admin@eureka-residences.com",
+            "password": "admin123",
+            "name": "Administrateur Rentila",
+            "role": "admin"
+        },
+        {
+            "id": "2",
+            "email": "proprietaire@example.com",
+            "password": "proprio123",
+            "name": "Eru Eru Pita",
+            "role": "proprietaire"
+        },
+        {
+            "id": "3",
+            "email": "gestionnaire@example.com",
+            "password": "gest123",
+            "name": "Assimbi Mboutman",
+            "role": "gestionnaire"
+        },
+        {
+            "id": "4",
+            "email": "user@test.com",
+            "password": "user123",
+            "name": "Test Utilisateur",
+            "role": "user"
+        }
+    ]
+}
