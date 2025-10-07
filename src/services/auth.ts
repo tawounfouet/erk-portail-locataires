@@ -1,130 +1,219 @@
 import { IUser } from "@/types/user.type";
-import usersData from '@/data/users-v001.json';
+import { DEFAULT_USER } from "@/static/users.static";
+import { IAuthTokens, ILoginResponse } from "@/types/auth.type";
 
+// Local Storage variable names
+const LS_ACCESS_TOKEN =  'access_token';
+const LS_REFRESH_TOKEN = 'refresh_token';
 
-interface ILoginResponse {
-  success: boolean;
-  token?: string;
-  user?: IUser;
-  expiresIn?: number;
-  message?: string;
-}
-
-
-const simulateNetworkDelay = (): Promise<void> => 
-  new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 700));
-
-// Generate a simulated JWT token (do not use in production)
-const generateMockToken = (userId: string): string => {
-  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const payload = btoa(JSON.stringify({ 
-    userId, 
-    exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-  }));
-  return `${header}.${payload}.mockSignature`;
-};
-
-const auth_testmode = async (email: string, password: string): Promise<ILoginResponse | null> => {
-    await simulateNetworkDelay();
+/**
+ * Authentication service for managing JWT authentication
+ * Provides methods for logging in, verifying, and refreshing tokens
+ */
+export default class AuthService
+{
+    // Basic URLs for the authentication API
+    private static readonly BASE_URL: string = "https://app.eureka-residences.com/api/auth";
+    private static readonly AUTHENTICATION_URL: string = "/jwt/create/";
+    private static readonly REFRESH_TOKEN_URL: string = "/jwt/refresh/";
+    private static readonly VERIFY_TOKEN_URL: string = "/jwt/verify/";
+    private static readonly CURRENT_USER_URL: string = "/users/me/";
     
-    const user = usersData.users.find(u => 
-        u.email.toLowerCase() === email.toLowerCase() && 
-        u.password === password
-    );
 
-    if (!user) {
-        return {
-            success: false,
-            message: "Email ou mot de passe incorrect"
-        };
-    }
+    /**
+     * Authenticates a user with email and password
+     * @param email - User's email
+     * @param password - User's password
+     * @returns Promise<ILoginResponse | null> - Connection response or null if unsuccessful
+     */
+    static async authenticate(email: string, password: string): Promise<ILoginResponse | null> 
+    {
+        try {
+            const response = await fetch(`${this.BASE_URL}${this.AUTHENTICATION_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email, password: password })
+            });
 
-    // Don't return the password
-    const { password: _, ...userWithoutPassword } = user;
-    
-    return {
-        success: true,
-        token: generateMockToken(user.id),
-        user: userWithoutPassword,
-        expiresIn: 86400 // 24 hours in seconds
-    };
-}
+            if (!response.ok) {
+                console.warn(`Authentication failed with status: ${response.status}`);
+                return null;
+            }
 
-const auth_realmode = async (email: string, password: string) : Promise<ILoginResponse | null> => {
-    try {
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            return data;
-        }
-        return null;
-    } catch (error) {
-        console.error('Authentication failed:', error);
-        return null;
-    }
-}
+            
+            const tokens: IAuthTokens = await response.json();
+            this.setTokens(tokens);
+                
+            // Retrieve information about the logged-in user
+            const user = await this.getCurrentUser(tokens.access) || DEFAULT_USER;
 
-
-
-// Secure storage with expiration management
-export const authService = {
-    setToken: (token: string, expiresIn: number = 3600) => {
-        const expiresAt = Date.now() + (expiresIn * 1000);
-
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('authTokenExpiry', expiresAt.toString());
-    },
-    
-    getToken: (): string | null => {
-        const token = localStorage.getItem('authToken');
-        const expiry = localStorage.getItem('authTokenExpiry');
-        
-        if (!token || !expiry) return null;
-        
-        // Check if the token is expired (24h limits)
-        if (Date.now() > parseInt(expiry)) {
-
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('authTokenExpiry');
+            return {
+                success: true, 
+                token: tokens.access,
+                user: user,
+                expiresIn: 86400 // 24 hours in seconds
+            };
+        } catch (error) {
+            console.error('Authentication failed:', error);
             return null;
         }
+    }
+
+    /**
+     * Retrieves information about the currently logged-in user.
+     * @param accessToken - JWT token for authentication.
+     * @returns Promise<IUser | null> - User information or null in case of error.
+     */
+    static async getCurrentUser(accessToken?: string): Promise<IUser | null> 
+    {
+        const token = accessToken || this.getTokens().access;
         
-        return token;
-    },
-    
-    clearToken: () => {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('authTokenExpiry');
-    },
-    
-    // Server-side checking
-    verifyToken: async (token: string): Promise<IUser | null> => {
-        try {
-        const response = await fetch('/api/auth/verify', {
+        if (!token) {
+            console.warn('No access token available');
+            return null;
+        }
+
+        const response = await fetch(`${this.BASE_URL}${this.CURRENT_USER_URL}`, {
             method: 'GET',
             headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            },
+                'Authorization': `JWT ${accessToken}`,
+                'Content-Type': 'application/json',
+            }
         });
-        
-        if (response.ok) {
-            return await response.json();
+
+        if (!response.ok) {
+            console.warn(`Failed to get current user: ${response.status}`);
+            return null; // Error retrieving user data
         }
-        return null;
+
+        return response.json();
+    }
+
+
+    /**
+     * Checks the validity of a JWT token
+     * @param accessToken - JWT token to be checked
+     * @returns Promise<boolean> - True if the token is valid
+     */
+    static async verifyToken(accessToken: string): Promise<boolean> 
+    {
+        try {
+            const response = await fetch(`${this.BASE_URL}${this.VERIFY_TOKEN_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token: accessToken })
+            });
+            
+            return response.ok;
         } catch (error) {
             console.error('Token verification failed:', error);
-        return null;
+            return false;
         }
-    },
-  
-    // Authentication 
-    authenticate: auth_testmode
-};
+    }
+
+    /**
+     * Refreshes the access token using the refresh token.
+     * @returns Promise<IAuthTokens> - New access and refresh tokens.
+     * @throws Error if refresh fails.
+     */
+    static async refreshToken(): Promise<IAuthTokens> {
+        const refreshToken = AuthService.getTokens().refresh;
+        
+        if (!refreshToken) {
+            this.clearTokens();
+            throw new Error('Aucun refresh token disponible');
+        }
+
+        const response = await fetch(`${this.BASE_URL}${this.REFRESH_TOKEN_URL}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ refresh: refreshToken })
+        });
+
+        if (!response.ok) {
+            this.clearTokens();
+            throw new Error('Session expirée, veuillez vous reconnecter');
+        }
+
+        const tokens: IAuthTokens = await response.json();
+        this.setTokens(tokens);
+
+        return tokens;
+    }
+
+    static setTokens(tokens: IAuthTokens): void
+    {
+        localStorage.setItem(LS_ACCESS_TOKEN, tokens.access);
+        localStorage.setItem(LS_REFRESH_TOKEN, tokens.refresh);
+    }
+
+    /**
+     * Retrieves JWT tokens from localStorage
+     * @returns { access: string | null, refresh: string | null } - Access and refresh tokens
+     */
+    static getTokens(): IAuthTokens
+    {
+        const access = localStorage.getItem(LS_ACCESS_TOKEN) || 'no_access_token';
+        const refresh = localStorage.getItem(LS_REFRESH_TOKEN) || 'no_refresh_token';
+
+        return { access, refresh };
+    }
+
+    /**
+     * Deletes JWT tokens from localStorage
+     */
+    static clearTokens(): void 
+    {
+        localStorage.removeItem(LS_ACCESS_TOKEN);
+        localStorage.removeItem(LS_REFRESH_TOKEN);
+    }
+
+    /**
+     * Checks whether a user is currently authenticated.
+     * @returns boolean - True if an access token is present.
+     */
+    static isAuthenticated(): boolean
+    {
+        return !!localStorage.getItem(LS_ACCESS_TOKEN);
+    }
+
+    /**
+     * Checks if the user is authenticated with a valid token.
+     * @returns Promise<boolean> - True if the user has a valid token.
+     */
+    static async isValidAuthentication(): Promise<boolean> {
+        const token = this.getTokens().access;
+        
+        if (!token) {
+            return false;
+        }
+
+        return await this.verifyToken(token);
+    }
+
+    /**
+     * Logs the user out by deleting the tokens
+     */
+    static destroyToken(): void
+    {
+        //@TODO: API call for token invalidation
+        /*
+        
+        fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Authorization': `JWT ${AuthService.getTokens().access}`,
+            },
+        }).catch(console.error);
+
+        */
+
+        this.clearTokens();
+    }
+}

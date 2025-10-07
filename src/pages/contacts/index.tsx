@@ -1,4 +1,5 @@
 import { DataTable } from "@/components/common/DataTable";
+import { AvailabilitySchedule } from "@/components/contacts";
 import { useContacts } from "@/hooks/useContacts";
 import { IContact } from "@/types/contacts.type";
 import { ColumnDef } from "@tanstack/react-table";
@@ -47,6 +48,7 @@ export default function ContactsPage()
 
     return (
         <div>
+            <AvailabilitySchedule />
             <DataTable columns={columns} data={contacts} />
         </div>
     );

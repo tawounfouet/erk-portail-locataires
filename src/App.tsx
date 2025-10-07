@@ -11,6 +11,7 @@ import {
   NewSuggestionPage
 } from '@pages'
 import { AuthProvider, ProtectedRoute } from '@/components/context';
+import { SectionCards } from './components/section-cards';
 
 function App() 
 {
@@ -24,7 +25,7 @@ function App()
               <DashboardLayout />
             </ProtectedRoute>
           }>
-              <Route path="/" element={<div>Bureau</div>} />
+              <Route path="/" element={<SectionCards/>} />
 
               <Route path="/reports" element={<HomeReportsPage />} />
               <Route path="/reports/new" element={<NewReportsPage />} />

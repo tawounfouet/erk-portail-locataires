@@ -17,8 +17,9 @@ function LoginForm({
   const { user, login } = useAuth();
   const location = useLocation();
 
-  // Rediriger si déjà connecté
-  if (user) {
+  // If already connected, redirect user to the homepage
+  if (user) 
+  {
     const from = location.state?.from?.pathname || '/';
     return <Navigate to={from} replace />;
   }
@@ -28,9 +29,10 @@ function LoginForm({
     setIsLoading(true);
     
     const success = await login(email, password);
-    if (!success) {
-      // Gérer l'erreur de connexion
-      alert('Échec de la connexion');
+
+    if (!success) 
+    {
+      console.log('Bad credentials, connection failed.');
     }
     
     setIsLoading(false);

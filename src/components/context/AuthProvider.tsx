@@ -1,4 +1,4 @@
-import { authService } from "@/services/auth";
+import AuthService from "@/services/auth";
 import { IAuthContextType, IUser } from "@/types/user.type";
 import { createContext, useCallback, useEffect, useState } from "react";
 
@@ -11,26 +11,26 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   // Check authentication
   const checkAuth = useCallback(async () => {
     try {
-      const token = authService.getToken();
+      const token: string = AuthService.getTokens().access;
       
-      if (!token) {
+      if (!token) 
+      {
         setUser(null);
         return;
       }
       
       // Server-side checking
-      const userData = await authService.verifyToken(token);
+      const bValid = await AuthService.verifyToken(token);
       
-      if (userData) {
-        setUser(userData);
-      } else {
-        // Invalid or expired token
-        authService.clearToken();
+      if (!bValid) // Invalid or expired token 
+      {
+        AuthService.clearTokens();
         setUser(null);
+        //@TODO: Return this user to login page.
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      authService.clearToken();
+      AuthService.clearTokens();
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -45,10 +45,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     try {
       setIsLoading(true);
       
-      const result = await authService.authenticate(email, password);
+      const result = await AuthService.authenticate(email, password);
       
-      if (result && result.token && result.user) {
-        authService.setToken(result.token, result.expiresIn);
+      if (result && result.token && result.user) 
+      {
         setUser(result.user);
         return true;
       }
@@ -63,15 +63,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   };
 
   const logout = () => {
-    // API call for token invalidation
-    fetch('/api/auth/logout', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${authService.getToken()}`,
-      },
-    }).catch(console.error);
+    AuthService.destroyToken();
     
-    authService.clearToken();
     setUser(null);
   };
 

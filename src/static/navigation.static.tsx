@@ -16,11 +16,6 @@ import {
 } from "lucide-react"
 
 export const data = {
-  user: {
-    name: "Eru Eru Pita",
-    email: "erkn5@eureka-residences.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Bureau",
@@ -28,7 +23,7 @@ export const data = {
       icon: LayoutDashboardIcon,
     },
     {
-      title: "Mes Signalements",
+      title: "Signalements",
       url: "/reports",
       icon: BarChartIcon,
     },

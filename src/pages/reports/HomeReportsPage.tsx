@@ -15,6 +15,8 @@ import { CircleEllipsis, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { shareToWhatsapp } from "@/services/sharetowhatsapp";
 import { getReportStatusBadge } from "@/services/badges";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ReportStats from "@/components/reports/ReportStats";
 
 export default function HomeReportsPage()
 {
@@ -109,16 +111,26 @@ export default function HomeReportsPage()
 
     return (
         <div>
-            <div className="flex items-center justify-end py-4">
-                <Link to="/reports/new">
-                    <Button className="flex items-center gap-2">
-                        <Plus className="h-4 w-4" />
-                        Nouveau signalement
-                    </Button>
-                </Link>
-            </div>
+            <ReportStats reports={reports} />
 
-            <DataTable columns={columns} data={reports} />
+            <Tabs defaultValue="personal">
+                <div className="flex items-center justify-between py-4">
+                    <TabsList>
+                        <TabsTrigger value="common">Commun</TabsTrigger>
+                        <TabsTrigger value="personal">Personnel</TabsTrigger>
+                    </TabsList>
+
+                    <Link to="/reports/new">
+                        <Button className="flex items-center gap-2">
+                            <Plus className="h-4 w-4" />
+                            Nouveau signalement
+                        </Button>
+                    </Link>
+                </div>
+
+                <TabsContent value="common"><DataTable columns={columns} data={[]} /></TabsContent>
+                <TabsContent value="personal"><DataTable columns={columns} data={reports} /></TabsContent>
+            </Tabs>
         </div>
     );
 }

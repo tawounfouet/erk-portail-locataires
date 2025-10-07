@@ -46,7 +46,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 
       <SidebarFooter>
-        <NavUser user={navigation_data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )
