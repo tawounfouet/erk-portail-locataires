@@ -25,7 +25,7 @@ function App()
               <DashboardLayout />
             </ProtectedRoute>
           }>
-              <Route path="/" element={<SectionCards/>} />
+              <Route path="/" element={<div>Bureau</div>} />
 
               <Route path="/reports" element={<HomeReportsPage />} />
               <Route path="/reports/new" element={<NewReportsPage />} />
