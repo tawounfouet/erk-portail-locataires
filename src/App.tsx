@@ -2,16 +2,16 @@ import { Routes, Route } from 'react-router-dom';
 import { DashboardLayout } from './components/layout';
 
 import { 
-  ContactsPage, 
-  DocsPage, 
-  LoginPage, 
+  ContactsPage,
+  DocsPage,
+  LoginPage,
   HomeReportsPage,
   NewReportsPage,
   DetailsReportsPage,
   NewSuggestionPage
-} from '@pages'
+} from '@pages';
 import { AuthProvider, ProtectedRoute } from '@/components/context';
-import { SectionCards } from './components/section-cards';
+
 
 function App() 
 {

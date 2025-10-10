@@ -15,6 +15,7 @@ export default class AuthService
     // Basic URLs for the authentication API
     private static readonly BASE_URL: string = "https://app.eureka-residences.com/api/auth";
     private static readonly AUTHENTICATION_URL: string = "/jwt/create/";
+    private static readonly LOGOUT_URL: string = "/jwt/logout/";
     private static readonly REFRESH_TOKEN_URL: string = "/jwt/refresh/";
     private static readonly VERIFY_TOKEN_URL: string = "/jwt/verify/";
     private static readonly CURRENT_USER_URL: string = "/users/me/";
@@ -70,7 +71,8 @@ export default class AuthService
     {
         const token = accessToken || this.getTokens().access;
         
-        if (!token) {
+        if (!token) 
+        {
             console.warn('No access token available');
             return null;
         }
@@ -83,7 +85,8 @@ export default class AuthService
             }
         });
 
-        if (!response.ok) {
+        if (!response.ok) 
+        {
             console.warn(`Failed to get current user: ${response.status}`);
             return null; // Error retrieving user data
         }
@@ -198,21 +201,18 @@ export default class AuthService
     }
 
     /**
-     * Logs the user out by deleting the tokens
+     * Logs the user out by deleting the tokens 
+     * and tell the server to invalidate the token
      */
     static destroyToken(): void
     {
-        //@TODO: API call for token invalidation
-        /*
-        
-        fetch('/api/auth/logout', {
+        //API call for token invalidation
+        fetch(`${this.BASE_URL}${this.LOGOUT_URL}`, {
             method: 'POST',
             headers: {
                 'Authorization': `JWT ${AuthService.getTokens().access}`,
             },
         }).catch(console.error);
-
-        */
 
         this.clearTokens();
     }
