@@ -6,37 +6,42 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getReportStatusBadge } from '@/services/badges';
+import { useLocation } from 'react-router-dom';
+import { IOperationList } from '@/types/operations.type';
 
 
 export default function DetailsReportsPage() {
   const [showShareAlert, setShowShareAlert] = useState(false);
+  const location = useLocation();
+
+  const { report, previousPage } = location.state as { report: IOperationList, previousPage: string };
 
   // Example
-  const signalement = {
-    id: 'SIG-2025-1247',
-    titre: 'Fuite d\'eau au plafond',
-    description: 'Une fuite d\'eau importante a été constatée au niveau du plafond de la salle. L\'eau s\'écoule en continu et a déjà endommagé plusieurs tables et chaises. Le problème semble provenir de la tuyauterie au-dessus. Intervention urgente requise pour éviter des dégâts supplémentaires.',
-    categorie: 'Maintenance',
-    estEspaceCommun: true,
-    identifiantSalle: 'B204',
-    dateTransmission: '2025-10-03T14:30:00',
-    auteur: {
-      nom: 'Eru Eru Pita',
-      email: 'erk-n5@eureka-residences.com',
-      role: 'Etudiant MF'
-    },
-    statut: 'prise_en_charge',
-    priorite: 'haute',
-    photos: [
-      { id: 1, url: 'https://i.f1g.fr/media/eidos/805x453_crop/2022/04/04/XVM0aac3694-b198-11ec-827f-33dd12f467ce.jpg', alt: 'Fuite au plafond' },
-      { id: 2, url: 'https://www.bbexpo.be/fr/wp-content/uploads/sites/2/2024/01/humidite-placard.jpg', alt: 'Dégâts mobilier' },
-      { id: 3, url: 'https://www.meilleur-deshumidificateur.fr/wp-content/uploads/2025/01/comment-enlever-humidite-placard.webp', alt: 'Vue d\'ensemble' }
-    ]
-  };
+  // const report = {
+  //   id: 'SIG-2025-1247',
+  //   titre: 'Fuite d\'eau au plafond',
+  //   description: 'Une fuite d\'eau importante a été constatée au niveau du plafond de la salle. L\'eau s\'écoule en continu et a déjà endommagé plusieurs tables et chaises. Le problème semble provenir de la tuyauterie au-dessus. Intervention urgente requise pour éviter des dégâts supplémentaires.',
+  //   categorie: 'Maintenance',
+  //   estEspaceCommun: true,
+  //   identifiantSalle: 'B204',
+  //   dateTransmission: '2025-10-03T14:30:00',
+  //   auteur: {
+  //     nom: 'Eru Eru Pita',
+  //     email: 'erk-n5@eureka-residences.com',
+  //     role: 'Etudiant MF'
+  //   },
+  //   statut: 'prise_en_charge',
+  //   priorite: 'haute',
+  //   photos: [
+  //     { id: 1, url: 'https://i.f1g.fr/media/eidos/805x453_crop/2022/04/04/XVM0aac3694-b198-11ec-827f-33dd12f467ce.jpg', alt: 'Fuite au plafond' },
+  //     { id: 2, url: 'https://www.bbexpo.be/fr/wp-content/uploads/sites/2/2024/01/humidite-placard.jpg', alt: 'Dégâts mobilier' },
+  //     { id: 3, url: 'https://www.meilleur-deshumidificateur.fr/wp-content/uploads/2025/01/comment-enlever-humidite-placard.webp', alt: 'Vue d\'ensemble' }
+  //   ]
+  // };
 
   const etapes = [
     { nom: 'Reçu', statut: 'complete', date: '03/10/2025 14:30', remarque: 'Nous avons bien reçu votre demande.' },
-    { nom: 'Prise en charge', statut: 'active', date: '03/10/2025 15:45', remarque: 'Votre signalement a été pris en compte par notre équipe et est actuellement en cours de traitement.' },
+    { nom: 'Prise en charge', statut: 'active', date: '03/10/2025 15:45', remarque: 'Votre report a été pris en compte par notre équipe et est actuellement en cours de traitement.' },
     { nom: 'Confirmé', statut: 'pending', date: '-' },
     { nom: 'En cours de traitement', statut: 'pending', date: '-' },
     { nom: 'Traité', statut: 'pending', date: '-' },
@@ -77,7 +82,7 @@ export default function DetailsReportsPage() {
       <html>
       <head>
         <meta charset="UTF-8">
-        <title>Signalement ${signalement.id}</title>
+        <title>Signalement ${report.id}</title>
         <style>
           * {
             margin: 0;
@@ -309,18 +314,18 @@ export default function DetailsReportsPage() {
       <body>
         <div class="header">
           <h1>Fiche de Signalement</h1>
-          <div class="ref">Référence: ${signalement.id}</div>
+          <div class="ref">Référence: ${report.id}</div>
         </div>
         
         <div class="section">
-          <h2 class="section-title">${signalement.titre}</h2>
+          <h2 class="section-title">${report.title}</h2>
           <div class="badges">
             <span class="badge badge-statut">En cours</span>
-            <span class="badge badge-priorite-${signalement.priorite}">${
-              signalement.priorite === 'haute' ? 'Haute priorité' :
-              signalement.priorite === 'moyenne' ? 'Priorité moyenne' : 'Basse priorité'
+            <span class="badge badge-priorite-${report.priority_display}">${
+              report.priority_display === 'haute' ? 'Haute priorité' :
+              report.priority_display === 'moyenne' ? 'Priorité moyenne' : 'Basse priorité'
             }</span>
-            <span class="badge badge-categorie">${signalement.categorie}</span>
+            <span class="badge badge-categorie">${report.categorie}</span>
           </div>
         </div>
         
@@ -329,20 +334,20 @@ export default function DetailsReportsPage() {
           <div class="info-grid">
             <div class="info-box">
               <div class="info-label">Signalé par</div>
-              <div class="info-value">${signalement.auteur.nom}</div>
-              <div class="info-sub">${signalement.auteur.role}</div>
-              <div class="info-sub">${signalement.auteur.email}</div>
+              <div class="info-value">${report.requester_name}</div>
+              <div class="info-sub">{report.auteur.role}</div>
+              <div class="info-sub">{report.requester.email}</div>
             </div>
             
             <div class="info-box">
               <div class="info-label">Date de transmission</div>
-              <div class="info-value">${formatDate(signalement.dateTransmission)}</div>
+              <div class="info-value">${formatDate(report.created_at)}</div>
             </div>
             
             <div class="info-box">
               <div class="info-label">Type d'espace</div>
-              <div class="info-value">${signalement.estEspaceCommun ? 'Espace commun' : 'Espace non commun'}</div>
-              ${signalement.estEspaceCommun ? `<div class="info-sub">Salle: ${signalement.identifiantSalle}</div>` : ''}
+              <div class="info-value">${report?.estEspaceCommun ? 'Espace commun' : 'Espace non commun'}</div>
+              ${report?.estEspaceCommun ? `<div class="info-sub">Salle: ${report?.identifiantSalle}</div>` : ''}
             </div>
             
             <div class="info-box">
@@ -356,7 +361,7 @@ export default function DetailsReportsPage() {
         <div class="section">
           <h2 class="section-title">Description détaillée</h2>
           <div class="description-box">
-            <p>${signalement.description}</p>
+            <p>${report?.description}</p>
           </div>
         </div>
         
@@ -377,11 +382,11 @@ export default function DetailsReportsPage() {
           </div>
         </div>
         
-        ${signalement.photos && signalement.photos.length > 0 ? `
+        ${report?.photos && report?.photos.length > 0 ? `
           <div class="section">
-            <h2 class="section-title">Photos (${signalement.photos.length})</h2>
+            <h2 class="section-title">Photos (${report?.photos.length})</h2>
             <div class="photos-grid">
-              ${signalement.photos.map(photo => `
+              ${report?.photos.map(photo => `
                 <div class="photo-box">
                   <img src="${photo.url}" alt="${photo.alt}">
                 </div>
@@ -432,7 +437,7 @@ export default function DetailsReportsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Fiche de Signalement</h1>
-            <p className="text-slate-600 mt-1">Référence: {signalement.id}</p>
+            <p className="text-slate-600 mt-1">Référence: {report.id}</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleShare}>
@@ -459,13 +464,13 @@ export default function DetailsReportsPage() {
           <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
             <div className="flex items-start justify-between">
               <div className="space-y-2 flex-1">
-                <CardTitle className="text-2xl">{signalement.titre}</CardTitle>
+                <CardTitle className="text-2xl">{report.titre}</CardTitle>
                 <div className="flex flex-wrap gap-2">
-                  {getReportStatusBadge(signalement.statut)}
-                  {/* {getPrioriteBadge(signalement.priorite)} */}
+                  {getReportStatusBadge(report.statut)}
+                  {/* {getPrioriteBadge(report.priorite)} */}
                   <Badge variant="outline">
                     <Tag className="mr-1 h-3 w-3" />
-                    {signalement.categorie}
+                    {report.categorie}
                   </Badge>
                 </div>
               </div>
@@ -479,9 +484,9 @@ export default function DetailsReportsPage() {
                 <User className="w-5 h-5 text-slate-600 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-slate-600">Signalé par</p>
-                  <p className="font-semibold text-slate-900">{signalement.auteur.nom}</p>
-                  <p className="text-sm text-slate-600">{signalement.auteur.role}</p>
-                  <p className="text-sm text-slate-500">{signalement.auteur.email}</p>
+                  <p className="font-semibold text-slate-900">{report.auteur.nom}</p>
+                  <p className="text-sm text-slate-600">{report.auteur.role}</p>
+                  <p className="text-sm text-slate-500">{report.auteur.email}</p>
                 </div>
               </div>
 
@@ -490,7 +495,7 @@ export default function DetailsReportsPage() {
                 <div>
                   <p className="text-sm font-medium text-slate-600">Date de transmission</p>
                   <p className="font-semibold text-slate-900">
-                    {formatDate(signalement.dateTransmission)}
+                    {formatDate(report.dateTransmission)}
                   </p>
                 </div>
               </div>
@@ -500,11 +505,11 @@ export default function DetailsReportsPage() {
                 <div>
                   <p className="text-sm font-medium text-slate-600">Type d'espace</p>
                   <p className="font-semibold text-slate-900">
-                    {signalement.estEspaceCommun ? 'Espace commun' : 'Espace non commun'}
+                    {report.estEspaceCommun ? 'Espace commun' : 'Espace non commun'}
                   </p>
-                  {signalement.estEspaceCommun && (
+                  {report.estEspaceCommun && (
                     <p className="text-sm text-slate-600">
-                      Salle: <span className="font-medium">{signalement.identifiantSalle}</span>
+                      Salle: <span className="font-medium">{report.identifiantSalle}</span>
                     </p>
                   )}
                 </div>
@@ -526,7 +531,7 @@ export default function DetailsReportsPage() {
             <div>
               <h3 className="text-lg font-semibold text-slate-900 mb-3">Description détaillée</h3>
               <p className="text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-lg">
-                {signalement.description}
+                {report.description}
               </p>
             </div>
 
@@ -565,13 +570,13 @@ export default function DetailsReportsPage() {
             <Separator />
 
             {/* Photos */}
-            {signalement.photos && signalement.photos.length > 0 && (
+            {report.photos && report.photos.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                  Photos ({signalement.photos.length})
+                  Photos ({report.photos.length})
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {signalement.photos.map(photo => (
+                  {report.photos.map(photo => (
                     <div key={photo.id} className="group relative aspect-video overflow-hidden rounded-lg border-2 border-slate-200 hover:border-slate-400 transition-colors">
                       <img
                         src={photo.url}

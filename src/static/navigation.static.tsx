@@ -17,11 +17,11 @@ import {
 
 export const data = {
   navMain: [
-    {
-      title: "Bureau",
-      url: "/",
-      icon: LayoutDashboardIcon,
-    },
+    // {
+    //   title: "Bureau",
+    //   url: "/",
+    //   icon: LayoutDashboardIcon,
+    // },
     {
       title: "Signalements",
       url: "/reports",

@@ -19,7 +19,8 @@ export default class AuthService
     private static readonly REFRESH_TOKEN_URL: string = "/jwt/refresh/";
     private static readonly VERIFY_TOKEN_URL: string = "/jwt/verify/";
     private static readonly CURRENT_USER_URL: string = "/users/me/";
-    
+
+    private static currentUser: IUser | null = null; 
 
     /**
      * Authenticates a user with email and password
@@ -27,7 +28,7 @@ export default class AuthService
      * @param password - User's password
      * @returns Promise<ILoginResponse | null> - Connection response or null if unsuccessful
      */
-    static async authenticate(email: string, password: string): Promise<ILoginResponse | null> 
+    static async authenticate(email: string, password: string): Promise<ILoginResponse> 
     {
         try {
             const response = await fetch(`${this.BASE_URL}${this.AUTHENTICATION_URL}`, {
@@ -38,9 +39,10 @@ export default class AuthService
                 body: JSON.stringify({ email: email, password: password })
             });
 
-            if (!response.ok) {
-                console.warn(`Authentication failed with status: ${response.status}`);
-                return null;
+            if (!response.ok) 
+            {
+                // Authentication failed with status: ${response.status}
+                return { success: false, response_status: response.status };
             }
 
             
@@ -48,17 +50,19 @@ export default class AuthService
             this.setTokens(tokens);
                 
             // Retrieve information about the logged-in user
-            const user = await this.getCurrentUser(tokens.access) || DEFAULT_USER;
+            AuthService.currentUser = await this.getCurrentUser(tokens.access) || DEFAULT_USER;
 
             return {
                 success: true, 
                 token: tokens.access,
-                user: user,
-                expiresIn: 86400 // 24 hours in seconds
+                user: AuthService.currentUser,
+                expiresIn: 86400, // 24 hours in seconds
             };
         } catch (error) {
             console.error('Authentication failed:', error);
-            return null;
+            return {
+                success: false,
+            };
         }
     }
 
@@ -77,10 +81,15 @@ export default class AuthService
             return null;
         }
 
+        if (AuthService.currentUser)
+        {
+            return AuthService.currentUser;
+        }
+
         const response = await fetch(`${this.BASE_URL}${this.CURRENT_USER_URL}`, {
             method: 'GET',
             headers: {
-                'Authorization': `JWT ${accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             }
         });
@@ -210,7 +219,7 @@ export default class AuthService
         fetch(`${this.BASE_URL}${this.LOGOUT_URL}`, {
             method: 'POST',
             headers: {
-                'Authorization': `JWT ${AuthService.getTokens().access}`,
+                'Authorization': `Bearer ${AuthService.getTokens().access}`,
             },
         }).catch(console.error);
 

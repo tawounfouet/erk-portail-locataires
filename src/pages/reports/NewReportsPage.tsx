@@ -16,34 +16,16 @@ const batiments = {
       '0': { nom: 'Rez-de-chaussée', salles: ['01', '02', '03', '04', '05'] },
       '1': { nom: 'Étage 1', salles: ['01', '02', '03', '04', '05', '06'] },
       '2': { nom: 'Étage 2', salles: ['01', '02', '03', '04', '05', '06'] },
-      '3': { nom: 'Étage 3', salles: ['01', '02', '03', '04'] }
     }
   },
-  'B': {
-    nom: 'Bâtiment B',
+  'PHI': {
+    nom: 'PHI',
     etages: {
       '0': { nom: 'Rez-de-chaussée', salles: ['01', '02', '03'] },
       '1': { nom: 'Étage 1', salles: ['01', '02', '03', '04', '05'] },
       '2': { nom: 'Étage 2', salles: ['01', '02', '03', '04', '05'] }
     }
   },
-  'C': {
-    nom: 'Bâtiment C',
-    etages: {
-      '0': { nom: 'Rez-de-chaussée', salles: ['01', '02', '03', '04', '05', '06', '07'] },
-      '1': { nom: 'Étage 1', salles: ['01', '02', '03', '04', '05', '06', '07', '08'] }
-    }
-  },
-  'D': {
-    nom: 'Bâtiment D',
-    etages: {
-      '0': { nom: 'Rez-de-chaussée', salles: ['01', '02'] },
-      '1': { nom: 'Étage 1', salles: ['01', '02', '03'] },
-      '2': { nom: 'Étage 2', salles: ['01', '02', '03'] },
-      '3': { nom: 'Étage 3', salles: ['01', '02', '03'] },
-      '4': { nom: 'Étage 4', salles: ['01', '02'] }
-    }
-  }
 };
 
 export default function NewReportsPage() {

@@ -43,7 +43,7 @@ export default class OperationService
         const config: RequestInit = {
             headers: {
                 'Content-Type': 'application/json',
-                ...(accessToken && { 'Authorization': `JWT ${accessToken}` }),
+                ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
                 ...options.headers,
             },
             ...options,
@@ -61,7 +61,7 @@ export default class OperationService
                         const newTokens = await AuthService.refreshToken();
                         config.headers = {
                             ...config.headers,
-                            'Authorization': `JWT ${newTokens.access}`
+                            'Authorization': `Bearer ${newTokens.access}`
                         };
                         
                         // Retry request with new token
@@ -471,7 +471,7 @@ export default class OperationService
         const response = await fetch(`${this.BASE_URL}${this.ATTACHMENTS_URL}`, {
             method: 'POST',
             headers: {
-                ...(accessToken && { 'Authorization': `JWT ${accessToken}` }),
+                ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
             },
             body: formData,
         });

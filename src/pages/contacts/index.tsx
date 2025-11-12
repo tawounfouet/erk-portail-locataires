@@ -24,16 +24,8 @@ export default function ContactsPage()
             header: "Type"
         },
         {
-            accessorKey: "email",
-            header: "E-mail"
-        },
-        {
             accessorKey: "phone_number",
             header: "Téléphone"
-        },
-        {
-            accessorKey: "action",
-            header: "Actions"
         }
     ];
 

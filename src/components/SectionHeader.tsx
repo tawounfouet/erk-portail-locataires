@@ -1,13 +1,11 @@
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { usePageInfo } from "@/hooks/usePageInfo";
 import { INavState } from "@/types/navigation.type";
-import { useLocation } from "react-router-dom"
 
 export default function SectionHeader() 
 {
-  const location = useLocation();
-
-  const { title }: INavState = location.state || {};
+  const { name } = usePageInfo();
 
   return (
     <header className="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
@@ -19,7 +17,7 @@ export default function SectionHeader()
           className="mx-2 data-[orientation=vertical]:h-4"
         />
 
-        <h1 className="text-base font-medium">{ !title ? "Bureau" : title }</h1>
+        <h1 className="text-base font-medium">{ name }</h1>
       </div>
     </header>
   )

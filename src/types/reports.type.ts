@@ -7,6 +7,7 @@ export type TReportCategory =
   | 'porte' 
   | 'chauffage' 
   | 'internet' 
+  | 'securite' 
   | 'autre';
 
 export type TReportPriority = 'low' | 'medium' | 'high';

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Link } from "react-router-dom"
 import { INavSectionProps } from "@/types/navigation.type";
+import { usePageInfo } from "@/hooks/usePageInfo";
 
 interface INavMainProps extends INavSectionProps
 {
@@ -18,7 +19,9 @@ interface INavMainProps extends INavSectionProps
   }[];
 }
 
-export default function NavMain({ currPage, setCurrPage, items } : INavMainProps) {
+export default function NavMain({ items } : INavMainProps) {
+  const { name } = usePageInfo();
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -28,8 +31,7 @@ export default function NavMain({ currPage, setCurrPage, items } : INavMainProps
               <Link to={item.url} state={{ title: item.title }}>
                 <SidebarMenuButton 
                   tooltip={item.title} 
-                  onClick={() => {setCurrPage(item.title)}}
-                  className={`${currPage === item.title ? "bg-primary hover:bg-primary/90 text-primary-foreground hover:text-primary-foreground" : ""}`} 
+                  className={`${name === item.title ? "bg-primary hover:bg-primary/90 text-primary-foreground hover:text-primary-foreground" : ""}`} 
                 >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>

@@ -17,8 +17,6 @@ import {
 
 
 function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [currPage, setCurrPage] = React.useState<string>("Bureau");
-
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -39,9 +37,9 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 
       <SidebarContent>
-        <NavMain currPage={currPage} setCurrPage={setCurrPage} items={navigation_data.navMain} />
+        <NavMain items={navigation_data.navMain} />
         {/* <NavDocuments items={navigation_data.documents} /> */}
-        <NavSecondary currPage={currPage} setCurrPage={setCurrPage} items={navigation_data.navSecondary} className="mt-auto" />
+        <NavSecondary items={navigation_data.navSecondary} className="mt-auto" />
       </SidebarContent>
 
 

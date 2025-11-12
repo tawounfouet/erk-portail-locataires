@@ -1,0 +1,31 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "lastUpdated": "2024-02-15",
+        "totalContacts": 10,
+        "types": ["Particulier", "Entreprise", "Association", "Administration"]
+    },
+    "contacts": [
+        {
+            "id": 1,
+            "last_name": "",
+            "first_name": "/",
+            "type": "Gestionnaire principal de la résidence",
+            "email": "arsene.ngoa@email.com",
+            "phone_number": "+237 6 90 19 14 04",
+            "address": "Yaoundé, Cameroun",
+            "creation_date": "2025-01-10"
+        },
+        {
+            "id": 2,
+            "last_name": "",
+            "first_name": "Jean",
+            "type": "Gardien de la résidence",
+            "email": "chantal.mballa@entreprise.cm",
+            "phone_number": "+237 6 40 58 09 03",
+            "address": "Douala, Cameroun",
+            "company": "Mballa SARL",
+            "creation_date": "2025-01-12"
+        }
+    ]
+}

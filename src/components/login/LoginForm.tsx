@@ -4,36 +4,32 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const [email, setEmail] = useState<string>('');
+  const [userID, setUserID] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   
   const { user, login } = useAuth();
-  const location = useLocation();
 
   // If already connected, redirect user to the homepage
   if (user) 
   {
-    const from = location.state?.from?.pathname || '/';
+    const from = /*location.state?.from?.pathname ||*/ '/reports';
     return <Navigate to={from} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    const success = await login(email, password);
+      
+    const email = (userID.indexOf('@') === -1) ? `${userID}@eurekanet.com` : userID;
 
-    if (!success) 
-    {
-      console.log('Bad credentials, connection failed.');
-    }
+    await login(email, password);
     
     setIsLoading(false);
   };
@@ -55,7 +51,7 @@ function LoginForm({
             id="userid" 
             type="userid" 
             placeholder="Entrez votre identifiant..." 
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setUserID(e.target.value)}
             required 
           />
         </div>

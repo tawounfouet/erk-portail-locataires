@@ -11,6 +11,7 @@ import {
   NewSuggestionPage
 } from '@pages';
 import { AuthProvider, ProtectedRoute } from '@/components/context';
+import { Toaster } from '@/components/common/Toaster';
 
 
 function App() 
@@ -37,6 +38,8 @@ function App()
               <Route path="/suggestions" element={<NewSuggestionPage />} />
           </Route>
       </Routes>
+
+      <Toaster />
     </AuthProvider>
   );
 }

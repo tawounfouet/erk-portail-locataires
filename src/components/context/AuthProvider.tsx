@@ -1,12 +1,17 @@
 import AuthService from "@/services/auth";
+import { ILoginResponse } from "@/types/auth.type";
 import { IAuthContextType, IUser } from "@/types/user.type";
 import { createContext, useCallback, useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export const AuthContext = createContext<IAuthContextType | undefined>(undefined);
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const { toast } = useToast();
 
   // Check authentication
   const checkAuth = useCallback(async () => {
@@ -45,14 +50,37 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     try {
       setIsLoading(true);
       
-      const result = await AuthService.authenticate(email, password);
+      const result: ILoginResponse = await AuthService.authenticate(email, password);
       
-      if (result && result.token && result.user) 
+      if (result.success && result.token && result.user) 
       {
         setUser(result.user);
         return true;
       }
-      
+      else if (!result.success && result.response_status)
+      {
+        switch (result.response_status)
+        {
+          case 401:
+            toast({
+              variant: "destructive",
+              title: "Hmmm... Tu es sûre de tes informations ?",
+              description: "Vérifies et ressaisies tes identifiants de connexion pour voir.",
+              action: <ToastAction altText="Try again" onClick={() => {login(email, password)}}>Réessayer</ToastAction>,
+            });
+          break;
+
+          case 500:
+            toast({
+              variant: "destructive",
+              title: "Oups ! Il y a eu un problème.",
+              description: "Il y a peut-être un petit soucis avec le serveur...",
+              action: <ToastAction altText="Try again" onClick={() => {login(email, password)}}>Réessayer</ToastAction>,
+            });
+          break;
+        }
+      }
+
       return false;
     } catch (error) {
       console.error('Login failed:', error);

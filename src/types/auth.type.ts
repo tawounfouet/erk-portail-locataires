@@ -19,4 +19,5 @@ export interface ILoginResponse
     user?: IUser;
     expiresIn?: number;
     message?: string;
+    response_status?: number;
 }

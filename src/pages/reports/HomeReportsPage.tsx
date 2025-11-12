@@ -1,8 +1,6 @@
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
-import { useReports } from "@/hooks/useReports";
-import { IReport } from "@/types/reports.type";
-import { formatDashDateToSlashDate } from "@/lib/date";
+import { formatISODateToFrench } from "@/lib/date";
 import { 
     DropdownMenu, 
     DropdownMenuContent, 
@@ -16,63 +14,69 @@ import { Link, useNavigate } from "react-router-dom";
 import { shareToWhatsapp } from "@/services/sharetowhatsapp";
 import { getReportStatusBadge } from "@/services/badges";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ReportStats from "@/components/reports/ReportStats";
+import { getCategoryIcon } from "@/services/icons";
+import { useMyOperations } from "@/hooks/useOperations";
+import { IOperationFilters, IOperationList } from "@/types/operations.type";
 
 export default function HomeReportsPage()
-{
-    const { reports, loading, error } = useReports();
+{   
+    const { operations: reports, loading, error } = useMyOperations({ operation_type: 'SIGNALEMENT' });
     const navigate = useNavigate();
 
-    const columns: ColumnDef<IReport>[] = [
+    const columns: ColumnDef<IOperationList>[] = [
         {
-            accessorKey: "report",
+            accessorKey: "title",
             header: "Signalement",
             cell: ({ row }) => {
                 const title = row.original.title;
-                const description = row.original.description;
+                // const category = row.original.category;
+                // const icon = getCategoryIcon(category);
 
                 return (
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{title}</div>
-
-                      <div className="text-sm text-gray-500 truncate max-w-xs">
-                        {description}
-                      </div>
+                    <div className="text-sm font-medium text-gray-900 flex gap-2">
+                        {/* {!!icon && icon}  */} {title}
                     </div>
                 );
             }
         },
-        {
-            accessorKey: "category",
-            header: "Catégorie",
-            cell: ({ row }) => {
-                const category = row.original.category;
+        // {
+        //     accessorKey: "category",
+        //     header: "Catégorie",
+        //     cell: ({ row }) => {
+        //         const category = row.original.category;
 
-                return (
-                    <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full capitalize">
-                      {category}
-                    </span>
-                );
-            }
-        },
+        //         return (
+        //             <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full capitalize">
+        //               {category}
+        //             </span>
+        //         );
+        //     }
+        // },
         {
             accessorKey: "status",
             header: "Statut",
             cell: ({ row }) => getReportStatusBadge(row.getValue("status"))
         },
         {
-            accessorKey: "date",
+            accessorKey: "created_at",
             header: "Date",
             cell: ({ row }) => {
-                const date: string = row.getValue("date");
+                const date: string = row.getValue("created_at");
 
-                return formatDashDateToSlashDate(date);
+                return formatISODateToFrench(date);
             }
         },
         {
             id: "action",
             header: "Actions",
-            cell: () => (
+            cell: ({ row }) =>  {
+                const navigationState = { 
+                    report: row.original, 
+                    previousPage: window.location.pathname; 
+                };
+
+
+                return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
@@ -86,32 +90,53 @@ export default function HomeReportsPage()
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="end" className="w-32">
-                        <DropdownMenuItem onClick={() => {navigate("/reports/details")}}>Détails</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {navigate("/reports/details", { state : navigationState })}}>Détails</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => {shareToWhatsapp()}}>Partager</DropdownMenuItem>
                         <DropdownMenuItem>Modifier</DropdownMenuItem>
                         
                         <DropdownMenuSeparator />
                         
                         {/* @TODO: Disable the delete button if the process has already started */}
-                        <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive">Supprimer</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            ),
+                )
+            },
         }
     ];
 
-    if (error)
-    {
+     // États de chargement et d'erreur
+    if (loading) {
         return (
-            <div>
-                Une erreur s'est produite lors du chargement des données.
+            <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Chargement de vos signalements...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <h3 className="text-lg font-medium text-red-800 mb-2">
+                    Erreur de chargement
+                </h3>
+                <p className="text-red-600 mb-4">{error}</p>
+                <Button 
+                    onClick={() => window.location.reload()} 
+                    variant="outline"
+                >
+                    Réessayer
+                </Button>
             </div>
         );
     }
 
     return (
         <div>
-            <ReportStats reports={reports} />
+            {/* <ReportStats reports={reports} /> */}
 
             <Tabs defaultValue="personal">
                 <div className="flex items-center justify-between py-4">
