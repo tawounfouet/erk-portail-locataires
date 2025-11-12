@@ -16,7 +16,7 @@ import { getReportStatusBadge } from "@/services/badges";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCategoryIcon } from "@/services/icons";
 import { useMyOperations } from "@/hooks/useOperations";
-import { IOperationFilters, IOperationList } from "@/types/operations.type";
+import { IOperationList } from "@/types/operations.type";
 
 export default function HomeReportsPage()
 {   
@@ -72,7 +72,7 @@ export default function HomeReportsPage()
             cell: ({ row }) =>  {
                 const navigationState = { 
                     report: row.original, 
-                    previousPage: window.location.pathname; 
+                    previousPage: window.location.pathname, 
                 };
 
 
