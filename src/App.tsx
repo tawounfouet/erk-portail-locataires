@@ -18,7 +18,6 @@ import {
 } from '@pages';
 import { AuthProvider, ProtectedRoute } from '@/components/context';
 import { Toaster } from '@/components/common/Toaster';
-import { useIsMobile } from './hooks/use-mobile';
 import ERKLayout from './components/layout/ERKLayout';
 
 

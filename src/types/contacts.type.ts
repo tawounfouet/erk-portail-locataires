@@ -1,10 +1,8 @@
 export type TContactType = 
-  | 'Particulier' 
-  | 'Entreprise' 
-  | 'Association' 
-  | 'Administration'
-  | 'Gestionnaire';
-
+  | 'management' 
+  | 'emergency' 
+  | 'support'; 
+  
 export type TContactStatus = 'actif' | 'inactif' | 'en_attente';
 
 export interface IContact
@@ -13,8 +11,8 @@ export interface IContact
   last_name: string;
   first_name: string;
   type: TContactType;
-  email: string;
   phone_number: string;
+  email?: string;
   private?: boolean;
   address?: string;
   company?: string;
@@ -23,6 +21,10 @@ export interface IContact
   gestionnaire?: string;
   creation_date?: string;
   status?: TContactStatus;
+  position?: string;
+  whatsapp?: string;
+  is_active?: boolean;
+  icon?: string;
 }
 
 export interface IContactsData 

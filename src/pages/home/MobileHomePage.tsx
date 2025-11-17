@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { getIconComponent } from "@/services/icons";
-import { Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 
@@ -19,7 +19,7 @@ const ActionPanel = ({ title, description, linkText, linkUrl }) => {
           href={linkUrl}
         >
           {linkText}
-          <span className="material-symbols-outlined text-base">arrow_forward</span>
+          <ArrowRight />
         </a>
       </div>
     </div>
@@ -79,9 +79,9 @@ const MobileHomePage = () => {
 	const navigate = useNavigate();
 
 	const actionPanelData = {
-		title: "Report #1234 is under review",
-		description: "We will notify you of any updates.",
-		linkText: "View Details",
+		title: "Quoi de neuf dans votre résidence ?",
+		description: "Pour le moment aucune nouvelle à signaler !",
+		linkText: "Voir plus",
 		linkUrl: "#"
 	};
 
@@ -90,7 +90,7 @@ const MobileHomePage = () => {
 			icon: "Reports",
 			title: "Signaler un incident",
 			pageTitle: 'Signalements',
-			description: "Submit a new safety or maintenance report",
+			description: "Signaler les problèmes dans votre logement",
 			link: '/reports'
 		},
 		{
@@ -129,7 +129,7 @@ const MobileHomePage = () => {
         <>    
             <main className="flex-1 overflow-y-auto">
 				<h2 className="text-[28px] font-bold leading-tight tracking-tight text-slate-800 dark:text-white">
-                    You are connected as {user.full_name}
+                    Connecté en tant que : {user.full_name}
                 </h2>
 
                 <ActionPanel {...actionPanelData} />

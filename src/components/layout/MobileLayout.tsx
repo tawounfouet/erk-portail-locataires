@@ -40,7 +40,7 @@ export default function MobileLayout({ children })
                         </Avatar>)}
                         
                         {previousPage && (
-                            <Link to={previousPage}>
+                            <Link to={previousPage} state={{previousPage: location.pathname}}>
                                 <ArrowLeft />
                             </Link>
                         )}

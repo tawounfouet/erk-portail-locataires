@@ -3,29 +3,75 @@
         "version": "1.0",
         "lastUpdated": "2024-02-15",
         "totalContacts": 10,
-        "types": ["Particulier", "Entreprise", "Association", "Administration"]
+        "types": ["management", "emergency", "support"]
     },
     "contacts": [
         {
             "id": 1,
+            "first_name": "",
             "last_name": "",
-            "first_name": "/",
-            "type": "Gestionnaire principal de la résidence",
-            "email": "arsene.ngoa@email.com",
+            "type": "management",
+            "position": "Gestionnaire principal",
             "phone_number": "+237 6 90 19 14 04",
-            "address": "Yaoundé, Cameroun",
-            "creation_date": "2025-01-10"
+            "whatsapp": "+237 6 90 19 14 04",
+            "icon": "building"
         },
         {
             "id": 2,
             "last_name": "",
             "first_name": "Jean",
-            "type": "Gardien de la résidence",
-            "email": "chantal.mballa@entreprise.cm",
+            "type": "management",
+            "position": "Gardien",
             "phone_number": "+237 6 40 58 09 03",
-            "address": "Douala, Cameroun",
-            "company": "Mballa SARL",
-            "creation_date": "2025-01-12"
+            "whatsapp": "+237 6 40 58 09 03",
+            "icon": "building"
+        },
+        {
+            "id": 3,
+            "first_name": "",
+            "last_name": "",
+            "position": "Police",
+            "type": "emergency",
+            "phone_number": "117",
+            "icon": "security"
+        },
+        {
+            "id": 4,
+            "last_name": "",
+            "first_name": "",
+            "position": "Gendarmerie",
+            "type": "emergency",
+            "phone_number": "120",
+            "icon": "security"
+        },
+        {
+            "id": 5,
+            "last_name": "",
+            "first_name": "",
+            "position": "Pompiers",
+            "type": "emergency",
+            "phone_number": "118",
+            "icon": "fire"
+        },
+        {
+            "id": 6,
+            "first_name": "",
+            "last_name": "",
+            "position": "Support technique",
+            "type": "support",
+            "phone_number": "+33 7 55 72 37 98",
+            "whatsapp": "+33 7 55 72 37 98",
+            "icon": "support"
+        },
+        {
+            "id": 7,
+            "last_name": "",
+            "first_name": "",
+            "position": "Support technique",
+            "type": "support",
+            "phone_number": "+33 6 68 95 74 67",
+            "whatsapp": "+33 6 68 95 74 67",
+            "icon": "support"
         }
     ]
 }

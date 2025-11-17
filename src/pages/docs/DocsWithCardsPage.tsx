@@ -14,7 +14,7 @@ const DocumentCard = ({ document }) => {
       <div className="flex-1">
         <h3 className="font-semibold">{document.title}</h3>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm text-slate-400">Effective:</span>
+          <span className="text-sm text-slate-400">Effectif depuis :</span>
           <span className="text-sm text-slate-300">{document.effective}</span>
         </div>
 
@@ -28,7 +28,7 @@ const DocumentCard = ({ document }) => {
           variant="secondary"
           className="bg-slate-400 hover:bg-slate-600 text-white"
         >
-          View
+          Voir
         </Button>
       </div>
     </div>
@@ -101,20 +101,20 @@ export default function DocsWithCardsPage()
     const allDocuments = [
         {
         id: 1,
-        title: 'Contrat de bail 2024-2025',
-        effective: '01/09/2023',
+        title: 'Contrat de bail 2025-2026',
+        effective: '01/09/2025',
         effectiveDate: new Date('2023-09-01'),
-        status: 'Signed',
+        status: 'Signé',
         statusColor: 'bg-green-300',
         category: 'leaseAgreements'
         },
         {
         id: 2,
-        title: 'Contrat de bail',
-        effective: '15/10/2023',
+        title: 'Etat des lieux',
+        effective: '01/09/2025',
         effectiveDate: new Date('2023-10-15'),
-        status: 'Pending',
-        statusColor: 'bg-orange-300',
+        status: 'Signé',
+        statusColor: 'bg-green-300',
         category: 'leaseAgreements'
         }
     ];
@@ -134,7 +134,7 @@ export default function DocsWithCardsPage()
         
         // Status filter
         const matchesStatus = 
-        (filters.statuses.signed && doc.status === 'Signed') ||
+        (filters.statuses.signed && doc.status === 'Signé') ||
         (filters.statuses.pending && doc.status === 'Pending');
         
         return matchesSearch && matchesStatus;

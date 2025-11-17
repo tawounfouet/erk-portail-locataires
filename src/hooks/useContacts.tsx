@@ -1,67 +1,89 @@
 import { useState, useEffect } from 'react';
-import type { IContact, TContactType } from '@/types/contacts.type';
-import { getContactsAsync } from '@/services/contacts';
+import type { IContact } from '@/types/contacts.type';
+import ContactService from '@/services/contacts';
 
 export function useContacts() {
     const [contacts, setContacts] = useState<IContact[]>([]);
+    const [emergencyContacts, setEmergencyContacts] = useState<IContact[]>([]);
+    const [managementContacts, setManagementContacts] = useState<IContact[]>([]);
+    const [supportContacts, setSupportContacts] = useState<IContact[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const loadContacts = async () => {
-            try {
-                setLoading(true);
-                setError(null);
+    const loadContacts = async () => {
+        try {
+            setLoading(true);
+            setError(null);
 
-                const data = await getContactsAsync();
+            const data = await ContactService.getContacts();
 
-                setContacts(data.contacts);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Unknown error');
-            } finally {
-                setLoading(false);
-            }
+            setContacts(data.contacts);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
+            setLoading(false);
         }
+    }
 
-        loadContacts();        
+    const loadEmergencyContacts = async () =>  {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const data = await ContactService.getEmergencyContacts();
+
+            setEmergencyContacts(data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const loadManagementContacts = async () =>  {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const data = await ContactService.getManagementContacts();
+
+            setManagementContacts(data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const loadSupportContacts = async () =>  {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const data = await ContactService.getSupportContacts();
+
+            setSupportContacts(data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        loadContacts();       
+        loadEmergencyContacts(); 
+        loadManagementContacts(); 
+        loadSupportContacts(); 
     }, []);
 
-    const addContact = (contact: Omit<IContact, 'id'>) => {
-    const newContact: IContact = {
-        ...contact,
-        id: Math.max(...contacts.map(c => c.id)) + 1
-    };
-        setContacts(prev => [...prev, newContact]);
-    };
-
-    const updateContact = (id: number, updates: Partial<IContact>) => {
-        setContacts(prev => 
-                prev.map(contact => 
-                contact.id === id ? { ...contact, ...updates } : contact
-            )
-        );
-    };
-
-    const deleteContact = (id: number) => {
-        setContacts(prev => prev.filter(contact => contact.id !== id));
-    };
-
-    const getContactById = (id: number): IContact | undefined => {
-        return contacts.find(contact => contact.id === id);
-    };
-
-    const filterByType = (type: TContactType): IContact[] => {
-        return contacts.filter(contact => contact.type === type);
-    };
 
     return {
         contacts,
         loading,
         error,
-        addContact,
-        updateContact,
-        deleteContact,
-        getContactById,
-        filterByType
+        emergencyContacts,
+        managementContacts,
+        supportContacts,
     };
 }
