@@ -15,7 +15,13 @@ import {
   Lightbulb,
   DoorOpen,
   Shield,
-  Wrench
+  Wrench,
+  FolderIcon,
+  UsersIcon,
+  ListIcon,
+  Bell,
+  BarChartIcon,
+  ArrowLeft
 } from 'lucide-react';
 
 
@@ -30,6 +36,13 @@ export const IconMap = {
   'Wifi': Wifi,
   'HelpCircle': HelpCircle,
   
+  'Reports': BarChartIcon,
+  'Documents': FolderIcon,
+  'Contacts': UsersIcon,
+  'Suggestions': ListIcon,
+  'Notifications': Bell,
+
+  'Return': ArrowLeft
   //...
 } as const;
 

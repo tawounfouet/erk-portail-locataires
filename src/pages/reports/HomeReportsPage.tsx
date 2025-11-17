@@ -39,19 +39,19 @@ export default function HomeReportsPage()
                 );
             }
         },
-        // {
-        //     accessorKey: "category",
-        //     header: "Catégorie",
-        //     cell: ({ row }) => {
-        //         const category = row.original.category;
+        {
+            id: "category",
+            header: "Catégorie",
+            cell: ({ row }) => {
+                // const category = row.original.category;
 
-        //         return (
-        //             <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full capitalize">
-        //               {category}
-        //             </span>
-        //         );
-        //     }
-        // },
+                return (
+                    <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full capitalize">
+                      category
+                    </span>
+                );
+            }
+        },
         {
             accessorKey: "status",
             header: "Statut",

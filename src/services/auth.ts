@@ -225,4 +225,129 @@ export default class AuthService
 
         this.clearTokens();
     }
+
+    /**
+     * Updates a user's information
+     * @param userId - User ID to update (optional, uses current user if not provided)
+     * @param userData - Partial user data to update
+     * @param isPartial - Whether to use PATCH (partial) or PUT (complete) update
+     * @returns Promise<boolean> - True if update was successful
+     */
+    static async updateUser(
+        userData: Partial<IUser>, 
+        userId?: string, 
+        isPartial: boolean = true
+    ): Promise<boolean> 
+    {
+        try {
+            const token = this.getTokens().access;
+            
+            // Determine the endpoint URL
+            const endpoint = userId 
+                ? `${this.BASE_URL}/users/${userId}/`
+                : `${this.BASE_URL}${this.CURRENT_USER_URL}`;
+
+            const method = isPartial ? 'PATCH' : 'PUT';
+
+            const response = await fetch(endpoint, {
+                method: method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                console.error(`User update failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            // Update the current user cache if modifying the current user
+            if (!userId) {
+                AuthService.currentUser = await response.json();
+            }
+
+            console.log('✅ User updated successfully');
+            return true;
+
+        } catch (error) {
+            console.error('User update failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Changes the current user's password
+     * @param currentPassword - Current password for verification
+     * @param newPassword - New password to set
+     * @returns Promise<boolean> - True if password change was successful
+     */
+    static async changePassword(currentPassword: string, newPassword: string): Promise<boolean> 
+    {
+        try {
+            const token = this.getTokens().access;
+
+            const response = await fetch(`${this.BASE_URL}/users/set_password/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    current_password: currentPassword,
+                    new_password: newPassword
+                })
+            });
+
+            if (!response.ok) {
+                console.error(`Password change failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            console.log('✅ Password changed successfully');
+            return true;
+
+        } catch (error) {
+            console.error('Password change failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Changes the current user's email
+     * @param newEmail - New email address
+     * @param currentPassword - Current password for verification
+     * @returns Promise<boolean> - True if email change was successful
+     */
+    static async changeEmail(newEmail: string, currentPassword: string): Promise<boolean> 
+    {
+        try {
+            const token = this.getTokens().access;
+
+            const response = await fetch(`${this.BASE_URL}/users/set_email/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    new_email: newEmail,
+                    current_password: currentPassword
+                })
+            });
+
+            if (!response.ok) {
+                console.error(`Email change failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            console.log('✅ Email changed successfully');
+            return true;
+
+        } catch (error) {
+            console.error('Email change failed:', error);
+            return false;
+        }
+    }
 }

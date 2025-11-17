@@ -27,9 +27,11 @@ import {
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/hooks/useAuth"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 export default function NavUser() {
   const { isMobile } = useSidebar();
+  const navigate = useNavigate();
 
   const { user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -88,7 +90,7 @@ export default function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { navigate('/myaccount'); }}>
                 <UserCircleIcon />
                 Mon compte
               </DropdownMenuItem>
@@ -96,7 +98,7 @@ export default function NavUser() {
                 <CreditCardIcon />
                 EurekaShop
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { navigate('/notifications'); }}>
                 <BellIcon />
                 Notifications
               </DropdownMenuItem>
