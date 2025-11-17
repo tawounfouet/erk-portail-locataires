@@ -32,7 +32,7 @@ export default function MobileLayout({ children })
 
     return (
         <div className="px-6 relative mx-auto flex h-screen max-w-md flex-col bg-background-light dark:bg-background-dark font-display">
-            <header className="sticky pt-8 flex shrink-0 flex-col gap-2 bg-background-light pb-2 dark:bg-background-dark">
+            <header className="sticky pt-6 flex shrink-0 flex-col gap-2 bg-background-light pb-2 dark:bg-background-dark">
                 <div className="flex h-12 items-center justify-between">
                     <div className="flex size-12 shrink-0 items-center">
                         {isAtHomePage && (<Avatar className="h-8 w-8 rounded-lg grayscale">

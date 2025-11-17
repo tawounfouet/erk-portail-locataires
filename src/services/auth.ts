@@ -19,6 +19,15 @@ export default class AuthService
     private static readonly REFRESH_TOKEN_URL: string = "/jwt/refresh/";
     private static readonly VERIFY_TOKEN_URL: string = "/jwt/verify/";
     private static readonly CURRENT_USER_URL: string = "/users/me/";
+    private static readonly USERS_URL: string = "/users/";
+    private static readonly ACTIVATION_URL: string = "/users/activation/";
+    private static readonly RESEND_ACTIVATION_URL: string = "/users/resend_activation/";
+    private static readonly RESET_EMAIL_URL: string = "/users/reset_email/";
+    private static readonly RESET_EMAIL_CONFIRM_URL: string = "/users/reset_email_confirm/";
+    private static readonly RESET_PASSWORD_URL: string = "/users/reset_password/";
+    private static readonly RESET_PASSWORD_CONFIRM_URL: string = "/users/reset_password_confirm/";
+    private static readonly SET_EMAIL_URL: string = "/users/set_email/";
+    private static readonly SET_PASSWORD_URL: string = "/users/set_password/";
 
     private static currentUser: IUser | null = null; 
 
@@ -227,24 +236,181 @@ export default class AuthService
     }
 
     /**
+     * Creates a new user account
+     * @param userData - User creation data
+     * @returns Promise<IUser | null> - Created user or null if failed
+     */
+    static async createUser(userData: {
+        first_name: string;
+        last_name: string;
+        email: string;
+        password: string;
+        re_password: string;
+    }): Promise<IUser | null> {
+        try {
+            const response = await fetch(`${this.BASE_URL}${this.USERS_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                console.error(`User creation failed: ${response.status}`, await response.text());
+                return null;
+            }
+
+            const user: IUser = await response.json();
+            console.log('✅ User created successfully');
+            return user;
+
+        } catch (error) {
+            console.error('User creation failed:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Activates a user account
+     * @param uid - User ID
+     * @param token - Activation token
+     * @returns Promise<boolean> - True if activation was successful
+     */
+    static async activateUser(uid: string, token: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.BASE_URL}${this.ACTIVATION_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ uid, token })
+            });
+
+            if (!response.ok) {
+                console.error(`Activation failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            console.log('✅ Account activated successfully');
+            return true;
+
+        } catch (error) {
+            console.error('Activation failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Resends activation email
+     * @param email - User's email address
+     * @returns Promise<boolean> - True if email was sent successfully
+     */
+    static async resendActivation(email: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.BASE_URL}${this.RESEND_ACTIVATION_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email })
+            });
+
+            if (!response.ok) {
+                console.error(`Resend activation failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            console.log('✅ Activation email sent successfully');
+            return true;
+
+        } catch (error) {
+            console.error('Resend activation failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Gets list of users (requires authentication)
+     * @param page - Page number for pagination
+     * @returns Promise<IUser[] | null> - List of users or null if failed
+     */
+    static async getUsers(page?: number): Promise<IUser[] | null> {
+        try {
+            const token = this.getTokens().access;
+            const params = page ? `?page=${page}` : '';
+            
+            const response = await fetch(`${this.BASE_URL}${this.USERS_URL}${params}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                console.error(`Get users failed: ${response.status}`, await response.text());
+                return null;
+            }
+
+            const data = await response.json();
+            return data.results;
+
+        } catch (error) {
+            console.error('Get users failed:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Gets a specific user by ID
+     * @param userId - User ID
+     * @returns Promise<IUser | null> - User data or null if failed
+     */
+    static async getUserById(userId: string): Promise<IUser | null> {
+        try {
+            const token = this.getTokens().access;
+            
+            const response = await fetch(`${this.BASE_URL}${this.USERS_URL}${userId}/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                console.error(`Get user failed: ${response.status}`, await response.text());
+                return null;
+            }
+
+            const user: IUser = await response.json();
+            return user;
+
+        } catch (error) {
+            console.error('Get user failed:', error);
+            return null;
+        }
+    }
+
+    /**
      * Updates a user's information
-     * @param userId - User ID to update (optional, uses current user if not provided)
      * @param userData - Partial user data to update
+     * @param userId - User ID to update (optional, uses current user if not provided)
      * @param isPartial - Whether to use PATCH (partial) or PUT (complete) update
-     * @returns Promise<boolean> - True if update was successful
+     * @returns Promise<IUser | null> - Updated user data or null if failed
      */
     static async updateUser(
-        userData: Partial<IUser>, 
-        userId?: string, 
+        userData: Partial<IUser>,
+        userId?: string,
         isPartial: boolean = true
-    ): Promise<boolean> 
-    {
+    ): Promise<IUser | null> {
         try {
             const token = this.getTokens().access;
             
             // Determine the endpoint URL
             const endpoint = userId 
-                ? `${this.BASE_URL}/users/${userId}/`
+                ? `${this.BASE_URL}${this.USERS_URL}${userId}/`
                 : `${this.BASE_URL}${this.CURRENT_USER_URL}`;
 
             const method = isPartial ? 'PATCH' : 'PUT';
@@ -260,19 +426,112 @@ export default class AuthService
 
             if (!response.ok) {
                 console.error(`User update failed: ${response.status}`, await response.text());
-                return false;
+                return null;
             }
+
+            const updatedUser: IUser = await response.json();
 
             // Update the current user cache if modifying the current user
             if (!userId) {
-                AuthService.currentUser = await response.json();
+                AuthService.currentUser = updatedUser;
             }
 
             console.log('✅ User updated successfully');
-            return true;
+            return updatedUser;
 
         } catch (error) {
             console.error('User update failed:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Deletes the current user's account
+     * @returns Promise<boolean> - True if deletion was successful
+     */
+    static async deleteCurrentUser(): Promise<boolean> {
+        try {
+            const token = this.getTokens().access;
+
+            const response = await fetch(`${this.BASE_URL}${this.CURRENT_USER_URL}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            });
+
+            if (!response.ok) {
+                console.error(`User deletion failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            this.clearTokens();
+            this.currentUser = null;
+            console.log('✅ User account deleted successfully');
+            return true;
+
+        } catch (error) {
+            console.error('User deletion failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Initiates password reset process
+     * @param email - User's email address
+     * @returns Promise<boolean> - True if reset email was sent successfully
+     */
+    static async resetPassword(email: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.BASE_URL}${this.RESET_PASSWORD_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email })
+            });
+
+            if (!response.ok) {
+                console.error(`Password reset request failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            console.log('✅ Password reset email sent successfully');
+            return true;
+
+        } catch (error) {
+            console.error('Password reset request failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Confirms password reset with token
+     * @param uid - User ID
+     * @param token - Reset token
+     * @param newPassword - New password
+     * @returns Promise<boolean> - True if password was reset successfully
+     */
+    static async resetPasswordConfirm(uid: string, token: string, newPassword: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.BASE_URL}${this.RESET_PASSWORD_CONFIRM_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ uid, token, new_password: newPassword })
+            });
+
+            if (!response.ok) {
+                console.error(`Password reset confirmation failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            console.log('✅ Password reset successfully');
+            return true;
+
+        } catch (error) {
+            console.error('Password reset confirmation failed:', error);
             return false;
         }
     }
@@ -283,12 +542,11 @@ export default class AuthService
      * @param newPassword - New password to set
      * @returns Promise<boolean> - True if password change was successful
      */
-    static async changePassword(currentPassword: string, newPassword: string): Promise<boolean> 
-    {
+    static async changePassword(currentPassword: string, newPassword: string): Promise<boolean> {
         try {
             const token = this.getTokens().access;
 
-            const response = await fetch(`${this.BASE_URL}/users/set_password/`, {
+            const response = await fetch(`${this.BASE_URL}${this.SET_PASSWORD_URL}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -320,12 +578,11 @@ export default class AuthService
      * @param currentPassword - Current password for verification
      * @returns Promise<boolean> - True if email change was successful
      */
-    static async changeEmail(newEmail: string, currentPassword: string): Promise<boolean> 
-    {
+    static async changeEmail(newEmail: string, currentPassword: string): Promise<boolean> {
         try {
             const token = this.getTokens().access;
 
-            const response = await fetch(`${this.BASE_URL}/users/set_email/`, {
+            const response = await fetch(`${this.BASE_URL}${this.SET_EMAIL_URL}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -349,5 +606,102 @@ export default class AuthService
             console.error('Email change failed:', error);
             return false;
         }
+    }
+
+    /**
+     * Initiates email reset process
+     * @param email - Current email address
+     * @returns Promise<boolean> - True if reset email was sent successfully
+     */
+    static async resetEmail(email: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.BASE_URL}${this.RESET_EMAIL_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email })
+            });
+
+            if (!response.ok) {
+                console.error(`Email reset request failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            console.log('✅ Email reset instructions sent successfully');
+            return true;
+
+        } catch (error) {
+            console.error('Email reset request failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Confirms email reset with new email
+     * @param newEmail - New email address
+     * @returns Promise<boolean> - True if email was reset successfully
+     */
+    static async resetEmailConfirm(newEmail: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.BASE_URL}${this.RESET_EMAIL_CONFIRM_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ new_email: newEmail })
+            });
+
+            if (!response.ok) {
+                console.error(`Email reset confirmation failed: ${response.status}`, await response.text());
+                return false;
+            }
+
+            console.log('✅ Email reset successfully');
+            return true;
+
+        } catch (error) {
+            console.error('Email reset confirmation failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Silent token refresh - tries to refresh token without user interaction
+     * @returns Promise<boolean> - True if token was refreshed successfully
+     */
+    static async silentRefresh(): Promise<boolean> {
+        try {
+            const tokens = await this.refreshToken();
+            console.log('🔐 Token silently refreshed');
+            return true;
+        } catch (error) {
+            console.log('🔐 Silent refresh failed, user needs to login again');
+            this.clearTokens();
+            return false;
+        }
+    }
+
+    /**
+     * Checks and maintains authentication state
+     * Should be called periodically or before API calls
+     * @returns Promise<boolean> - True if user is properly authenticated
+     */
+    static async checkAndMaintainAuth(): Promise<boolean> {
+        const token = this.getTokens().access;
+        
+        if (!token || token === 'no_access_token') {
+            return false;
+        }
+
+        // Check if token is about to expire (optional: decode JWT to check expiry)
+        const isTokenValid = await this.verifyToken(token);
+        
+        if (!isTokenValid) {
+            // Try to refresh the token
+            return await this.silentRefresh();
+        }
+
+        return true;
     }
 }
