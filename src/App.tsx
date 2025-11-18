@@ -1,59 +1,36 @@
 import { Routes, Route } from 'react-router-dom';
-import { DashboardLayout } from './components/layout';
-
-import { 
-  ContactsPage,
-  ContactsWithCardsPage,
-  DocsPage,
-  DocsWithCardsPage,
-  LoginPage,
-  HomeReportsPage,
-  NewReportsPage,
-  DetailsReportsPage,
-  NewSuggestionPage,
-  MyAccountPage,
-  NotificationsPage,
-  MobileHomePage,
-  HomeReportsWithCardsPage
-} from '@pages';
+import { LoginPage, MobileHomePage } from '@pages';
 import { AuthProvider, ProtectedRoute } from '@/components/context';
 import { Toaster } from '@/components/common/Toaster';
-import ERKLayout from './components/layout/ERKLayout';
+import ERKLayout from '@/components/layout/ERKLayout';
+import { getAllModules } from './static/modules.static';
+import { IERKModule } from '@/types/module.type';
+import { generateRoutesFromModule } from '@/lib/module';
 
 
-function App() 
+export default function App() 
 {
-  return (
-    <AuthProvider>
-      <Routes>
-          <Route path="/login" element={<LoginPage />} />
+	const erkModules = getAllModules();
 
-            <Route element={
-              <ProtectedRoute>
-                <ERKLayout />
-              </ProtectedRoute>
-            }>
-                <Route path="/" element={<MobileHomePage />} />
+	return (
+		<AuthProvider>
+			<Routes>
+				<Route path="/login" element={<LoginPage />} />
 
-                <Route path="/reports" element={<HomeReportsWithCardsPage />} />
-                <Route path="/reports/new" element={<NewReportsPage />} />
-                <Route path="/reports/details" element={<DetailsReportsPage />} />
-                
-                <Route path="/docs" element={<DocsWithCardsPage />} />
-                <Route path="/contacts" element={<ContactsWithCardsPage />} />
+					<Route element={
+						<ProtectedRoute>
+							<ERKLayout />
+						</ProtectedRoute>
+					}>
 
-                <Route path="/suggestions" element={<NewSuggestionPage />} />
+						<Route path="/" element={<MobileHomePage />} />
 
-                <Route path="/myaccount" element={<MyAccountPage />} />
-                <Route path="/notifications" element={<NotificationsPage />} />
-            </Route>
+						{/* Génération automatique de toutes les routes des modules */}
+						{erkModules.flatMap((module: IERKModule) => generateRoutesFromModule(module))}
+					</Route>
+			</Routes>
 
-
-      </Routes>
-
-      <Toaster />
-    </AuthProvider>
-  );
+			<Toaster />
+		</AuthProvider>
+	);
 }
-
-export default App;

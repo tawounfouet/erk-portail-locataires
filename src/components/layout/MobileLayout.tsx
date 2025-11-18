@@ -35,11 +35,12 @@ export default function MobileLayout({ children })
             <header className="sticky pt-6 flex shrink-0 flex-col gap-2 bg-background-light pb-2 dark:bg-background-dark">
                 <div className="flex h-12 items-center justify-between">
                     <div className="flex size-12 shrink-0 items-center">
-                        {isAtHomePage && (<Avatar className="h-8 w-8 rounded-lg grayscale">
-                            <AvatarFallback className="rounded-lg">{user.last_name.charAt(0)}{user.first_name.charAt(0)}</AvatarFallback>
-                        </Avatar>)}
+                        <button className="flex h-12 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg bg-transparent p-0 text-base font-bold leading-normal tracking-[0.015em] text-slate-800 dark:text-white min-w-0">
+                            <Bell />
+                        </button>
                         
-                        {previousPage && (
+                        
+                        {previousPage && !isAtHomePage && (
                             <Link to={previousPage} state={{previousPage: location.pathname}}>
                                 <ArrowLeft />
                             </Link>
@@ -50,11 +51,9 @@ export default function MobileLayout({ children })
                         <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-800 dark:text-white">{pageTitle}</h1>
                     </div>
 
-                    <div className="flex w-12 items-center justify-end">
-                        <button className="flex h-12 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg bg-transparent p-0 text-base font-bold leading-normal tracking-[0.015em] text-slate-800 dark:text-white min-w-0">
-                            <Bell />
-                        </button>
-                    </div>
+                    {isAtHomePage && (<Avatar className="h-8 w-8 rounded-lg grayscale">
+                        <AvatarFallback className="rounded-lg">{user.last_name.charAt(0)}{user.first_name.charAt(0)}</AvatarFallback>
+                    </Avatar>)}
                 </div>
 
                 {!isAtHomePage && <Separator className="mb-6" />}
