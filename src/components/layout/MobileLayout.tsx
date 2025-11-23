@@ -51,9 +51,13 @@ export default function MobileLayout({ children })
                         <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-800 dark:text-white">{pageTitle}</h1>
                     </div>
 
-                    {isAtHomePage && (<Avatar className="h-8 w-8 rounded-lg grayscale">
-                        <AvatarFallback className="rounded-lg">{user.last_name.charAt(0)}{user.first_name.charAt(0)}</AvatarFallback>
-                    </Avatar>)}
+                    {isAtHomePage && (
+                        <Link to="/">
+                            <Avatar className="p-2 bg-slate-200 rounded-full grayscale">
+                                <AvatarFallback className="rounded-lg">{user.last_name.charAt(0)}{user.first_name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                        </Link>
+                    )}
                 </div>
 
                 {!isAtHomePage && <Separator className="mb-6" />}

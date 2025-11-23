@@ -22,6 +22,18 @@ export type TSuggestionCategory =
   | 'environment_sustainability'
   | 'other';
 
+export const SuggestionCategoryMapping: Record<TSuggestionCategory, string> = {
+  'common_spaces': 'Amélioration des espaces communs',
+  'services_equipment': 'Services et équipements',
+  'activities_events': 'Activités et événements',
+  'security_comfort': 'Sécurité et confort',
+  'communication': 'Communication',
+  'environment_sustainability': 'Environnement et durabilité',
+  'other': 'Autre'
+} as const;
+
+export const SuggestionsCategoryMappingArray = Object.entries(SuggestionCategoryMapping) as [TSuggestionCategory, string][];
+
 // ===== COMMENT INTERFACES =====
 
 /**

@@ -1,67 +1,64 @@
-import { useMyOperations } from "@/hooks/useOperations";
+import { useMyOperations, useOperationTypes } from "@/hooks/useOperations";
 import { getReportStatusBadge } from "@/services/badges";
-import { IOperationDetail } from "@/types/operations.type";
+import { IOperationDetail, TOperationCategory } from "@/types/operations.type";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { getIconComponent } from "@/services/icons";
+import { formatISODateToFrench } from "@/lib/date";
+import FloatingAddButton from "@/components/common/FloatingAddButton";
 
 interface IReportCardProps
 {
-    report: IOperationDetail
+    idx: number;
+    report: IOperationDetail;
+    category: string | TOperationCategory;
 }
 
-function ReportCard({ report }: IReportCardProps)
-{
-    return (
-        <div className="flex cursor-pointer items-start gap-4 rounded-xl border border-transparent bg-slate-100 p-4 transition-all hover:border-primary/50 dark:bg-slate-800/50">
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary">
-                <span className="material-symbols-outlined text-2xl">water_drop</span>
-            </div>
+function ReportCard({ idx, report, category }: IReportCardProps)
+{   
+    const Icon = getIconComponent(category || '');
 
-            <div className="flex flex-1 flex-col justify-center gap-1">
-                <div className="flex items-center justify-between">
-                    <p className="text-base font-medium text-slate-900 dark:text-white">{report.title}</p>
-                    <div className="flex items-center gap-2 rounded-full bg-orange-500/20 px-2.5 py-1">
-                        <div className="size-1.5 rounded-full bg-orange-500"></div>
-                        <p className="text-xs font-medium text-orange-500">{getReportStatusBadge(report.status)}</p>
-                    </div>
+    return (
+        <Link to={`report-${idx}`} state={{ report }}>
+            <div className="my-4 flex cursor-pointer items-start gap-4 rounded-xl border border-transparent bg-slate-100 p-4 transition-all hover:border-primary/50 dark:bg-slate-800/50">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary">
+                    <Icon />
                 </div>
 
-                <p className="text-sm font-normal text-slate-500 dark:text-slate-400">ID: {report.id} | May 20, 2024</p>
-                <p className="mt-1 text-sm font-normal text-slate-600 dark:text-slate-300">{report.description}</p>
+                <div className="flex flex-1 flex-col justify-center gap-1">
+                    <div className="flex items-center justify-between">
+                        <p className="text-base font-medium text-slate-900 dark:text-white">{report.title}</p>
+                        {getReportStatusBadge(report.status)}
+                    </div>
+
+                    <p className="text-sm font-normal text-slate-500 dark:text-slate-400">ID: {report.operation_number} | {formatISODateToFrench(report.created_at)}</p>
+                    <p className="mt-1 text-sm font-normal text-slate-600 dark:text-slate-300">{report.description}</p>
+                </div>
             </div>
-        </div>
+        
+        </Link>
     )
 }
 
 
-const FloatingActionButton = ({text, onClick }) => {
-  return (
-    <div className="fixed bottom-12 right-4 z-10 mx-auto max-w-md sm:right-[calc(50%-11rem)]">
-      <button 
-        className="flex h-14 min-w-0 cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-full bg-primary p-4 text-base font-bold leading-normal tracking-[0.015em] text-white shadow-lg"
-        onClick={onClick}
-      >
-        <Plus />
-      </button>
-    </div>
-  );
-};
-
-
 export default function HomeReportsWithCardsPage()
 {
+    // ==========================================
+	// 				   STATE
+	// ==========================================
     const { operations: reports, loading, error } = useMyOperations({ operation_type: 'SIGNALEMENT' });
+    const { operationTypes, isLoading: operationTypeLoading, error: operationTypeError } = useOperationTypes();
     const navigate = useNavigate();
     const location = useLocation();
-        
-    const [active_reports] = useState<IOperationDetail[]>([]);
 
+	// ==========================================
+	// 				    RENDER
+	// ==========================================
 
-     // États de chargement et d'erreur
-    if (loading) {
+    // États de chargement et d'erreur
+    if (loading || operationTypeLoading)
+    {
         return (
             <div className="flex items-center justify-center py-12">
                 <div className="text-center">
@@ -72,7 +69,8 @@ export default function HomeReportsWithCardsPage()
         );
     }
     
-    if (error) {
+    if (error || operationTypeError) 
+    {
         return (
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
                 <h3 className="text-lg font-medium text-red-800 mb-2">
@@ -89,6 +87,15 @@ export default function HomeReportsWithCardsPage()
         );
     }
 
+    const getReportCategory = (operationTypeId: string | TOperationCategory): string => {
+        const operationType = operationTypes.get(operationTypeId);
+
+        if (operationType)
+            return operationType.category;
+
+        return 'none';
+    }
+
     return (
         <>
             <Tabs defaultValue="actives">
@@ -99,16 +106,13 @@ export default function HomeReportsWithCardsPage()
                 </TabsList>
 
                 <TabsContent value="actives">
-                    {active_reports.map((report, index) => <ReportCard key={`${report.id}${index}`} report={report} />)}
+                    {reports.map((report, index) => <ReportCard key={`${report.id}${index}`} idx={index} report={report as IOperationDetail} category={getReportCategory(report.operation_type)} />)}
                 </TabsContent>
                 <TabsContent value="common"></TabsContent>
                 <TabsContent value="resolved"></TabsContent>
             </Tabs>
 
-            <FloatingActionButton 
-                text="Signalement"
-                onClick={() => navigate('/reports/new', { state: { previousPage: location.pathname } })}
-            /> 
+            <FloatingAddButton onClick={() => navigate('/reports/new', { state: { previousPage: location.pathname } })} />
         </>
     );
 }

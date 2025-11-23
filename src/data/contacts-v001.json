@@ -52,26 +52,6 @@
             "type": "emergency",
             "phone_number": "118",
             "icon": "fire"
-        },
-        {
-            "id": 6,
-            "first_name": "",
-            "last_name": "",
-            "position": "Support technique",
-            "type": "support",
-            "phone_number": "+33 7 55 72 37 98",
-            "whatsapp": "+33 7 55 72 37 98",
-            "icon": "support"
-        },
-        {
-            "id": 7,
-            "last_name": "",
-            "first_name": "",
-            "position": "Support technique",
-            "type": "support",
-            "phone_number": "+33 6 68 95 74 67",
-            "whatsapp": "+33 6 68 95 74 67",
-            "icon": "support"
         }
     ]
 }

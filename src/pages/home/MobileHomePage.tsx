@@ -1,7 +1,9 @@
 import { useAuth } from "@/hooks/useAuth";
 import { getIconComponent } from "@/services/icons";
-import { ArrowRight, Plus } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getAllModules } from "@/static/modules.static";
+import { IERKModule } from "@/types/module.type";
+import { ArrowRight } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 
 const ActionPanel = ({ title, description, linkText, linkUrl }) => {
@@ -27,22 +29,21 @@ const ActionPanel = ({ title, description, linkText, linkUrl }) => {
 };
 
 
-const NavGroup = ({ items }) => {
+const NavGroup = ({ items }: { items: IERKModule[] }) => {
 	const location = useLocation();
 	
 	return (
 		<div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-4 pb-6">
-		{items.map((item) => {
+		{items.map((item: IERKModule, index: number) => {
 			const navigationState = {
 				previousPage : location.pathname,
-				pageTitle: item.pageTitle 
+				pageTitle: item.title 
 			};
 
-
-			const Icon = getIconComponent(item.icon)
+			const Icon = getIconComponent(item.icon_uri);
 	
 			return (
-				<Link to={item.link} state={navigationState} className="flex flex-1 flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+				<Link key={`${index}${item.id}${index}`} to={item.routes[0].path} state={navigationState} className="flex flex-1 flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
 					<span className="text-primary"><Icon /></span>
 					<div className="flex flex-col gap-1">
 						<h2 className="font-bold leading-tight text-slate-800 dark:text-white">{item.title}</h2>
@@ -58,63 +59,16 @@ const NavGroup = ({ items }) => {
   );
 };
 
-
-const FloatingActionButton = ({text, onClick }) => {
-  return (
-    <div className="fixed bottom-12 right-4 z-10 mx-auto max-w-md sm:right-[calc(50%-11rem)]">
-      <button 
-        className="flex h-14 min-w-0 cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-full bg-primary px-5 pl-4 pr-6 text-base font-bold leading-normal tracking-[0.015em] text-white shadow-lg"
-        onClick={onClick}
-      >
-        <span className="material-symbols-outlined"><Plus /></span>
-        <span className="truncate">{text}</span>
-      </button>
-    </div>
-  );
-};
-
-
-const MobileHomePage = () => {
+export default function MobileHomePage() 
+{
     const { user } = useAuth();
-	const navigate = useNavigate();
-
+	
 	const actionPanelData = {
 		title: "Quoi de neuf dans votre résidence ?",
 		description: "Pour le moment aucune nouvelle à signaler !",
 		linkText: "Voir plus",
 		linkUrl: "#"
 	};
-
-	const navItems = [
-		{
-			icon: "Reports",
-			title: "Signaler un incident",
-			pageTitle: 'Signalements',
-			description: "Signaler les problèmes dans votre logement",
-			link: '/reports'
-		},
-		{
-			icon: "Documents",
-			title: "Mes Documents",
-			pageTitle: 'Documents',
-			description: "Accéder à vos documents importants",
-			link: '/docs'
-		},
-		{
-			icon: "Contacts",
-			title: "Carnet d'adresse",
-			pageTitle: 'Carnet',
-			description: "Trouver rapidement les numéros d'urgence et importants",
-			link: '/contacts'
-		},
-		{
-			icon: "Suggestions",
-			title: "Suggestions pour la résidence",
-			pageTitle: 'Suggestions',
-			description: "Partagez vos idées pour améliorer la résidence",
-			link: '/suggestions'
-		}
-	];
 
     if (!user)
     {
@@ -127,21 +81,14 @@ const MobileHomePage = () => {
 
     return (
         <>    
-            <main className="flex-1 overflow-y-auto">
+			<main className="flex-1 overflow-y-auto">
 				<h2 className="text-[28px] font-bold leading-tight tracking-tight text-slate-800 dark:text-white">
-                    Connecté en tant que : {user.full_name}
+                    Accueil
                 </h2>
 
                 <ActionPanel {...actionPanelData} />
-				<NavGroup items={navItems} />
-            </main>
-
-            <FloatingActionButton 
-                text="Signalement"
-                onClick={() => navigate('/reports/new')}
-            />            
+				<NavGroup items={getAllModules()} />
+            </main>          
         </>
     );
 };
-
-export default MobileHomePage;

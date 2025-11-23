@@ -134,3 +134,64 @@ export function formatISODateToFrench(isoDateString: string): string
         return isoDateString;
     }
 }   
+
+
+
+function getTimeElapsed(isoDateString) 
+{
+  const datePassed = new Date(isoDateString);
+  const now = new Date();
+  const diffMs = now - datePassed; // différence en millisecondes
+  
+  // Convertir en différentes unités
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  return {
+    milliseconds: diffMs,
+    seconds: diffSeconds,
+    minutes: diffMinutes,
+    hours: diffHours,
+    days: diffDays
+  };
+}
+
+export function getTimeElapsedStr(isoDateString: string): string 
+{
+    const date = new Date(isoDateString);
+    const now = new Date();
+
+    const diffMs = now - date;
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    const diffMonths = Math.floor(diffDays / 30);
+    const diffYears = Math.floor(diffDays / 365);
+
+    if (diffYears > 0) 
+    {
+        return `il y a ${diffYears} an${diffYears > 1 ? 's' : ''}`;
+    } 
+    else if (diffMonths > 0) 
+    {
+        return `il y a ${diffMonths} mois`;
+    } 
+    else if (diffDays > 0) 
+    {
+        return `il y a ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
+    } 
+    else if (diffHours > 0) 
+    {
+        return `il y a ${diffHours} heure${diffHours > 1 ? 's' : ''}`;
+    } 
+    else if (diffMinutes > 0) 
+    {
+        return `il y a ${diffMinutes} minute${diffMinutes > 1 ? 's' : ''}`;
+    } 
+    else {
+        return `il y a quelques secondes`;
+    }
+}   

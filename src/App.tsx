@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { LoginPage, MobileHomePage } from '@pages';
-import { AuthProvider, ProtectedRoute } from '@/components/context';
+import { AuthProvider, ProtectedRoute } from '@/context';
 import { Toaster } from '@/components/common/Toaster';
 import ERKLayout from '@/components/layout/ERKLayout';
 import { getAllModules } from './static/modules.static';

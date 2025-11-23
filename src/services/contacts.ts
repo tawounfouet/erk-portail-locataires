@@ -99,11 +99,10 @@ export default class ContactService
 				contact.type === type  /* && contact.is_active */
 			);
 		
-			console.log(`✅ Found ${filteredContacts.length} contacts of type: ${type}`);
 		return filteredContacts;
 		
 		} catch (error) {
-			console.error(`❌ Error loading contacts for type ${type}:`, error);
+			// console.error(`❌ Error loading contacts for type ${type}:`, error);
 			return [];
 		}
 	}

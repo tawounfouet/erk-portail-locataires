@@ -1,6 +1,7 @@
 import { IUser } from "@/types/user.type";
 import { DEFAULT_USER } from "@/static/users.static";
 import { IAuthTokens, ILoginResponse } from "@/types/auth.type";
+import { ERK_API_URL } from "@/static/dev.static";
 
 // Local Storage variable names
 const LS_ACCESS_TOKEN =  'access_token';
@@ -13,7 +14,7 @@ const LS_REFRESH_TOKEN = 'refresh_token';
 export default class AuthService
 {
     // Basic URLs for the authentication API
-    private static readonly BASE_URL: string = "https://app.eureka-residences.com/api/auth";
+    private static readonly BASE_URL: string = `${ERK_API_URL}/auth`;
     private static readonly AUTHENTICATION_URL: string = "/jwt/create/";
     private static readonly LOGOUT_URL: string = "/jwt/logout/";
     private static readonly REFRESH_TOKEN_URL: string = "/jwt/refresh/";
@@ -29,7 +30,7 @@ export default class AuthService
     private static readonly SET_EMAIL_URL: string = "/users/set_email/";
     private static readonly SET_PASSWORD_URL: string = "/users/set_password/";
 
-    private static currentUser: IUser | null = null; 
+    private static currentUser: IUser | null = null;
 
     /**
      * Authenticates a user with email and password
@@ -128,10 +129,10 @@ export default class AuthService
                 },
                 body: JSON.stringify({ token: accessToken })
             });
-            
+
             return response.ok;
         } catch (error) {
-            console.error('Token verification failed:', error);
+            console.error(`Token verification failed: ${error}`);
             return false;
         }
     }

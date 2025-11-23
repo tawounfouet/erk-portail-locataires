@@ -1,4 +1,5 @@
 import { ContactsWithCardsPage, DetailsReportsPage, DocsWithCardsPage, HomeReportsWithCardsPage, NewReportsPage, NewSuggestionPage } from "@/pages";
+import HomeSuggestionWithCardPage from "@/pages/suggestions/HomeSuggestionWithCardPage";
 import type { TERKModuleRegistry, TERKModuleCategoryRegistry, IERKModule, IERKRoute } from "@/types/module.type";
 
 
@@ -91,8 +92,13 @@ const SuggestionsModule: IERKModule = {
     routes: [
         {
             path: '/suggestions',
-            element: <NewSuggestionPage />,
-            children: []
+            element: <HomeSuggestionWithCardPage />,
+            children: [
+                {
+                    path: 'new',
+                    element: <NewSuggestionPage />
+                }
+            ]
         }
     ],
 

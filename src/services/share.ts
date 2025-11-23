@@ -1,6 +1,5 @@
 import { IReport } from "@/types/reports.type";
-
-type TPlatform = 'whatsapp' | 'telegram' | 'email';
+import type { TPlatform } from "@/types/share.type";
 
 /**
  * Sharing service for messaging and social networking applications
@@ -48,7 +47,9 @@ export default class ShareService
                 }
                 
                 shareUrl = `${this.WHATSAPP_BASE_URL}/${cleanedNumber}?text=${encodedMessage}`;
-            } else {
+            } 
+            else 
+            {
                 // Standard sharing (user chooses contact/group)
                 shareUrl = `${this.WHATSAPP_API_URL}?text=${encodedMessage}`;
             }

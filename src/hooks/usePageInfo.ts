@@ -113,7 +113,7 @@ export function usePageInfo(): PageInfo {
     // Page d'accueil
     if (path === '/') {
       return {
-        title: 'Tableau de bord',
+        title: 'Accueil',
         section: 'main'
       };
     }
@@ -210,7 +210,7 @@ export function useDocumentTitle() {
   
   useEffect(() => {
     const appName = 'EurekaNet';
-    document.title = name === 'Tableau de bord' 
+    document.title = name === 'Accueil' 
       ? appName 
       : `${name} - ${appName}`;
       

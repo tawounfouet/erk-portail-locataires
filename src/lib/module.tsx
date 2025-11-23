@@ -12,37 +12,40 @@ import { IERKModule, IERKRoute } from "@/types/module.type";
 export const generateRoutesFromModule = (module: IERKModule): JSX.Element[] => {
 
     /**
-     * Internal recursive function that traverses the route tree
+     * Internal function that traverses the route tree
      * @param routes - Array of routes to transform
      * @returns Array of JSX Route elements
      */
-    const renderRoutesRecursive = (routes: IERKRoute[]): JSX.Element[] => {
-        return routes.flatMap((route, index) => {
-    
-            const key = `${module.id}-${route.path}-${index}`;
-            
-            if (route.children && route.children.length > 0) 
+    const renderRoutes = (routes: IERKRoute[]): JSX.Element[] => {
+        const routeComponents = [];
+        
+        for (const route of routes)
+        {
+            if (route.children && route.children.length > 0)
             {
-                return [
-                    <Route 
-                        key={key} 
-                        path={route.path} 
-                        element={route.element}
-                    >
-                        {renderRoutesRecursive(route.children)}
+                routeComponents.push(
+                    <Route key={`route-${route.path}`} path={route.path}>
+                        <Route index element={route.element} />
+                        {route.children.map((child: IERKRoute, index: number) => (
+                            <Route key={`route-child-${index}-${child.path}`} path={child.path} element={child.element} />
+                        ))}
                     </Route>
-                ];
+                );
             }
-            
-            return [
-                <Route 
-                    key={key} 
-                    path={route.path} 
-                    element={route.element} 
-                />
-            ];
-        });
-    };
+            else
+            {
+                routeComponents.push(
+                    <Route
+                        key={`route-${route.path}`}
+                        path={route.path}
+                        element={route.element}
+                    />
+                );
+            }
+        }
 
-    return renderRoutesRecursive(module.routes);
+        return routeComponents;
+    }
+
+    return renderRoutes(module.routes);
 };

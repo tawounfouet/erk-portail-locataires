@@ -2,12 +2,14 @@ import {
   IAttachment, IOperationComment, IHistoryLog,
   IOperationList, IOperationDetail,
   IAttachmentFilters, IOperationFilters, ICommentFilters,
-  TAttachmentType, TOperationStatus
+  TAttachmentType, TOperationStatus,
+  TOperationCategory,
+  IPaginatedResponse,
+  IOperationType,
+  TPriority
 } from '@/types/operations.type';
 import AuthService from './auth';
-
-// Base URL for the operations API
-const OPERATIONS_BASE_URL: string = "https://app.eureka-residences.com/api";
+import { ERK_API_URL } from '@/static/dev.static';
 
 /**
  * Operations service for managing maintenance operations, attachments, comments and history
@@ -16,13 +18,15 @@ const OPERATIONS_BASE_URL: string = "https://app.eureka-residences.com/api";
 export default class OperationService 
 {
     // Base URLs for the operations API endpoints
-    private static readonly BASE_URL: string = OPERATIONS_BASE_URL;
+    private static readonly BASE_URL: string = ERK_API_URL;
     private static readonly ATTACHMENTS_URL: string = "/operations/attachments/";
     private static readonly COMMENTS_URL: string = "/operations/comments/";
     private static readonly HISTORY_URL: string = "/operations/history/";
     private static readonly NOTIFICATIONS_URL: string = "/operations/notifications/";
     private static readonly OPERATIONS_URL: string = "/operations/operations/";
     private static readonly TYPES_URL: string = "/operations/types/";
+    private static readonly TYPES_BY_CATEGORY_URL: string = "/operations/types/by_category/";
+    private static readonly TYPES_REQUIRING_APPROVAL_URL: string = "/operations/types/requiring_approval/";
 
     /**
      * Generic request method for all API calls with error handling
@@ -52,6 +56,8 @@ export default class OperationService
         try {
             const response = await fetch(url, config);
             
+            console.log(response)
+
             if (!response.ok) 
             {
                 // Handle token expiration
@@ -536,5 +542,212 @@ export default class OperationService
             overdue: overdue.length,
             highPriority: highPriority.length
         };
+    }
+
+    // =========================================================================
+    // OPERATION TYPES MANAGEMENT
+    // =========================================================================
+
+    /**
+     * Retrieves all operation types with optional filtering and pagination
+     * @param filters - Filtering options for operation types
+     * @returns Paginated list of operation types
+     */
+    static async getOperationTypes(filters: {
+        category?: TOperationCategory;
+        requires_approval?: boolean;
+        is_active?: boolean;
+        search?: string;
+        ordering?: string;
+        page?: number;
+    } = {}): Promise<IPaginatedResponse<IOperationType>> {
+        const params = new URLSearchParams();
+        
+        if (filters?.category) params.append('category', filters.category);
+        if (filters?.requires_approval !== undefined) params.append('requires_approval', filters.requires_approval.toString());
+        if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
+        if (filters?.search) params.append('search', filters.search);
+        if (filters?.ordering) params.append('ordering', filters.ordering);
+        if (filters?.page) params.append('page', filters.page.toString());
+
+        const queryString = params.toString();
+        const endpoint = queryString ? `${this.TYPES_URL}?${queryString}` : this.TYPES_URL;
+
+        return this.request<IPaginatedResponse<IOperationType>>(endpoint);
+    }
+
+    /**
+     * Retrieves operation types grouped by category
+     * @param filters - Filtering options
+     * @returns Paginated list of operation types grouped by category
+     */
+    static async getOperationTypesByCategory(filters: {
+        category?: TOperationCategory;
+        requires_approval?: boolean;
+        is_active?: boolean;
+        search?: string;
+        ordering?: string;
+        page?: number;
+    } = {}): Promise<IPaginatedResponse<IOperationType>> {
+        const params = new URLSearchParams();
+        
+        if (filters?.category) params.append('category', filters.category);
+        if (filters?.requires_approval !== undefined) params.append('requires_approval', filters.requires_approval.toString());
+        if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
+        if (filters?.search) params.append('search', filters.search);
+        if (filters?.ordering) params.append('ordering', filters.ordering);
+        if (filters?.page) params.append('page', filters.page.toString());
+
+        const queryString = params.toString();
+        const endpoint = queryString ? `${this.TYPES_BY_CATEGORY_URL}?${queryString}` : this.TYPES_BY_CATEGORY_URL;
+
+        return this.request<IPaginatedResponse<IOperationType>>(endpoint);
+    }
+
+    /**
+     * Retrieves operation types that require approval
+     * @param filters - Filtering options
+     * @returns Paginated list of operation types requiring approval
+     */
+    static async getOperationTypesRequiringApproval(filters: {
+        category?: TOperationCategory;
+        requires_approval?: boolean;
+        is_active?: boolean;
+        search?: string;
+        ordering?: string;
+        page?: number;
+    } = {}): Promise<IPaginatedResponse<IOperationType>> {
+        const params = new URLSearchParams();
+        
+        if (filters?.category) params.append('category', filters.category);
+        if (filters?.requires_approval !== undefined) params.append('requires_approval', filters.requires_approval.toString());
+        if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
+        if (filters?.search) params.append('search', filters.search);
+        if (filters?.ordering) params.append('ordering', filters.ordering);
+        if (filters?.page) params.append('page', filters.page.toString());
+
+        const queryString = params.toString();
+        const endpoint = queryString ? `${this.TYPES_REQUIRING_APPROVAL_URL}?${queryString}` : this.TYPES_REQUIRING_APPROVAL_URL;
+
+        return this.request<IPaginatedResponse<IOperationType>>(endpoint);
+    }
+
+    /**
+     * Retrieves a specific operation type by ID
+     * @param id - Operation type UUID
+     * @returns Operation type details
+     */
+    static async getOperationTypeById(id: string): Promise<IOperationType> {
+        return this.request<IOperationType>(`${this.TYPES_URL}${id}/`);
+    }
+
+    /**
+     * Creates a new operation type
+     * @param operationTypeData - Operation type creation data
+     * @returns Created operation type
+     */
+    static async createOperationType(operationTypeData: {
+        name: string;
+        code: string;
+        category?: TOperationCategory;
+        description?: string;
+        requires_approval?: boolean;
+        auto_assign_rules?: Record<string, any>;
+        default_priority?: TPriority;
+        sla_hours?: number;
+        color_code?: string;
+        icon_name?: string;
+        default_icon?: string;
+        is_active?: boolean;
+    }): Promise<IOperationType> {
+        return this.request<IOperationType>(this.TYPES_URL, {
+            method: 'POST',
+            body: JSON.stringify(operationTypeData)
+        });
+    }
+
+    /**
+     * Updates an existing operation type (full update)
+     * @param id - Operation type UUID
+     * @param operationTypeData - Complete operation type data
+     * @returns Updated operation type
+     */
+    static async updateOperationType(
+        id: string, 
+        operationTypeData: {
+            name: string;
+            code: string;
+            category?: TOperationCategory;
+            description?: string;
+            requires_approval?: boolean;
+            auto_assign_rules?: Record<string, any>;
+            default_priority?: TPriority;
+            sla_hours?: number;
+            color_code?: string;
+            icon_name?: string;
+            default_icon?: string;
+            is_active?: boolean;
+        }
+    ): Promise<IOperationType> {
+        return this.request<IOperationType>(`${this.TYPES_URL}${id}/`, {
+            method: 'PUT',
+            body: JSON.stringify(operationTypeData)
+        });
+    }
+
+    /**
+     * Partially updates an operation type
+     * @param id - Operation type UUID
+     * @param partialData - Partial operation type data
+     * @returns Updated operation type
+     */
+    static async partialUpdateOperationType(
+        id: string, 
+        partialData: Partial<{
+            name: string;
+            code: string;
+            category: TOperationCategory;
+            description: string;
+            requires_approval: boolean;
+            auto_assign_rules: Record<string, any>;
+            default_priority: TPriority;
+            sla_hours: number;
+            color_code: string;
+            icon_name: string;
+            default_icon: string;
+            is_active: boolean;
+        }>
+    ): Promise<IOperationType> {
+        return this.request<IOperationType>(`${this.TYPES_URL}${id}/`, {
+            method: 'PATCH',
+            body: JSON.stringify(partialData)
+        });
+    }
+
+    /**
+     * Deletes an operation type
+     * @param id - Operation type UUID
+     */
+    static async deleteOperationType(id: string): Promise<void> {
+        return this.request<void>(`${this.TYPES_URL}${id}/`, {
+            method: 'DELETE'
+        });
+    }
+
+    /**
+     * Utility method to get all active operation types (convenience method)
+     * @returns List of active operation types
+     */
+    static async getActiveOperationTypes(): Promise<IPaginatedResponse<IOperationType>> {
+        return this.getOperationTypes({ is_active: true });
+    }
+
+    /**
+     * Utility method to get operation types by specific category
+     * @param category - Operation category
+     * @returns List of operation types in the specified category
+     */
+    static async getOperationTypesBySpecificCategory(category: TOperationCategory): Promise<IPaginatedResponse<IOperationType>> {
+        return this.getOperationTypes({ category, is_active: true });
     }
 }

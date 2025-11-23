@@ -4,6 +4,7 @@
  */
 export interface IERKRoute {
   path: string;
+  layout?: JSX.Element;
   element: JSX.Element;
   children?: IERKRoute[];
 }

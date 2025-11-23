@@ -18,34 +18,42 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 	const checkAuth = useCallback(async () => {
 		try {
 			setIsLoading(true);
-			const token: string = AuthService.getTokens().access;
+			const { access: accessToken, refresh: refreshToken } = AuthService.getTokens();
 			
-			if (!token || token == 'no_acess_token') 
+			if (!accessToken || accessToken == 'no_acess_token') 
 			{
 				setUser(null);
 				return;
 			}
-			
+			//@TODO: Recheck refreshing logic
 			// Server-side checking
-			const bValid = await AuthService.verifyToken(token);
+			let currentUser = await AuthService.getCurrentUser(accessToken);
 			
-			if (!bValid) // Invalid or expired token 
+			if (!currentUser) // Invalid or expired token 
 			{
-				const currentUser = await AuthService.getCurrentUser(token);
-
-				if (currentUser)
-				{
-					setUser(currentUser);
-				}
-				else
+				const bValid = await AuthService.verifyToken(refreshToken);
+				
+				if (!bValid)
 				{
 					AuthService.clearTokens();
 					setUser(null);
-					throw new Error('Failed to get user data');
+					throw new Error('This user is not authenticated');
+				}
+				else
+				{
+					const tokens = await AuthService.refreshToken();
+
+					if (!tokens)
+					{
+						throw new Error('Failed to authenticate user');
+					}
+
+					currentUser = await AuthService.getCurrentUser(tokens.access);
 				}
 			}
+			
+			setUser(currentUser);
 		} catch (err) {
-			console.error('Auth check failed:', err);
 			setError(err as string);
 			AuthService.clearTokens();
 			setUser(null);

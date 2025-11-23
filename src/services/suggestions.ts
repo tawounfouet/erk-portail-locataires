@@ -10,9 +10,8 @@ import {
   TSuggestionStatus,
 } from '@/types/suggestions.type';
 import AuthService from './auth';
+import { ERK_API_URL } from '@/static/dev.static';
 
-// Base URL for the suggestions API
-const SUGGESTIONS_BASE_URL: string = "https://app.eureka-residences.com/api";
 
 /**
  * Suggestions service for managing suggestions, comments, and responses
@@ -21,7 +20,7 @@ const SUGGESTIONS_BASE_URL: string = "https://app.eureka-residences.com/api";
 export default class SuggestionService 
 {
     // Base URLs for the suggestions API endpoints
-    private static readonly BASE_URL: string = SUGGESTIONS_BASE_URL;
+    private static readonly BASE_URL: string = ERK_API_URL;
     private static readonly COMMENTS_URL: string = "/suggestions/comments/";
     private static readonly RESPONSES_URL: string = "/suggestions/responses/";
     private static readonly SUGGESTIONS_URL: string = "/suggestions/suggestions/";
@@ -39,7 +38,7 @@ export default class SuggestionService
         
         // Get authentication token
         const tokens = AuthService.getTokens();
-        const accessToken = tokens.access !== 'no_access_token' ? tokens.access : null;
+        const accessToken = tokens.access;
 
         // Prepare request configuration
         const config: RequestInit = {
