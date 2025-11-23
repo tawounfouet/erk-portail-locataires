@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useOperationTypes } from '@/hooks/useOperations';
-import { IOperationDetail, IOperationType } from '@/types/operations.type';
+import { useOperationCategories } from '@/hooks/useOperations';
+import { IOperationCategory, IOperationDetail } from '@/types/operations.type';
 import { useBuildingHierarchy, useBuildings } from '@/hooks/usePatrimoine';
 import { IBuilding, IFloor, IUnit } from '@/types/patrimoine.type';
 import OperationService from '@/services/operations';
@@ -17,7 +17,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 
 export default function NewReportsPage() 
-{
+{	
 	// ==========================================
 	// 				 FORM DATA 
 	// ==========================================
@@ -29,7 +29,6 @@ export default function NewReportsPage()
 	const [operationData, setOperationData] = useState<Partial<IOperationDetail>>({
 		requester: '',
 		operation_type: 'SIGNALEMENT',
-		operation_category: '',
 		managed_unit_details: '',
 		title: '',
 		description: '',
@@ -40,10 +39,17 @@ export default function NewReportsPage()
 	// ==========================================
 	// 				 SERVICE DATA
 	// ==========================================
-	const { operationTypesList: categories } = useOperationTypes();
+	// const { operationTypesList: categories } = useOperationTypes();
 	const { buildingsList, isLoading } = useBuildings();
 	const { user } = useAuth();
 	const { floorsList, unitsList, isLoading: hierarchyIsLoading } = useBuildingHierarchy(selectedBuilding);
+	const {
+		operationCategories,
+		operationCategoriesList,
+		isError,
+		error,
+		setSearch
+	} = useOperationCategories();
 
 
 	// ==========================================
@@ -79,7 +85,7 @@ export default function NewReportsPage()
 
 	const handleCategoryChange = (value: string) => {
 		setCategory(value);
-		handleInputChange('operation_category', value);
+		handleInputChange('operation_type', "af99f5f2-3b64-42d5-bb62-c858bbc21b9b");
 	}
 
 	const handleBuildingChange = (value: string) => {
@@ -110,13 +116,20 @@ export default function NewReportsPage()
 			alert('Veuillez renseigner l\'identifiant de la unit');
 			return;
 		}
+
+		setOperationData(prev => ({
+			...prev,
+			requester: user.id
+		}));
 		
+		console.log(operationData);
+
 		await OperationService.createOperation(operationData);
 	
 		// Reset form
 		setOperationData({
 			requester: user ? user.id : '',
-			operation_type: 'SIGNALEMENT',
+			operation_type: '',
 			operation_category: '',
 			managed_unit_details: '',
 			title: '',
@@ -125,7 +138,6 @@ export default function NewReportsPage()
 
 		setPhotos([]);
 	};
-
 
 	// ==========================================
 	// 				 	RENDER
@@ -196,9 +208,9 @@ export default function NewReportsPage()
 						<SelectValue placeholder="Sélectionner une catégorie" />
 						</SelectTrigger>
 						<SelectContent>
-						{categories.map((category: IOperationType) => (
+						{operationCategoriesList.map((category: IOperationCategory) => (
 							<SelectItem key={category.id} value={category.id}>
-								{category.category}
+								{category.name}
 							</SelectItem>
 						))}
 						</SelectContent>

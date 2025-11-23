@@ -6,7 +6,8 @@ import {
   TOperationCategory,
   IPaginatedResponse,
   IOperationType,
-  TPriority
+  TPriority,
+  IOperationCategory
 } from '@/types/operations.type';
 import AuthService from './auth';
 import { ERK_API_URL } from '@/static/dev.static';
@@ -27,6 +28,7 @@ export default class OperationService
     private static readonly TYPES_URL: string = "/operations/types/";
     private static readonly TYPES_BY_CATEGORY_URL: string = "/operations/types/by_category/";
     private static readonly TYPES_REQUIRING_APPROVAL_URL: string = "/operations/types/requiring_approval/";
+    private static readonly CATEGORIES_URL: string = "/operations/categories/";
 
     /**
      * Generic request method for all API calls with error handling
@@ -56,8 +58,6 @@ export default class OperationService
         try {
             const response = await fetch(url, config);
             
-            console.log(response)
-
             if (!response.ok) 
             {
                 // Handle token expiration
@@ -749,5 +749,68 @@ export default class OperationService
      */
     static async getOperationTypesBySpecificCategory(category: TOperationCategory): Promise<IPaginatedResponse<IOperationType>> {
         return this.getOperationTypes({ category, is_active: true });
+    }
+
+    /**
+     * Retrieves all operation categories with optional filtering and pagination
+     * @param filters - Filtering options for operation categories
+     * @returns Paginated list of operation categories
+     */
+    static async getOperationCategories(filters: {
+        is_active?: boolean;
+        code?: string;
+        search?: string;
+        ordering?: string;
+        page?: number;
+    } = {}): Promise<IPaginatedResponse<IOperationCategory>> {
+        const params = new URLSearchParams();
+        
+        if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
+        if (filters?.code) params.append('code', filters.code);
+        if (filters?.search) params.append('search', filters.search);
+        if (filters?.ordering) params.append('ordering', filters.ordering);
+        if (filters?.page) params.append('page', filters.page.toString());
+
+        const queryString = params.toString();
+        const endpoint = queryString ? `${this.CATEGORIES_URL}?${queryString}` : this.CATEGORIES_URL;
+
+        return this.request<IPaginatedResponse<IOperationCategory>>(endpoint);
+    }
+
+    /**
+     * Retrieves a specific operation category by ID
+     * @param id - Operation category UUID
+     * @returns Operation category details
+     */
+    static async getOperationCategoryById(id: string): Promise<IOperationCategory> {
+        return this.request<IOperationCategory>(`${this.CATEGORIES_URL}${id}/`);
+    }
+
+    /**
+     * Retrieves operation categories by code
+     * @param code - Category code to filter by
+     * @returns List of operation categories with the specified code
+     */
+    static async getOperationCategoriesByCode(code: string): Promise<IPaginatedResponse<IOperationCategory>> {
+        return this.getOperationCategories({ code, is_active: true });
+    }
+
+    /**
+     * Utility method to get all active operation categories
+     * @returns List of active operation categories
+     */
+    static async getActiveOperationCategories(): Promise<IPaginatedResponse<IOperationCategory>> {
+        return this.getOperationCategories({ is_active: true });
+    }
+
+    /**
+     * Utility method to get operation categories sorted by display order
+     * @returns List of operation categories sorted by sort_order
+     */
+    static async getSortedOperationCategories(): Promise<IPaginatedResponse<IOperationCategory>> {
+        return this.getOperationCategories({ 
+            is_active: true, 
+            ordering: 'sort_order,name' 
+        });
     }
 }

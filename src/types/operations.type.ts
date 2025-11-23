@@ -269,3 +269,17 @@ export interface IOperationsMediaFile
     mime_type?: string;
     created_at: string;
 }
+
+export interface IOperationCategory {
+    id: string;
+    code: string;
+    name: string;
+    description?: string;
+    color_code?: string;
+    icon_name?: string;
+    sort_order?: number;
+    is_active: boolean;
+    operation_types_count?: number;
+    created_at: string;
+    updated_at: string;
+}
