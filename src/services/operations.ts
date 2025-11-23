@@ -7,7 +7,9 @@ import {
   IPaginatedResponse,
   IOperationType,
   TPriority,
-  IOperationCategory
+  IOperationCategory,
+  ICreateOperationPayload,
+  IOperationResponse
 } from '@/types/operations.type';
 import AuthService from './auth';
 import { ERK_API_URL } from '@/static/dev.static';
@@ -60,6 +62,29 @@ export default class OperationService
             
             if (!response.ok) 
             {
+                // 🔍 LOG: Capture detailed error information
+                let errorMessage = `HTTP error! status: ${response.status}`;
+                let errorDetails = null;
+                
+                try {
+                    errorDetails = await response.json();
+                    console.error('❌ API Error Details:', errorDetails);
+                    
+                    // Format validation errors for better readability
+                    if (response.status === 400 && errorDetails) {
+                        const validationErrors = Object.entries(errorDetails)
+                            .map(([field, messages]) => {
+                                const msgArray = Array.isArray(messages) ? messages : [messages];
+                                return `  • ${field}: ${msgArray.join(', ')}`;
+                            })
+                            .join('\n');
+                        errorMessage = `Validation Error:\n${validationErrors}`;
+                    }
+                } catch {
+                    // If response body is not JSON, use status text
+                    errorMessage = `HTTP error! status: ${response.status} - ${response.statusText}`;
+                }
+                
                 // Handle token expiration
                 if (response.status === 401 && accessToken) {
                     try {
@@ -83,7 +108,7 @@ export default class OperationService
                     }
                 }
                 
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(errorMessage);
             }
 
             return await response.json();
@@ -310,13 +335,63 @@ export default class OperationService
     /**
      * Creates a new operation
      * @param data - Operation data to create
-     * @returns Promise<IOperationList> - Created operation
+     * @returns Promise<IOperationResponse> - Created operation with full details
+     * 
+     * @example
+     * ```typescript
+     * const operation = await OperationService.createOperation({
+     *   operation_type_code: 'RENTAL_COMPLAINT',
+     *   title: 'Fuite d\'eau',
+     *   description: 'Il y a une fuite dans la salle de bain',
+     *   priority: 'HIGH',
+     *   managed_unit: 'uuid-de-l-unite'
+     * });
+     * ```
      */
-    static async createOperation(data: Partial<IOperationList>): Promise<IOperationList> 
+    static async createOperation(data: ICreateOperationPayload | any): Promise<IOperationResponse> 
     {
-        return this.request<IOperationList>(this.OPERATIONS_URL, {
+        // 🔍 LOG: Payload envoyé avant nettoyage
+        console.log('📤 Payload reçu par createOperation:', JSON.stringify(data, null, 2));
+        
+        // ⚠️ VALIDATION: Vérifier que operation_type_code est présent
+        if (!data.operation_type_code) {
+            console.error('❌ ERREUR: operation_type_code manquant dans le payload');
+            console.error('📋 Payload reçu:', data);
+            throw new Error(
+                'Le champ "operation_type_code" est requis. ' +
+                'Vous devez fournir le CODE du type d\'opération (ex: "RENTAL_COMPLAINT"), ' +
+                'pas l\'UUID. Payload reçu: ' + JSON.stringify(data, null, 2)
+            );
+        }
+        
+        // ✅ Nettoyer et valider le payload selon le format attendu par l'API
+        const cleanPayload: ICreateOperationPayload = {
+            operation_type_code: data.operation_type_code,
+            title: data.title?.trim() || '',
+            description: data.description?.trim() || '',
+            priority: data.priority || 'NORMAL',
+            managed_unit: data.managed_unit || null,
+        };
+        
+        // Validation des champs requis
+        if (!cleanPayload.title) {
+            throw new Error('Le titre est requis');
+        }
+        if (!cleanPayload.description) {
+            throw new Error('La description est requise');
+        }
+        
+        // Ajouter les champs optionnels uniquement s'ils sont définis
+        if (data.tags && typeof data.tags === 'string') {
+            cleanPayload.tags = data.tags;
+        }
+        
+        // 🔍 LOG: Payload nettoyé
+        console.log('✅ Payload nettoyé et validé:', JSON.stringify(cleanPayload, null, 2));
+        
+        return this.request<IOperationResponse>(this.OPERATIONS_URL, {
             method: 'POST',
-            body: JSON.stringify(data),
+            body: JSON.stringify(cleanPayload),
         });
     }
 
@@ -487,6 +562,78 @@ export default class OperationService
         }
 
         return response.json();
+    }
+
+    /**
+     * Upload multiple photos for an operation
+     * Creates attachments linked to the operation
+     * 
+     * @param operationId - Operation UUID to link photos to
+     * @param files - Array of File objects to upload
+     * @param attachmentType - Type of attachment (default: 'photo_evidence' for user reports)
+     * @returns Promise<IAttachment[]> - Array of created attachments
+     * 
+     * @example
+     * ```typescript
+     * const photos = [file1, file2, file3];
+     * const attachments = await OperationService.uploadOperationPhotos(
+     *   operation.id,
+     *   photos,
+     *   'photo_evidence'  // For user complaint photos
+     * );
+     * console.log(`${attachments.length} photos uploaded`);
+     * ```
+     */
+    static async uploadOperationPhotos(
+        operationId: string,
+        files: File[],
+        attachmentType: TAttachmentType = 'photo_evidence'  // 🎯 Default for user complaints
+    ): Promise<IAttachment[]> 
+    {
+        console.log(`📸 Upload de ${files.length} photo(s) pour l'opération ${operationId}`);
+
+        const tokens = AuthService.getTokens();
+        const accessToken = tokens.access !== 'no_access_token' ? tokens.access : null;
+
+        // Upload toutes les photos en parallèle
+        const uploadPromises = files.map(async (file, index) => {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('attachment_type', attachmentType);
+            formData.append('related_operation', operationId);
+            formData.append('title', file.name);
+            formData.append('sort_order', index.toString());
+
+            console.log(`  📤 Upload ${index + 1}/${files.length}: ${file.name}`);
+
+            const response = await fetch(`${this.BASE_URL}${this.ATTACHMENTS_URL}upload/`, {
+                method: 'POST',
+                headers: {
+                    ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
+                    // Ne PAS mettre 'Content-Type' pour FormData, le navigateur le gère automatiquement
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`❌ Erreur upload ${file.name}:`, errorText);
+                throw new Error(`Upload failed for ${file.name}: ${response.status}`);
+            }
+
+            const attachment = await response.json();
+            console.log(`  ✅ Upload réussi: ${file.name}`);
+            return attachment;
+        });
+
+        try {
+            const attachments = await Promise.all(uploadPromises);
+            console.log(`✅ ${attachments.length} photo(s) uploadée(s) avec succès`);
+            return attachments;
+        } catch (error) {
+            console.error('❌ Erreur lors de l\'upload des photos:', error);
+            throw error;
+        }
     }
 
     /**

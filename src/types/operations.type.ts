@@ -1,4 +1,5 @@
 export type TAttachmentType = 
+  | 'photo_evidence'  // 🎯 Photo de signalement (pour les étudiants/résidents)
   | 'photo_before' | 'photo_after' | 'photo_progress' | 'document' 
   | 'invoice' | 'receipt' | 'report' | 'manual' | 'certificate' 
   | 'plan' | 'video' | 'audio' | 'other';
@@ -282,4 +283,45 @@ export interface IOperationCategory {
     operation_types_count?: number;
     created_at: string;
     updated_at: string;
+}
+
+// ============================================================================
+// PAYLOAD INTERFACES FOR CREATING/UPDATING OPERATIONS
+// ============================================================================
+
+/**
+ * Payload for creating a new operation
+ * Matches the API contract from backend
+ */
+export interface ICreateOperationPayload {
+    operation_type_code: string;  // Code du type d'opération (ex: 'RENTAL_COMPLAINT')
+    title: string;                // Titre du signalement
+    description: string;          // Description détaillée
+    priority?: TPriority;         // Priorité (optionnel, défaut: NORMAL)
+    managed_unit?: string | null; // ID de l'unité gérée (optionnel)
+    tags?: string;                // Tags séparés par des virgules (optionnel)
+}
+
+/**
+ * Response from API when creating/retrieving an operation
+ * Extends IOperationList with additional fields returned by API
+ */
+export interface IOperationResponse extends IOperationList {
+    managed_unit_details?: {
+        id: string;
+        unit_number: string | null;
+        floor_number: string | null;
+        building_name: string | null;
+        residence_name: string | null;
+    } | null;
+    unit_number?: string | null;
+    building_name?: string | null;
+    residence_name?: string | null;
+    tags?: string;
+    images_count?: number;
+    user_images_count?: number;
+    manager_images_count?: number;
+    documents_count?: number;
+    has_user_evidence?: boolean;
+    has_evidence_photos?: boolean;
 }
