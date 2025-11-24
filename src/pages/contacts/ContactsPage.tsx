@@ -87,7 +87,7 @@ export default function ContactsPage()
     const { emergencyContacts, managementContacts } =  useContacts();
 
     return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24">
             <div className="mb-6 mt-2">
                 <h2 className="text-3xl font-bold text-white tracking-tight">Carnet</h2>
                 <p className="text-gray-400 mt-1">Numéros utiles de la résidence</p>

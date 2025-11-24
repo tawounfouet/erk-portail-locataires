@@ -22,16 +22,17 @@ export default function HomePage()
 			<div className="relative z-10">
 			<div className="flex items-center gap-3 mb-3">
 				<div className="p-2 bg-primary text-black rounded-full">
-				<Clock className="w-4 h-4" />
+					<Clock className="w-4 h-4" />
 				</div>
-				<span className="text-primary font-semibold text-sm tracking-wide uppercase">Action requise</span>
+				<span className="text-primary font-semibold text-sm tracking-wide uppercase">Notification</span>
 			</div>
-			<h3 className="text-xl font-bold text-white mb-1">Bail à signer</h3>
-			<p className="text-gray-400 text-sm mb-4">Votre renouvellement de bail est en attente de signature.</p>
+
+			<h3 className="text-xl font-bold text-white mb-1">Rien pour le moment</h3>
+			<p className="text-gray-400 text-sm mb-4">Retrouvez les actions à mener et les actualités de la résidence sur EurekaNet.</p>
 			
-			<div className="flex items-center text-sm font-medium text-white group-hover:underline decoration-primary decoration-2 underline-offset-4">
+			{/* <div className="flex items-center text-sm font-medium text-white group-hover:underline decoration-primary decoration-2 underline-offset-4">
 				Consulter les documents <CheckCircle2 className="w-4 h-4 ml-2" />
-			</div>
+			</div> */}
 			</div>
 		</div>
 

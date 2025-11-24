@@ -16,3 +16,8 @@ export function formatERKEmailToDisplay(email: string) {
     
     return email;
 }
+
+export function obtainInitial(first_name: string, last_name: string): string
+{
+    return `${last_name[0]}${first_name[0]}`;
+}

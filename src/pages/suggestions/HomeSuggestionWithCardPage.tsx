@@ -1,12 +1,10 @@
 import FloatingAddButton from "@/components/common/FloatingAddButton";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useMySuggestions } from "@/hooks/useSuggestions";
-import { formatISODateToFrench } from "@/lib/date";
 import { ISuggestionDetail } from "@/types/suggestions.type";
-import { Badge, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import no_suggestion from "@/assets/images/no_suggestions.webp";
+import SuggestionView from "@/components/suggestions/SuggestionView";
 
 
 export default function HomeSuggestionWithCardPage()
@@ -77,30 +75,37 @@ export default function HomeSuggestionWithCardPage()
 
     return (
         <>
-            {suggestions.map((suggestion: ISuggestionDetail, index: number) => (
-                <Card key={`${suggestion.id}${index}`} className="bg-slate-800 border-slate-700 hover:bg-slate-750 transition-colors cursor-pointer group max-w-2xl w-full">
-                    <div className="p-6 flex items-center justify-between">
-                        <div className="flex-1">
-                            <h3 className="text-white text-xl font-semibold mb-3">
-                                {suggestion.titre}
-                            </h3>
-                            <div className="flex items-center gap-3 text-slate-400 text-sm">
-                            <Badge 
-                                variant="secondary" 
-                                className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border-0 font-medium"
-                            >
-                                {suggestion.status}
-                            </Badge>
-                            <span>{formatISODateToFrench(suggestion.created_at)}</span>
-                            </div>
-                        </div>
+            <div className="mb-6">
+                <h2 className="text-3xl font-bold text-white tracking-tight">Suggestions</h2>
+                <p className="text-gray-400 mt-1">Proposez des améliorations</p>
+            </div>
+
+            {suggestions.map((suggestion: ISuggestionDetail) => (
+                <SuggestionView key={suggestion.id} suggestion={suggestion} />
+                
+                // <Card key={`${suggestion.id}${index}`} className="bg-slate-800 border-slate-700 hover:bg-slate-750 transition-colors cursor-pointer group max-w-2xl w-full">
+                //     <div className="p-6 flex items-center justify-between">
+                //         <div className="flex-1">
+                //             <h3 className="text-white text-xl font-semibold mb-3">
+                //                 {suggestion.titre}
+                //             </h3>
+                //             <div className="flex items-center gap-3 text-slate-400 text-sm">
+                //             <Badge 
+                //                 variant="secondary" 
+                //                 className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border-0 font-medium"
+                //             >
+                //                 {suggestion.status}
+                //             </Badge>
+                //             <span>{formatISODateToFrench(suggestion.created_at)}</span>
+                //             </div>
+                //         </div>
                     
-                        <ChevronRight 
-                            className="text-slate-500 group-hover:text-slate-400 group-hover:translate-x-1 transition-all" 
-                            size={24}
-                        />
-                    </div>
-                </Card>
+                //         <ChevronRight 
+                //             className="text-slate-500 group-hover:text-slate-400 group-hover:translate-x-1 transition-all" 
+                //             size={24}
+                //         />
+                //     </div>
+                // </Card>
             ))}
 
             <FloatingAddButton 

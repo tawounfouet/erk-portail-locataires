@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useBugReport } from '@/hooks/useBug';
 import { TPlatform } from '@/types/share.type';
 import { IBugReport } from '@/types/bug.type';
-import { currentEnv } from '@/static/dev.static';
+import { currentEnv, IsInDevelopment } from '@/static/dev.static';
+import { useAuth } from '@/hooks/useAuth';
+import Redirector from '../common/Redirector';
 
 export default function BugReportButton() {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +19,7 @@ export default function BugReportButton() {
     const [autoShare, setAutoShare] = useState(true);
     const [sharePlatform, setSharePlatform] = useState<TPlatform>('whatsapp');
     const [steps, setSteps] = useState<string[]>(['']);
+    const { user } = useAuth();
     
     const { reportBug, quickShareBug, shareBugReport } = useBugReport();
 
@@ -86,17 +89,23 @@ export default function BugReportButton() {
         );
     };
 
+    if (!user)
+        return <Redirector />
+
+    if (!user.is_staff || !user.is_active)
+        return <></>
+
     return (
         <>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline" size="icon" className="fixed bottom-6 right-6 z-50 shadow-lg">
+                    <Button variant="outline" size="icon" className="fixed bottom-32 right-7 z-50 shadow-lg border border-primary text-primary">
                         <Bug className="h-4 w-4" />
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
+                        <DialogTitle className="flex items-center gap-2 text-white">
                             <Bug className="h-5 w-5" />
                             Signaler un bug
                         </DialogTitle>
@@ -105,10 +114,10 @@ export default function BugReportButton() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Section Informations générales */}
                         <div className="space-y-4">
-                            <h3 className="text-lg font-semibold border-b pb-2">Informations générales</h3>
+                            <h3 className="text-lg font-semibold border-b pb-2 text-white">Informations générales</h3>
                             
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-gray-400">
                                     <Label htmlFor="title">Titre du bug *</Label>
                                     <Input
                                         id="title"
@@ -118,7 +127,7 @@ export default function BugReportButton() {
                                     />
                                 </div>
                                 
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-gray-400">
                                     <Label htmlFor="environment">Environnement *</Label>
                                     <Select name="environment" defaultValue={currentEnv}>
                                         <SelectTrigger>
@@ -133,7 +142,7 @@ export default function BugReportButton() {
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-2 text-gray-400">
                                 <Label htmlFor="description">Description détaillée *</Label>
                                 <Textarea
                                     id="description"
@@ -147,10 +156,10 @@ export default function BugReportButton() {
 
                         {/* Section API (optionnelle) */}
                         <div className="space-y-4">
-                            <h3 className="text-lg font-semibold border-b pb-2">Informations API (si applicable)</h3>
+                            <h3 className="text-lg font-semibold border-b pb-2 text-white">Informations API (si applicable)</h3>
                             
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-gray-400">
                                     <Label htmlFor="endpoint">Endpoint</Label>
                                     <Input
                                         id="endpoint"
@@ -159,7 +168,7 @@ export default function BugReportButton() {
                                     />
                                 </div>
                                 
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-gray-400">
                                     <Label htmlFor="method">Méthode HTTP</Label>
                                     <Select name="method">
                                         <SelectTrigger>
@@ -179,7 +188,7 @@ export default function BugReportButton() {
 
                         {/* Section Scénario */}
                         <div className="space-y-4">
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between text-gray-400">
                                 <h3 className="text-lg font-semibold">Scénario de reproduction *</h3>
                                 <Button type="button" variant="outline" size="sm" onClick={addStep}>
                                     <Plus className="h-4 w-4 mr-1" />
@@ -187,7 +196,7 @@ export default function BugReportButton() {
                                 </Button>
                             </div>
                             
-                            <div className="space-y-3">
+                            <div className="space-y-3 text-gray-400">
                                 {steps.map((step, index) => (
                                     <div key={index} className="flex gap-2 items-start">
                                         <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 text-sm font-medium mt-1">
@@ -217,12 +226,12 @@ export default function BugReportButton() {
                         </div>
 
                         {/* Section Résultats */}
-                        <div className="space-y-4">
+                        <div className="space-y-4 text-gray-400">
                             <h3 className="text-lg font-semibold border-b pb-2">Résultats</h3>
                             
                             <div className="grid grid-cols-1 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="expectedResult" className="text-green-600">
+                                    <Label htmlFor="expectedResult" className="text-green-800">
                                         ✅ Résultat attendu *
                                     </Label>
                                     <Textarea
@@ -235,7 +244,7 @@ export default function BugReportButton() {
                                 </div>
                                 
                                 <div className="space-y-2">
-                                    <Label htmlFor="actualResult" className="text-red-600">
+                                    <Label htmlFor="actualResult" className="text-red-800">
                                         ❌ Résultat actuel *
                                     </Label>
                                     <Textarea
@@ -250,11 +259,11 @@ export default function BugReportButton() {
                         </div>
 
                         {/* Section Impact et Priorité */}
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-semibold border-b pb-2">Impact et Priorité</h3>
+                        <div className="space-y-4 text-gray-400">
+                            <h3 className="text-lg font-semibold border-b pb-2 text-white">Impact et Priorité</h3>
                             
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-gray-400">
                                     <Label htmlFor="priority">Priorité *</Label>
                                     <Select name="priority" defaultValue="medium">
                                         <SelectTrigger>
@@ -269,7 +278,7 @@ export default function BugReportButton() {
                                     </Select>
                                 </div>
                                 
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-gray-400">
                                     <Label htmlFor="impact">Impact</Label>
                                     <Input
                                         id="impact"
@@ -282,10 +291,10 @@ export default function BugReportButton() {
 
                         {/* Section Données techniques */}
                         <div className="space-y-4">
-                            <h3 className="text-lg font-semibold border-b pb-2">Données techniques</h3>
+                            <h3 className="text-lg font-semibold border-b pb-2 text-white">Données techniques</h3>
                             
-                            <div className="space-y-4">
-                                <div className="space-y-2">
+                            <div className="space-y-4 text-gray-400">
+                                <div className="space-y-2 text-gray-400">
                                     <Label htmlFor="sampleData">Données d'exemple (JSON)</Label>
                                     <Textarea
                                         id="sampleData"
@@ -296,7 +305,7 @@ export default function BugReportButton() {
                                     />
                                 </div>
                                 
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-gray-400">
                                     <Label htmlFor="errorDetails" className="flex items-center gap-2">
                                         <AlertTriangle className="h-4 w-4" />
                                         Détails de l'erreur (stack trace, logs...)
@@ -314,9 +323,9 @@ export default function BugReportButton() {
 
                         {/* Section Options */}
                         <div className="space-y-4 border-t pt-4">
-                            <h3 className="text-lg font-semibold">Options d'envoi</h3>
+                            <h3 className="text-lg font-semibold text-white">Options d'envoi</h3>
                             
-                            <div className="space-y-4">
+                            <div className="space-y-4 text-gray-400">
                                 <div className="flex items-center space-x-2">
                                     <input
                                         type="checkbox"
@@ -332,7 +341,7 @@ export default function BugReportButton() {
                                 </div>
                                 
                                 {autoShare && (
-                                    <div className="ml-6 space-y-2">
+                                    <div className="ml-6 space-y-2 text-gray-400">
                                         <Label htmlFor="sharePlatform">Plateforme de partage</Label>
                                         <Select value={sharePlatform} onValueChange={(value: TPlatform) => setSharePlatform(value)}>
                                             <SelectTrigger>
@@ -350,16 +359,12 @@ export default function BugReportButton() {
                         </div>
 
                         {/* Actions */}
-                        <div className="flex justify-between pt-6 border-t">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={handleQuickReport}
-                            >
-                                Rapport rapide
-                            </Button>
-                            
+                        <div className="flex justify-between pt-6 border-t text-gray-400">
                             <div className="flex gap-2">
+                                <Button type="submit" disabled={isSubmitting}>
+                                    <Send className="h-4 w-4 mr-2" />
+                                    {isSubmitting ? 'Envoi en cours...' : 'Envoyer le rapport'}
+                                </Button>
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -367,11 +372,15 @@ export default function BugReportButton() {
                                 >
                                     Annuler
                                 </Button>
-                                <Button type="submit" disabled={isSubmitting}>
-                                    <Send className="h-4 w-4 mr-2" />
-                                    {isSubmitting ? 'Envoi en cours...' : 'Envoyer le rapport'}
-                                </Button>
                             </div>
+
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleQuickReport}
+                            >
+                                Rapport rapide
+                            </Button>
                         </div>
                     </form>
                 </DialogContent>

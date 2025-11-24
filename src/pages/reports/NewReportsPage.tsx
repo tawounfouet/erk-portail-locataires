@@ -13,6 +13,7 @@ import { IOperationCategory, ICreateOperationPayload } from '@/types/operations.
 import { useBuildingHierarchy, useBuildings } from '@/hooks/usePatrimoine';
 import { IBuilding, IFloor, IUnit } from '@/types/patrimoine.type';
 import OperationService from '@/services/operations';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function NewReportsPage() {
@@ -49,6 +50,7 @@ export default function NewReportsPage() {
 	const { buildingsList, isLoading } = useBuildings();
 	const { floorsList, unitsList, isLoading: hierarchyIsLoading } = useBuildingHierarchy(selectedBuilding);
 	const { operationCategoriesList } = useOperationCategories();
+	const navigate = useNavigate();
 
 
 	// ==========================================
@@ -157,6 +159,8 @@ export default function NewReportsPage() {
 			setSelectedBuilding('');
 			setSelectedFloor('');
 			setSelectedUnit('');
+
+			navigate('/reports');
 
 		} catch (error) {
 			console.error('❌ Erreur lors de la création du signalement:', error);

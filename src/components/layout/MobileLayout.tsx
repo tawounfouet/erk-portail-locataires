@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { ChevronLeft, User } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function MobileLayout({ children })
 {
@@ -9,6 +9,7 @@ export default function MobileLayout({ children })
     const navigate = useNavigate();
 
     const isAtHomePage = location.pathname === "/";
+    const isAtSettingsPage = location.pathname.includes("settings");
 
     const handleBack = () => {
         const path = location.pathname;
@@ -61,9 +62,16 @@ export default function MobileLayout({ children })
                     }
                     
 
-                    <div className="w-12 h-12 rounded-full bg-secondary border border-white/10 flex items-center justify-center overflow-hidden">
-                        <User className="w-6 h-6 text-gray-400" />
-                    </div>
+                    {!isAtSettingsPage && 
+                        (
+                            <Link to="/settings">
+                                <div className="w-12 h-12 rounded-full bg-secondary border border-white/10 flex items-center justify-center overflow-hidden">
+                                    <User className="w-6 h-6 text-gray-400" />
+                                </div>
+                            </Link>
+                        )
+                    }
+                    
                 </div>
             </header>
 

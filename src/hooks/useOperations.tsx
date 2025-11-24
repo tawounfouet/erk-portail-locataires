@@ -22,8 +22,6 @@ export function useMyOperations(filters : IOperationFilters = {}) {
                 
                 const userOperations = await OperationService.getMyOperations(filters);
 
-                console.log(userOperations)
-
                 if (bMounted)
                 {
                     setOperations(userOperations);

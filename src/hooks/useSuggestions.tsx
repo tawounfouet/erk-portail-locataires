@@ -18,7 +18,6 @@ export function useMySuggestions(filters: ISuggestionFilters = {})
 
                 const userSuggestions = await SuggestionService.getMySuggestions(filters);
 
-
                 if (bMounted)
                 {
                     setSuggestions(userSuggestions.results);

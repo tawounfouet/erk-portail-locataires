@@ -9,7 +9,6 @@ interface IReportViewProps {
 
 export default function ReportView({ report }: IReportViewProps) 
 {
-console.log(report);
     return (
 		<Link to={`/reports/1`} state={{ report }}>
 			<div 
