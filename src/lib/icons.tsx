@@ -1,33 +1,36 @@
 import { TFileType } from '@/types/docs.type';
 import { TReportCategory } from '@/types/reports.type';
 import { 
-  Clock, 
-  AlertCircle, 
-  CheckCircle,
-  Zap,
-  DoorClosed,
-  Thermometer,
-  Wifi,
-  HelpCircle,
-  FileText,
-  Image,
-  Droplets,
-  Lightbulb,
-  DoorOpen,
-  Shield,
-  Wrench,
-  FolderIcon,
-  UsersIcon,
-  ListIcon,
-  Bell,
-  BarChartIcon,
-  ArrowLeft,
-  LucideIcon,
-  LucideProps,
-  Asterisk,
-  Building,
-  ShieldBan,
-  Headset
+	Clock, 
+	AlertCircle, 
+	CheckCircle,
+	Zap,
+	DoorClosed,
+	Thermometer,
+	Wifi,
+	HelpCircle,
+	FileText,
+	Image,
+	Droplets,
+	Lightbulb,
+	DoorOpen,
+	Shield,
+	Wrench,
+	FolderIcon,
+	UsersIcon,
+	ListIcon,
+	Bell,
+	BarChartIcon,
+	ArrowLeft,
+	LucideIcon,
+	LucideProps,
+	Asterisk,
+	Building,
+	ShieldBan,
+	Headset,
+	AlertTriangle,
+	Phone,
+  ChevronLeft
 } from 'lucide-react';
 import { forwardRef } from 'react';
 
@@ -35,18 +38,19 @@ import { forwardRef } from 'react';
 export const WhatsappIcon = forwardRef<SVGSVGElement, LucideProps>(
   ({ size = 24, color = 'currentColor', strokeWidth = 2, ...props }, ref) => (
     <svg
-      ref={ref}
-      width={size}
-      height={size}
-      strokeWidth={strokeWidth}
-      stroke={color}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-      viewBox="0 0 32 32"
-      fill="currentColor" 
-      version="1.1" 
-      xmlns="http://www.w3.org/2000/svg">
+		ref={ref}
+		width={size}
+		height={size}
+		strokeWidth={strokeWidth}
+		stroke={color}
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		{...props}
+		viewBox="0 0 32 32"
+		fill="currentColor" 
+		version="1.1" 
+		xmlns="http://www.w3.org/2000/svg"
+	>
         <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
         <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
         <g id="SVGRepo_iconCarrier"> 
@@ -67,13 +71,13 @@ export const IconMap = {
   'wifi': Wifi,
   'helpcircle': HelpCircle,
   
-  'reports': BarChartIcon,
-  'documents': FolderIcon,
-  'contacts': UsersIcon,
-  'suggestions': ListIcon,
+  'reports': AlertTriangle,
+  'documents': FileText,
+  'contacts': Phone,
+  'suggestions': Lightbulb,
   'notifications': Bell,
 
-  'return': ArrowLeft,
+  'return': ChevronLeft,
 
   'security': Shield,
   'fire': Asterisk,

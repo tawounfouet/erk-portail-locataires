@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
-import { getIconComponent } from "@/services/icons";
-import { getAllModules } from "@/static/modules.static";
+import { getIconComponent } from "@/lib/icons";
+import { ERKModulesArray } from "@/static/modules.static";
 import { IERKModule } from "@/types/module.type";
 import { ArrowRight } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -87,7 +87,7 @@ export default function MobileHomePage()
                 </h2>
 
                 <ActionPanel {...actionPanelData} />
-				<NavGroup items={getAllModules()} />
+				        <NavGroup items={ERKModulesArray} />
             </main>          
         </>
     );

@@ -137,7 +137,7 @@ export function formatISODateToFrench(isoDateString: string): string
 
 
 
-function getTimeElapsed(isoDateString) 
+export function getTimeElapsed(isoDateString: string) 
 {
   const datePassed = new Date(isoDateString);
   const now = new Date();
@@ -195,3 +195,63 @@ export function getTimeElapsedStr(isoDateString: string): string
         return `il y a quelques secondes`;
     }
 }   
+
+/**
+ * Converts an ISO 8601 date string to French format with month name (e.g., "20 Mai 2020")
+ * Handles various ISO formats including timezone offsets
+ * @param isoDateString - Date string in ISO 8601 format (e.g., "2020-05-20T03:53:17.775462+01:00")
+ * @returns Date string in French format with month name (e.g., "20 Mai 2020")
+ * 
+ * @example
+ * formatISODateToFrenchWithMonth("2020-05-20T03:53:17.775462+01:00") => "20 Mai 2020"
+ * @example
+ * formatISODateToFrenchWithMonth("2024-01-05T10:30:00Z") => "05 Janvier 2024"
+ * @example
+ * formatISODateToFrenchWithMonth("2024-12-25") => "25 Décembre 2024"
+ * @example
+ * formatISODateToFrenchWithMonth("2023-07-01") => "01 Juillet 2023"
+ */
+export function formatISODateToFrenchWithMonth(isoDateString: string): string {
+    try {
+        const date = new Date(isoDateString);
+        
+        if (isNaN(date.getTime())) {
+            throw new Error('Date invalide');
+        }
+        
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = date.getMonth(); // Les mois commencent à 0
+        const year = date.getFullYear();
+        
+        const months = [
+            'Janv.', 'Fév.', 'Mars', 'Avril', 'Mai', 'Juin',
+            'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'
+        ];
+        
+        const monthName = months[month];
+        
+        return `${day} ${monthName} ${year}`;
+    } catch (error) {
+        console.error('Erreur lors du formatage de la date:', error);
+        
+        // Fallback: yyyy-mm-dd
+        if (isoDateString.includes('-')) {
+            const parts = isoDateString.split('T')[0].split('-'); 
+            if (parts.length === 3) {
+                const [year, month, day] = parts;
+                const monthIndex = parseInt(month, 10) - 1;
+                
+                const months = [
+                    'Janv.', 'Fév.', 'Mars', 'Avril', 'Mai', 'Juin',
+                    'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'
+                ];
+                
+                if (monthIndex >= 0 && monthIndex < 12) {
+                    return `${day.padStart(2, '0')} ${months[monthIndex]} ${year}`;
+                }
+            }
+        }
+        
+        return isoDateString;
+    }
+}

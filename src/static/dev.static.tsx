@@ -17,7 +17,7 @@ const config = {
 
 
 const getCurrentEnv = () => {
-    return env.ERK_ENV_TYPE || 'development';
+    return env.ERK_ENV_TYPE || 'production';
 };
 
 export const currentEnv = getCurrentEnv();

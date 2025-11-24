@@ -4,7 +4,7 @@ import { IOperationDetail, TOperationCategory } from "@/types/operations.type";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { getIconComponent } from "@/services/icons";
+import { getIconComponent } from "@/lib/icons";
 import { formatISODateToFrench } from "@/lib/date";
 import FloatingAddButton from "@/components/common/FloatingAddButton";
 

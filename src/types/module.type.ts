@@ -19,7 +19,7 @@ export interface IERKModule {
   title: string;
   description: string;
   color: string;
-  icon_uri: string;
+  icon: string;
   
   routes: IERKRoute[]; // Routes du module
 

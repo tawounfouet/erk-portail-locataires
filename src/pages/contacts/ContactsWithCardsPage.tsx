@@ -2,7 +2,7 @@ import { CopyButtonWithToast } from "@/components/common/CopyButton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useContacts } from "@/hooks/useContacts";
-import { getIconComponent, WhatsappIcon } from "@/services/icons";
+import { getIconComponent, WhatsappIcon } from "@/lib/icons";
 import ShareService from "@/services/share";
 import { IContact } from "@/types/contacts.type";
 import { Phone } from "lucide-react";

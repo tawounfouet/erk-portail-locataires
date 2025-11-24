@@ -1,4 +1,4 @@
-import { getFileIcon } from "@/services/icons";
+import { getFileIcon } from "@/lib/icons";
 import { IDocument } from "@/types/docs.type";
 import { formatDashDateToSlashDate } from "@/lib/date";
 import { Download, FileText, X } from "lucide-react";

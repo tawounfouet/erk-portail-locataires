@@ -1,36 +1,37 @@
 import { Routes, Route } from 'react-router-dom';
-import { LoginPage, MobileHomePage } from '@pages';
+import { LoginPage } from '@pages';
 import { AuthProvider, ProtectedRoute } from '@/context';
 import { Toaster } from '@/components/common/Toaster';
 import ERKLayout from '@/components/layout/ERKLayout';
-import { getAllModules } from './static/modules.static';
+import { ERKModulesArray as AppModules } from './static/modules.static';
 import { IERKModule } from '@/types/module.type';
 import { generateRoutesFromModule } from '@/lib/module';
+import HomePage from './pages/home/HomePage';
 
 
 export default function App() 
 {
-	const erkModules = getAllModules();
-
 	return (
-		<AuthProvider>
-			<Routes>
-				<Route path="/login" element={<LoginPage />} />
+		<div className="min-h-screen bg-gradient-to-b from-amber-800/45 from-1% via-background via-50% to-background to-90% text-foreground">
+			<AuthProvider>
+				<Routes>
+					<Route path="/login" element={<LoginPage />} />
 
-					<Route element={
-						<ProtectedRoute>
-							<ERKLayout />
-						</ProtectedRoute>
-					}>
+						<Route element={
+							<ProtectedRoute>
+								<ERKLayout />
+							</ProtectedRoute>
+						}>
 
-						<Route path="/" element={<MobileHomePage />} />
+							<Route path="/" element={<HomePage />} />
 
-						{/* Génération automatique de toutes les routes des modules */}
-						{erkModules.flatMap((module: IERKModule) => generateRoutesFromModule(module))}
-					</Route>
-			</Routes>
+							{/* Generate automatically nodes */}
+							{AppModules.flatMap((module: IERKModule) => generateRoutesFromModule(module))}
+						</Route>
+				</Routes>
 
-			<Toaster />
-		</AuthProvider>
+				<Toaster />
+			</AuthProvider>
+		</div>
 	);
 }

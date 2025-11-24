@@ -1,4 +1,4 @@
-import { ContactsWithCardsPage, DetailsReportsPage, DocsWithCardsPage, HomeReportsWithCardsPage, NewReportsPage, NewSuggestionPage } from "@/pages";
+import { ContactsPage, DetailsReportsPage, DocsPage, HomeReportsPage, NewReportsPage, NewSuggestionPage } from "@/pages";
 import HomeSuggestionWithCardPage from "@/pages/suggestions/HomeSuggestionWithCardPage";
 import type { TERKModuleRegistry, TERKModuleCategoryRegistry, IERKModule, IERKRoute } from "@/types/module.type";
 
@@ -7,14 +7,14 @@ const ReportModule: IERKModule = {
     id: 'report',
     category_id: 'basic',
     title: 'Signalements',
-    description: 'Signaler les problèmes dans votre logement',
+    description: 'Gérer les signalements',
     color: 'bg-purple-100',
-    icon_uri: '/icons/report.svg',
+    icon: "reports",
 
     routes: [
         {
             path: '/reports',
-            element: <HomeReportsWithCardsPage />,
+            element: <HomeReportsPage />,
             children: [
                 {
                     path: ':id',
@@ -40,15 +40,15 @@ const ReportModule: IERKModule = {
 const DocsModule: IERKModule = {
     id: "docs",
     category_id: 'basic',
-    title: "Mes Documents",
-    description: "Accéder à vos documents importants",
+    title: "Documents",
+    description: "Vos documents",
     color: 'bg-lime-100',
-    icon_uri: '/',
+    icon: "documents",
 
     routes: [
         {
             path: '/docs',
-            element: <DocsWithCardsPage />,
+            element: <DocsPage />,
             children: []
         }
     ],
@@ -63,14 +63,14 @@ const ContactsModule: IERKModule = {
     id: "contacts",
     category_id: 'basic',
     title: "Carnet d'adresse",
-    description: "Trouver rapidement les numéros d'urgence et importants",
+    description: "Contacts utiles",
     color: 'bg-amber-100',
-    icon_uri: '/',
+    icon: "contacts",
 
     routes: [
         {
             path: '/contacts',
-            element: <ContactsWithCardsPage />,
+            element: <ContactsPage />,
             children: []
         }
     ],
@@ -85,9 +85,9 @@ const SuggestionsModule: IERKModule = {
     id: "suggestions",
     category_id: 'basic',
     title: "Suggestions",
-    description: "Partagez vos idées pour améliorer la résidence",
+    description: "Boîte à idées",
     color: 'bg-rose-100',
-    icon_uri: '/',
+    icon: 'suggestions',
 
     routes: [
         {
@@ -128,7 +128,7 @@ export const ERKModules: TERKModuleRegistry = new Map([
  * Helper to retrieve all modules
  * @returns An array of all IERKModules
  */
-export const getAllModules = (): IERKModule[] => {
+const getAllModules = (): IERKModule[] => {
     return Array.from(ERKModules.values()).flat();
 };
 
@@ -136,6 +136,10 @@ export const getAllModules = (): IERKModule[] => {
  * Helper to retrieve all module routes
  * @returns An array of all routes of each IERKModule
  */
-export const getAllModuleRoutes = (): IERKRoute[] => {
+const getAllModuleRoutes = (): IERKRoute[] => {
     return getAllModules().flatMap(module => module.routes);
 };
+
+export const ERKModulesArray = getAllModules();
+
+export const ERKModuleRoutesArray = getAllModuleRoutes();

@@ -380,24 +380,21 @@ export default function DetailsReportsPage() {
 		return <Circle className="w-5 h-5 text-gray-300" />;
 	};
 
-	console.log(report)
-
 	return (
-	<div className="min-h-screen">
-		<div className="max-w-5xl mx-auto space-y-6">
+		<div className="max-w-5xl mx-auto space-y-6 pb-20">
+			<div className="mb-6 mt-2">
+                <h2 className="text-3xl font-bold text-white tracking-tight">Fiche de signalement</h2>
+                <p className="text-gray-400 mt-1">Consultez les détails de votre signalement</p>
+            </div>
 
 		{/* Header actions */}
-		<div className="flex items-center justify-between">
-			<div>
-				<h1 className="text-3xl font-bold text-slate-900">Fiche de Signalement</h1>
-				<p className="text-slate-600 mt-1">Référence: {report.operation_number}</p>
-			</div>
-
-			<div className="flex gap-2">
-				<Button variant="outline" onClick={handleShare}>
+		<div>
+			<div className="mt-3 flex gap-2">
+				<Button variant="outline" onClick={handleShare} className="text-white">
 					<Share2 className="mr-2 h-4 w-4" />
 					Partager
 				</Button>
+
 				<Button onClick={handleDownload}>
 					<Download className="mr-2 h-4 w-4" />
 					Télécharger
@@ -414,77 +411,76 @@ export default function DetailsReportsPage() {
 		)}
 
 		{/* Main infos */}
-		<Card className="shadow-lg">
-			<CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100">
-				<div className="flex items-start justify-between">
-					<div className="space-y-2 flex-1">
-						<CardTitle className="text-2xl">{report.title}</CardTitle>
-						
-						<div className="flex flex-wrap gap-2">
-							{getReportStatusBadge(report.status)}
-							<Badge variant="outline">
-								<Tag className="mr-1 h-3 w-3" />
-								{report.operation_category}
-							</Badge>
-						</div>
-					</div>
-				</div>
-			</CardHeader>
+		<div className="shadow-lg">
+			<div className="flex items-start justify-between bg-primary/20 border border-primary rounded-lg p-4">
+				<div className="space-y-2 flex-1">
+					<CardTitle className="text-2xl text-white">{report.title}</CardTitle>
+					<h3 className="text-white mt-1"><span className="font-bold">Référence :</span><br/>{report.operation_number}</h3>
 
-			<CardContent className="pt-6 space-y-6">
-				{/* Requester infos */}
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
-						<User className="w-5 h-5 text-slate-600 mt-0.5" />
-
-						<div>
-							<p className="text-sm font-medium text-slate-600">Signalé par</p>
-							<p className="font-semibold text-slate-900">{report.requester_name}</p>
-							<p className="text-sm text-slate-600">Locataire</p>
-						</div>
-					</div>
-
-				{/* Report creation date */}
-				<div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
-					<Calendar className="w-5 h-5 text-slate-600 mt-0.5" />
-
-					<div>
-						<p className="text-sm font-medium text-slate-600">Date de transmission</p>
-						<p className="font-semibold text-slate-900">
-						{formatDate(report.created_at)}
-						</p>
-					</div>
-				</div>
-
-				<div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
-					<MapPin className="w-5 h-5 text-slate-600 mt-0.5" />
-
-					<div>
-						<p className="text-sm font-medium text-slate-600">Unité concernée</p>
-						{report.managed_unit_details && (
-							<p className="text-sm text-slate-600">
-								<span className="font-medium text-slate-900">{report.managed_unit_details.full_name}</span>
-							</p>
-						)}
-					</div>
-				</div>
-
-				<div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
-					<Clock className="w-5 h-5 text-slate-600 mt-0.5" />
-					
-					<div>
-						<p className="text-sm font-medium text-slate-600">Temps écoulé</p>
-						<p className="font-semibold text-slate-900">{getTimeElapsedStr(report.created_at)}</p>
+					<div className="flex flex-wrap gap-2">
+						{getReportStatusBadge(report.status)}
+						<Badge variant="outline">
+							<Tag className="mr-1 h-3 w-3" />
+							{report.operation_category}
+						</Badge>
 					</div>
 				</div>
 			</div>
+
+			<div className="pt-6 space-y-6">
+				{/* Requester infos */}
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground">
+						<User className="w-5 h-5 text-gray-100 mt-0.5" />
+
+						<div>
+							<p className="text-sm font-medium text-gray-100">Signalé par</p>
+							<p className="font-semibold text-gray-100">{report.requester_name}</p>
+							<p className="text-sm text-gray-400">Locataire</p>
+						</div>
+					</div>
+
+					{/* Report creation date */}
+					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground">
+						<Calendar className="w-5 h-5 text-gray-100 mt-0.5" />
+
+						<div>
+							<p className="text-sm font-medium text-gray-100">Date de transmission</p>
+							<p className="text-sm text-gray-400">
+							{formatDate(report.created_at)}
+							</p>
+						</div>
+					</div>
+
+					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground">
+						<MapPin className="w-5 h-5 text-gray-100 mt-0.5" />
+
+						<div>
+							<p className="text-sm font-medium text-gray-100">Unité concernée</p>
+							{report.managed_unit_details && (
+								<p className="text-sm text-slate-600">
+									<span className="text-sm text-gray-400">{report.managed_unit_details.full_name}</span>
+								</p>
+							)}
+						</div>
+					</div>
+
+					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground">
+						<Clock className="w-5 h-5 text-gray-100 mt-0.5" />
+						
+						<div>
+							<p className="text-sm font-medium text-gray-100">Temps écoulé</p>
+							<p className="text-sm text-gray-400">{getTimeElapsedStr(report.created_at)}</p>
+						</div>
+					</div>
+				</div>
 
 			<Separator />
 
 			{/* Description */}
 			<div>
-				<h3 className="text-lg font-semibold text-slate-900 mb-3">Description détaillée</h3>
-				<p className="text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-lg">
+				<h3 className="text-lg font-semibold text-white mb-3">Description détaillée</h3>
+				<p className="text-slate-700 leading-relaxed bg-gray-400 p-4 rounded-lg">
 				{report.description}
 				</p>
 			</div>
@@ -492,8 +488,8 @@ export default function DetailsReportsPage() {
 			<Separator />
 
 			{/* Suivi du traitement */}
-			<div>
-				<h3 className="text-lg font-semibold text-slate-900 mb-4">Suivi du traitement</h3>
+			{/* <div>
+				<h3 className="text-lg font-semibold text-white mb-4">Suivi du traitement</h3>
 				<div className="space-y-4">
 				{etapes.map((etape, index) => (
 					<div key={index} className="flex items-start gap-4">
@@ -519,9 +515,9 @@ export default function DetailsReportsPage() {
 					</div>
 				))}
 				</div>
-			</div>
+			</div> */}
 
-			<Separator />
+			{/* <Separator /> */}
 
 			{/* Photos */}
 			{/* {report.photos && report.photos.length > 0 && (
@@ -542,8 +538,8 @@ export default function DetailsReportsPage() {
 				</div>
 				</div>
 			)} */}
-			</CardContent>
-		</Card>
+			</div>
+		</div>
 
 		{/* Note de bas de page */}
 		<Card className="bg-slate-50">
@@ -562,6 +558,5 @@ export default function DetailsReportsPage() {
 			</CardContent>
 		</Card>
 		</div>
-	</div>
 	);
 }

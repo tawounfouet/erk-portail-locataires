@@ -180,260 +180,243 @@ export default function NewReportsPage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-			<div className="max-w-3xl mx-auto">
-				<Card className="shadow-lg">
-					<CardHeader>
-						<div className="flex items-center gap-3">
-							<AlertCircle className="w-8 h-8 text-primary" />
-							<div>
-								<CardTitle className="text-3xl">Nouveau Signalement</CardTitle>
-								<CardDescription className="mt-1">
-									Remplissez ce formulaire pour signaler un problème
-								</CardDescription>
-							</div>
-						</div>
-					</CardHeader>
+		<div className="pb-20">
+			<div className="mb-8 mt-4">
+                <h2 className="text-3xl font-bold text-white tracking-tight">Nouveau Signalement</h2>
+                <p className="text-gray-400 mt-1">Remplissez ce formulaire pour signaler un problème</p>
+            </div>
 
-					<CardContent className="space-y-6">
-						{showSuccess && (
-							<Alert className="bg-green-50 border-green-200">
-								<AlertDescription className="text-green-800">
-									Signalement soumis avec succès !
-								</AlertDescription>
-							</Alert>
-						)}
+			<div className="space-y-6">
+				{showSuccess && (
+					<Alert className="bg-green-50 border-green-200">
+						<AlertDescription className="text-green-800">
+							Signalement soumis avec succès !
+						</AlertDescription>
+					</Alert>
+				)}
 
-						{/* Common Field */}
-						<div className="flex items-center space-x-2 p-4 bg-primary/5 rounded-lg">
-							<Checkbox
-								id="common"
-								checked={isCommon}
-								onCheckedChange={handleCommonChange}
-							/>
-							<Label
-								htmlFor="common"
-								className="text-base font-medium cursor-pointer"
-							>
-								Il s'agit d'un bien commun
-							</Label>
-						</div>
+				{/* Common Field */}
+				<div className="flex items-center space-x-2 p-4 bg-primary/5 rounded-lg">
+					<Checkbox
+						id="common"
+						checked={isCommon}
+						onCheckedChange={handleCommonChange}
+					/>
+					<Label
+						htmlFor="common"
+						className="text-base font-medium cursor-pointer"
+					>
+						Il s'agit d'un bien commun
+					</Label>
+				</div>
 
-						{/* Category */}
+				{/* Category */}
+				<div className="space-y-2">
+					<Label htmlFor="category" className="text-gray-400">
+						Catégorie <span className="text-red-500">*</span>
+					</Label>
+					<Select
+						value={category}
+						onValueChange={handleCategoryChange}
+					>
+						<SelectTrigger id="category" className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+							<SelectValue placeholder="Sélectionner une catégorie" />
+						</SelectTrigger>
+						<SelectContent className="w-full bg-[#333337] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+							{operationCategoriesList.map((category: IOperationCategory) => (
+								<SelectItem key={category.id} value={category.id} className="text-white">
+									{category.name}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
+
+				{/* Unit id (only for common operations) */}
+				{isCommon && (
+					<div className="space-y-2">
+						{/* Bâtiment */}
 						<div className="space-y-2">
-							<Label htmlFor="category">
-								Catégorie <span className="text-red-500">*</span>
+							<Label htmlFor="building" className="text-base font-semibold flex items-center gap-2 text-gray-400">
+								<Building2 className="w-4 h-4 text-indigo-600" />
+								Bâtiment
 							</Label>
 							<Select
-								value={category}
-								onValueChange={handleCategoryChange}
+								value={selectedBuilding}
+								onValueChange={handleBuildingChange}
 							>
-								<SelectTrigger id="category">
-									<SelectValue placeholder="Sélectionner une catégorie" />
+								<SelectTrigger id="building" className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+									<SelectValue placeholder="Sélectionner un bâtiment" />
 								</SelectTrigger>
-								<SelectContent>
-									{operationCategoriesList.map((category: IOperationCategory) => (
-										<SelectItem key={category.id} value={category.id}>
-											{category.name}
+								<SelectContent className="w-full bg-[#333337] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+									{buildingsList.map((building: IBuilding, index: number) => (
+										<SelectItem key={`${building.id}-${index}`} value={building.id} className="text-white">
+												{building.name}
 										</SelectItem>
 									))}
 								</SelectContent>
 							</Select>
 						</div>
 
-						{/* Unit id (only for common operations) */}
-						{isCommon && (
-							<div className="space-y-2">
-								{/* Bâtiment */}
-								<div className="space-y-2">
-									<Label htmlFor="building" className="text-base font-semibold flex items-center gap-2">
-										<Building2 className="w-4 h-4 text-indigo-600" />
-										Bâtiment
-									</Label>
-									<Select
-										value={selectedBuilding}
-										onValueChange={handleBuildingChange}
-									>
-										<SelectTrigger id="building" className="h-12">
-											<SelectValue placeholder="Sélectionner un bâtiment" />
-										</SelectTrigger>
-										<SelectContent>
-											{buildingsList.map((building: IBuilding, index: number) => (
-												<SelectItem key={`${building.id}-${index}`} value={building.id}>
-													<div className="flex items-center gap-2">
-														<span className="text-muted-foreground">{building.name}</span>
-													</div>
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</div>
-
-								{/* Étage */}
-								<div className="space-y-2">
-									<Label
-										htmlFor="floor"
-										className={`text-base font-semibold flex items-center gap-2 ${!selectedBuilding ? 'opacity-50' : ''
-											}`}
-									>
-										<Layers className="w-4 h-4 text-purple-600" />
-										Étage
-									</Label>
-									<Select
-										value={selectedFloor}
-										onValueChange={handleFloorChange}
-										disabled={!selectedBuilding}
-									>
-										<SelectTrigger id="floor" className="h-12">
-											<SelectValue placeholder={
-												selectedBuilding
-													? "Sélectionner un étage"
-													: "Sélectionner d'abord un bâtiment"
-											} />
-										</SelectTrigger>
-										<SelectContent>
-											{floorsList.map((floor: IFloor, index: number) => (
-												<SelectItem key={`${floor.id}${index}`} value={floor.id}>
-													<div className="flex items-center gap-2">
-														<span className="text-muted-foreground">
-															{index === 0 ? 'Rez-de-chaussée' : `Etage ${index}`}
-														</span>
-													</div>
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</div>
-
-								{/* Unit */}
-								<div className="space-y-2">
-									<Label
-										htmlFor="unit"
-										className={`text-base font-semibold flex items-center gap-2 ${!selectedFloor ? 'opacity-50' : ''
-											}`}
-									>
-										<DoorOpen className="w-4 h-4 text-pink-600" />
-										Unité concernée
-									</Label>
-									<Select
-										value={selectedUnit}
-										onValueChange={handleUnitChange}
-										disabled={!selectedFloor}
-									>
-										<SelectTrigger id="unit" className="h-12">
-											<SelectValue placeholder={
-												selectedFloor
-													? "Sélectionner une unité"
-													: "Sélectionner d'abord un étage"
-											} />
-										</SelectTrigger>
-										<SelectContent>
-											{unitsList.map((unit: IUnit, index: number) => (
-												<SelectItem key={`${unit.id}${index}`} value={unit.id}>
-													<div className="flex items-center gap-2">
-														<span className="font-semibold">{unit.name}</span>
-													</div>
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</div>
-							</div>
-						)}
-
-						{/* Titre */}
+						{/* Étage */}
 						<div className="space-y-2">
-							<Label htmlFor="titre">
-								Titre du signalement <span className="text-red-500">*</span>
+							<Label
+								htmlFor="floor"
+								className={`text-gray-400 text-base font-semibold flex items-center gap-2 ${!selectedBuilding ? 'opacity-50' : ''
+									}`}
+							>
+								<Layers className="w-4 h-4 text-purple-600" />
+								Étage
 							</Label>
-							<Input
-								id="titre"
-								type="text"
-								placeholder="Résumé du problème"
-								value={operationData.title}
-								onChange={(e) => handleInputChange('title', e.target.value)}
-							/>
-						</div>
-
-						{/* Description */}
-						<div className="space-y-2">
-							<Label htmlFor="description">
-								Description <span className="text-red-500">*</span>
-							</Label>
-							<Textarea
-								id="description"
-								placeholder="Décrivez le problème en détail..."
-								rows={5}
-								value={operationData.description}
-								onChange={(e) => handleInputChange('description', e.target.value)}
-							/>
-						</div>
-
-						{/* Photos */}
-						<div className="space-y-2">
-							<Label>Photos</Label>
-							<div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors">
-								<input
-									type="file"
-									accept="image/*"
-									multiple
-									onChange={handlePhotoUpload}
-									className="hidden"
-									id="photo-upload"
-								/>
-								<label
-									htmlFor="photo-upload"
-									className="cursor-pointer flex flex-col items-center gap-2"
-								>
-									<Upload className="w-10 h-10 text-muted-foreground" />
-									<span className="text-sm font-medium text-foreground">
-										Cliquez pour ajouter des photos
-									</span>
-									<span className="text-xs text-muted-foreground">
-										Plusieurs fichiers acceptés (JPG, PNG, etc.)
-									</span>
-								</label>
-							</div>
-
-							{/* Aperçu des photos */}
-							{photos.length > 0 && (
-								<div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-									{photos.map(photo => (
-										<div key={photo.id} className="relative group">
-											<img
-												src={photo.url}
-												alt={photo.name}
-												className="w-full h-32 object-cover rounded-lg border-2 border-border"
-											/>
-											<Button
-												type="button"
-												variant="destructive"
-												size="icon"
-												className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-												onClick={() => removePhoto(photo.id)}
-											>
-												<X className="h-4 w-4" />
-											</Button>
-											<p className="text-xs text-muted-foreground mt-1 truncate">
-												{photo.name}
-											</p>
-										</div>
+							<Select
+								value={selectedFloor}
+								onValueChange={handleFloorChange}
+								disabled={!selectedBuilding}
+							>
+								<SelectTrigger id="floor" className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+									<SelectValue placeholder={
+										selectedBuilding
+											? "Sélectionner un étage"
+											: "Sélectionner d'abord un bâtiment"
+									} />
+								</SelectTrigger>
+								<SelectContent className="w-full bg-[#333337] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+									{floorsList.map((floor: IFloor, index: number) => (
+										<SelectItem key={`${floor.id}${index}`} value={floor.id} className="text-white">
+											{index === 0 ? 'Rez-de-chaussée' : `Etage ${index}`}
+										</SelectItem>
 									))}
-								</div>
-							)}
+								</SelectContent>
+							</Select>
 						</div>
 
-						{/* Bouton de soumission */}
-						<Button
-							onClick={handleSubmit}
-							className="w-full"
-							size="lg"
+						{/* Unit */}
+						<div className="space-y-2">
+							<Label
+								htmlFor="unit"
+								className={`text-gray-400 text-base font-semibold flex items-center gap-2 ${!selectedFloor ? 'opacity-50' : ''
+									}`}
+							>
+								<DoorOpen className="w-4 h-4 text-pink-600" />
+								Unité concernée
+							</Label>
+							<Select
+								value={selectedUnit}
+								onValueChange={handleUnitChange}
+								disabled={!selectedFloor}
+							>
+								<SelectTrigger id="unit" className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+									<SelectValue placeholder={
+										selectedFloor
+											? "Sélectionner une unité"
+											: "Sélectionner d'abord un étage"
+									} />
+								</SelectTrigger>
+								<SelectContent className="w-full bg-[#333337] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+									{unitsList.map((unit: IUnit, index: number) => (
+										<SelectItem key={`${unit.id}${index}`} value={unit.id} className="text-white">
+											{unit.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+					</div>
+				)}
+
+				{/* Titre */}
+				<div className="space-y-2">
+					<Label htmlFor="titre" className="text-gray-400">
+						Titre du signalement <span className="text-red-500">*</span>
+					</Label>
+					<Input
+						id="titre"
+						type="text"
+						placeholder="Résumé du problème"
+						value={operationData.title}
+						onChange={(e) => handleInputChange('title', e.target.value)}
+						className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+					/>
+				</div>
+
+				{/* Description */}
+				<div className="space-y-2">
+					<Label htmlFor="description" className="text-gray-400">
+						Description <span className="text-red-500">*</span>
+					</Label>
+					<Textarea
+						id="description"
+						placeholder="Décrivez le problème en détail..."
+						rows={5}
+						value={operationData.description}
+						onChange={(e) => handleInputChange('description', e.target.value)}
+						className="w-full bg-[#333337] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+					/>
+				</div>
+
+				{/* Photos */}
+				<div className="space-y-2 text-gray-400">
+					<Label>Photos</Label>
+					<div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors">
+						<input
+							type="file"
+							accept="image/*"
+							multiple
+							onChange={handlePhotoUpload}
+							className="hidden"
+							id="photo-upload"
+						/>
+						<label
+							htmlFor="photo-upload"
+							className="cursor-pointer flex flex-col items-center gap-2"
 						>
-							<Send className="mr-2 h-4 w-4" />
-							Soumettre le signalement
-						</Button>
-					</CardContent>
-				</Card>
+							<Upload className="w-10 h-10 text-muted-foreground" />
+							<span className="text-sm font-medium text-muted-foreground">
+								Cliquez pour ajouter des photos
+							</span>
+							<span className="text-xs text-muted-foreground">
+								Plusieurs fichiers acceptés (JPG, PNG, etc.)
+							</span>
+						</label>
+					</div>
+
+					{/* Aperçu des photos */}
+					{photos.length > 0 && (
+						<div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+							{photos.map(photo => (
+								<div key={photo.id} className="relative group">
+									<img
+										src={photo.url}
+										alt={photo.name}
+										className="w-full h-32 object-cover rounded-lg border-2 border-border"
+									/>
+									<Button
+										type="button"
+										variant="destructive"
+										size="icon"
+										className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+										onClick={() => removePhoto(photo.id)}
+									>
+										<X className="h-4 w-4" />
+									</Button>
+									<p className="text-xs text-muted-foreground mt-1 truncate">
+										{photo.name}
+									</p>
+								</div>
+							))}
+						</div>
+					)}
+				</div>
+
+				{/* Bouton de soumission */}
+				<Button
+					onClick={handleSubmit}
+					size="lg"
+					className="w-full shadow-primary/30 shadow-md"
+				>
+					<Send className="mr-2 h-4 w-4" />
+					Soumettre le signalement
+				</Button>
 			</div>
 		</div>
 	);

@@ -6,6 +6,7 @@ import { formatISODateToFrench } from "@/lib/date";
 import { ISuggestionDetail } from "@/types/suggestions.type";
 import { Badge, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import no_suggestion from "@/assets/images/no_suggestions.webp";
 
 
 export default function HomeSuggestionWithCardPage()
@@ -45,6 +46,31 @@ export default function HomeSuggestionWithCardPage()
                     onClick={() => navigate('/suggestions/new')}
                 />
             </div>
+        );
+    }
+
+    if (suggestions.length < 1)
+    {
+        return (
+            <>
+                <div className="flex flex-col items-center jutify-between gap-4 mt-8">
+                    <h1 className="text-2xl font-medium text-white">Aucune suggestion.</h1>
+                    
+                    <img
+                        src={no_suggestion}
+                        alt="thinking boy"
+                        className="opacity-60"
+                    />
+
+                    <p className="text-center text-gray-400">
+                        Des idées pour améliorer la vie dans la résidence ?
+                    </p>
+                </div>
+
+                <FloatingAddButton 
+                    onClick={() => navigate('/suggestions/new')}
+                />
+            </>
         );
     }
 

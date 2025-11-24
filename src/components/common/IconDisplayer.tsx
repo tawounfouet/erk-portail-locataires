@@ -1,5 +1,5 @@
 // components/IconDisplay.tsx
-import { getIconComponent } from '@/services/icons';
+import { getIconComponent } from '@/lib/icons';
 import { LucideIcon } from 'lucide-react';
 
 interface IconDisplayProps

@@ -1,24 +1,34 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
-import { ArrowLeft, Bell } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import { Separator } from "../ui/separator";
+import { ChevronLeft, User } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function MobileLayout({ children })
 {
     const { user } = useAuth();
     const location = useLocation();
-
+    const navigate = useNavigate();
 
     const isAtHomePage = location.pathname === "/";
 
-    let previousPage = null;
-    let pageTitle = null;
-
-    if (location.state)
-    {
-        previousPage = location.state.previousPage;
-        pageTitle = location.state.pageTitle;
+    const handleBack = () => {
+        const path = location.pathname;
+        
+        // Compter le nombre de segments dans le chemin
+        const segments = path.split('/').filter(segment => segment !== '');
+        
+        if (segments.length >= 2) 
+        {
+            const parentPath = '/' + segments.slice(0, -1).join('/');
+            navigate(parentPath);
+        } 
+        else if (segments.length === 1) 
+        {
+            navigate('/');
+        } 
+        else 
+        {
+            navigate(-1);
+        }
     }
 
     if (!user)
@@ -31,36 +41,30 @@ export default function MobileLayout({ children })
     }
 
     return (
-        <div className="px-6 relative mx-auto flex h-screen max-w-md flex-col bg-background-light dark:bg-background-dark font-display">
-            <header className="sticky pt-6 flex shrink-0 flex-col gap-2 bg-background-light pb-2 dark:bg-background-dark">
-                <div className="flex h-12 items-center justify-between">
-                    <div className="flex size-12 shrink-0 items-center">
-                        <button className="flex h-12 cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg bg-transparent p-0 text-base font-bold leading-normal tracking-[0.015em] text-slate-800 dark:text-white min-w-0">
-                            <Bell />
-                        </button>
-                        
-                        
-                        {previousPage && !isAtHomePage && (
-                            <Link to={previousPage} state={{previousPage: location.pathname}}>
-                                <ArrowLeft />
-                            </Link>
-                        )}
-                    </div>
+        <div className="px-6 relative mx-auto flex h-screen max-w-md flex-col font-display">
+            <header className="sticky pt-6 pb-2">
+                <div className="flex justify-between items-start">
+                    {isAtHomePage ? 
+                        (
+                            <div>
+                                <h2 className="text-3xl font-bold text-white tracking-tight">Bonjour,</h2>
+                                <p className="text-muted mt-1 text-lg">Bienvenue chez vous.</p>
+                            </div>
+                        ) :
+                        (
+                            <>
+                                <div onClick={handleBack} className="bg-transparent p-3 rounded-full border-[0.15em] border-gray-400 active:scale-95 transition-all cursor-pointer group">
+                                    <ChevronLeft className="text-primary" />
+                                </div>
+                            </>
+                        )
+                    }
                     
-                    <div>
-                        <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-800 dark:text-white">{pageTitle}</h1>
+
+                    <div className="w-12 h-12 rounded-full bg-secondary border border-white/10 flex items-center justify-center overflow-hidden">
+                        <User className="w-6 h-6 text-gray-400" />
                     </div>
-
-                    {isAtHomePage && (
-                        <Link to="/">
-                            <Avatar className="p-2 bg-slate-200 rounded-full grayscale">
-                                <AvatarFallback className="rounded-lg">{user.last_name.charAt(0)}{user.first_name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        </Link>
-                    )}
                 </div>
-
-                {!isAtHomePage && <Separator className="mb-6" />}
             </header>
 
         
