@@ -6,12 +6,5 @@ import BugReportButton from "../dev/BugReportButton";
 
 export default function ERKLayout()
 {
-    const isMobile = useIsMobile();
-
-    if (isMobile)
-    {
-        return <MobileLayout><Outlet /><BugReportButton /></MobileLayout>;
-    }
-
-    return <DashboardLayout><Outlet /><BugReportButton /></DashboardLayout>;
+    return <MobileLayout><Outlet /><BugReportButton /></MobileLayout>;
 }

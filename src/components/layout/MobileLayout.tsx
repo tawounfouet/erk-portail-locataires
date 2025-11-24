@@ -42,7 +42,7 @@ export default function MobileLayout({ children })
     }
 
     return (
-        <div className="px-6 relative mx-auto flex h-screen max-w-md flex-col font-display">
+        <div className="px-6 relative mx-auto flex h-screen flex-col font-display">
             <header className="sticky pt-6 pb-2">
                 <div className="flex justify-between items-start">
                     {isAtHomePage ? 
