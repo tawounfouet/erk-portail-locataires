@@ -183,7 +183,7 @@ export default function NewReportsPage() {
 		<div className="pb-20">
 			<div className="mb-8 mt-4">
                 <h2 className="text-3xl font-bold text-white tracking-tight">Nouveau Signalement</h2>
-                <p className="text-gray-400 mt-1">Remplissez ce formulaire pour signaler un problème</p>
+                <p className="text-gray-300 mt-1">Remplissez ce formulaire pour signaler un problème</p>
             </div>
 
 			<div className="space-y-6">
@@ -204,7 +204,7 @@ export default function NewReportsPage() {
 					/>
 					<Label
 						htmlFor="common"
-						className="text-base font-medium cursor-pointer"
+						className="text-gray-300 font-medium cursor-pointer"
 					>
 						Il s'agit d'un bien commun
 					</Label>
@@ -212,7 +212,7 @@ export default function NewReportsPage() {
 
 				{/* Category */}
 				<div className="space-y-2">
-					<Label htmlFor="category" className="text-gray-400">
+					<Label htmlFor="category" className="text-gray-300">
 						Catégorie <span className="text-red-500">*</span>
 					</Label>
 					<Select
@@ -237,7 +237,7 @@ export default function NewReportsPage() {
 					<div className="space-y-2">
 						{/* Bâtiment */}
 						<div className="space-y-2">
-							<Label htmlFor="building" className="text-base font-semibold flex items-center gap-2 text-gray-400">
+							<Label htmlFor="building" className="text-base font-semibold flex items-center gap-2 text-gray-300">
 								<Building2 className="w-4 h-4 text-indigo-600" />
 								Bâtiment
 							</Label>
@@ -262,7 +262,7 @@ export default function NewReportsPage() {
 						<div className="space-y-2">
 							<Label
 								htmlFor="floor"
-								className={`text-gray-400 text-base font-semibold flex items-center gap-2 ${!selectedBuilding ? 'opacity-50' : ''
+								className={`text-gray-300 text-base font-semibold flex items-center gap-2 ${!selectedBuilding ? 'opacity-50' : ''
 									}`}
 							>
 								<Layers className="w-4 h-4 text-purple-600" />
@@ -294,7 +294,7 @@ export default function NewReportsPage() {
 						<div className="space-y-2">
 							<Label
 								htmlFor="unit"
-								className={`text-gray-400 text-base font-semibold flex items-center gap-2 ${!selectedFloor ? 'opacity-50' : ''
+								className={`text-gray-300 text-base font-semibold flex items-center gap-2 ${!selectedFloor ? 'opacity-50' : ''
 									}`}
 							>
 								<DoorOpen className="w-4 h-4 text-pink-600" />
@@ -326,7 +326,7 @@ export default function NewReportsPage() {
 
 				{/* Titre */}
 				<div className="space-y-2">
-					<Label htmlFor="titre" className="text-gray-400">
+					<Label htmlFor="titre" className="text-gray-300">
 						Titre du signalement <span className="text-red-500">*</span>
 					</Label>
 					<Input
@@ -341,7 +341,7 @@ export default function NewReportsPage() {
 
 				{/* Description */}
 				<div className="space-y-2">
-					<Label htmlFor="description" className="text-gray-400">
+					<Label htmlFor="description" className="text-gray-300">
 						Description <span className="text-red-500">*</span>
 					</Label>
 					<Textarea
@@ -355,7 +355,7 @@ export default function NewReportsPage() {
 				</div>
 
 				{/* Photos */}
-				<div className="space-y-2 text-gray-400">
+				<div className="space-y-2 text-gray-300">
 					<Label>Photos</Label>
 					<div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors">
 						<input
@@ -412,7 +412,7 @@ export default function NewReportsPage() {
 				<Button
 					onClick={handleSubmit}
 					size="lg"
-					className="w-full shadow-primary/30 shadow-md"
+					className="w-full shadow-primary/30 shadow-md rounded-full"
 				>
 					<Send className="mr-2 h-4 w-4" />
 					Soumettre le signalement
