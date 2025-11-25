@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { Calendar, User, MapPin, Tag, Clock, Share2, Download, CheckCircle2, Circle, AlertCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Calendar, User, MapPin, Tag, Clock, CheckCircle2, Circle, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getReportStatusBadge } from '@/services/badges';
 import { useLocation } from 'react-router-dom';
-import { IOperationDetail, IOperationList } from '@/types/operations.type';
-import { getTimeElapsedStr } from '@/lib/date';
+import { IOperationDetail } from '@/types/operations.type';
+import { formatISODateToFrenchWithMonth, getTimeElapsedStr } from '@/lib/date';
+import { WhatsappIcon } from '@/lib/icons';
+import ShareService from '@/services/share';
 
 
 export default function DetailsReportsPage() {
@@ -27,8 +29,26 @@ export default function DetailsReportsPage() {
 	];
 
 	const handleShare = () => {
-		setShowShareAlert(true);
-		setTimeout(() => setShowShareAlert(false), 3000);
+		ShareService.shareToWhatsapp(
+			 `
+🚨 *SIGNALEMENT* 🚨
+
+*Titre :* ${report.title}
+*Référence :* ${report.operation_number}
+*Transmis le :* ${formatISODateToFrenchWithMonth(report.created_at)} (${getTimeElapsedStr(report.created_at)})
+
+*📍 Unité concernée :* ${report.managed_unit_details.full_name}
+*👤 Auteur du signalement :* ${report.requester_name}
+
+----
+
+*📝 Description :*
+${report.description}
+			 `
+		);
+		
+		// setShowShareAlert(true);:
+		// setTimeout(() => setShowShareAlert(false), 3000);
 	};
 
 	const handleDownload = () => {
@@ -391,14 +411,14 @@ export default function DetailsReportsPage() {
 		<div>
 			<div className="mt-3 flex gap-2">
 				<Button variant="outline" onClick={handleShare} className="text-white">
-					<Share2 className="mr-2 h-4 w-4" />
+					<WhatsappIcon className="mr-2 h-4 w-4" />
 					Partager
 				</Button>
 
-				<Button onClick={handleDownload}>
+				{/* <Button onClick={handleDownload}>
 					<Download className="mr-2 h-4 w-4" />
 					Télécharger
-				</Button>
+				</Button> */}
 			</div>
 		</div>
 
@@ -430,7 +450,7 @@ export default function DetailsReportsPage() {
 			<div className="pt-6 space-y-6">
 				{/* Requester infos */}
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground">
+					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm  hover:text-accent-foreground">
 						<User className="w-5 h-5 text-gray-100 mt-0.5" />
 
 						<div>
@@ -441,7 +461,7 @@ export default function DetailsReportsPage() {
 					</div>
 
 					{/* Report creation date */}
-					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground">
+					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm  hover:text-accent-foreground">
 						<Calendar className="w-5 h-5 text-gray-100 mt-0.5" />
 
 						<div>
@@ -452,7 +472,7 @@ export default function DetailsReportsPage() {
 						</div>
 					</div>
 
-					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground">
+					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm  hover:text-accent-foreground">
 						<MapPin className="w-5 h-5 text-gray-100 mt-0.5" />
 
 						<div>
@@ -465,7 +485,7 @@ export default function DetailsReportsPage() {
 						</div>
 					</div>
 
-					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground">
+					<div className="flex items-start gap-3 p-3 rounded-lg border border-input bg-background shadow-sm  hover:text-accent-foreground">
 						<Clock className="w-5 h-5 text-gray-100 mt-0.5" />
 						
 						<div>
@@ -480,7 +500,7 @@ export default function DetailsReportsPage() {
 			{/* Description */}
 			<div>
 				<h3 className="text-lg font-semibold text-white mb-3">Description détaillée</h3>
-				<p className="text-slate-700 leading-relaxed bg-gray-400 p-4 rounded-lg">
+				<p className="text-gray-100 leading-relaxed bg-background border border-input p-4 rounded-lg">
 				{report.description}
 				</p>
 			</div>
@@ -542,16 +562,15 @@ export default function DetailsReportsPage() {
 		</div>
 
 		{/* Note de bas de page */}
-		<Card className="bg-slate-50">
+		<Card className="bg-secondary/30">
 			<CardContent className="pt-6">
 				<div className="flex items-start gap-2">
-					<AlertCircle className="w-5 h-5 text-slate-600 mt-0.5" />
+					<AlertCircle className="w-5 h-5 mt-0.5 text-white" />
 					
 					<div>
-						<p className="text-sm font-medium text-slate-900">Note</p>
-						<p className="text-sm text-slate-600">
-							Ce document est confidentiel et destiné uniquement aux personnes autorisées. 
-							Toute reproduction ou diffusion sans autorisation est strictement interdite.
+						<h5 className="text-sm font-medium text-white">Note</h5>
+						<p className="text-sm text-gray-300">
+							Ce document est confidentiel et à usage interne uniquement.
 						</p>
 					</div>
 				</div>

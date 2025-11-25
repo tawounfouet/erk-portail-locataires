@@ -84,7 +84,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 				case 401:
 					toast({
 					variant: "destructive",
-					title: "Hmmm... Tu es sûre de tes informations ?",
+					title: "Hmmm... Tu es sûre de tes identifiants ?",
 					description: "Vérifies et ressaisies tes identifiants de connexion pour voir.",
 					action: <ToastAction altText="Try again" onClick={() => {login(email, password)}}>Réessayer</ToastAction>,
 					});

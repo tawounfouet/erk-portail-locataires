@@ -28,35 +28,47 @@ export function getReportPercentageStyle(percent: string | number): string
         value = parseInt(percent);
     }
 
-    if (value < 1/8)
+    if (value < 1/5)
     {
         return "w-0";
     }
-    else if (value < 2/8)
+    else if (value < 2/5)
     {
-        return "w-1/8";
+        return "w-1/5";
     }
-    else if (value < 3/8)
+    else if (value < 3/5)
     {
-        return "w-2/8";
+        return "w-2/5";
     }
-    else if (value < 4/8)
+    else if (value < 4/5)
     {
-        return "w-3/8";
+        return "w-3/5";
     }
-    else if (value < 5/8)
+    else if (value < 5/5)
     {
-        return "w-4/8";
-    }
-    else if (value < 6/8)
-    {
-        return "w-5/8";
-    }
-    else if (value < 7/8)
-    {
-        return "w-6/8";
+        return "w-4/5";
     }
     else{
         return "w-full";
+    }
+}
+
+export function getReportPercentageStyleFromStatus(status: TOperationStatus)
+{
+    switch (status)
+    {
+        default: case 'CREATED': return "w-0";
+        
+        case 'PENDING_VALIDATION': return "w-1/5";
+        
+        case 'APPROVED': return "w-2/5";
+        
+        case 'REJECTED': return "w-3/5";
+
+        case 'ON_HOLD':
+        case 'IN_PROGRESS': return "w-4/5";
+        
+        case 'COMPLETED':
+        case 'CANCELLED': return "w-full";
     }
 }

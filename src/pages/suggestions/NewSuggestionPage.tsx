@@ -128,23 +128,13 @@ export default function NewSuggestionPage() {
 	// ==========================================
 
 	return (
-		<div className="min-h-screen">
 		<div className="max-w-3xl mx-auto">
-			<Card className="shadow-xl border-t-4 border-t-primary">
-			<CardHeader className="text-center pb-8">
-				<div className="flex justify-center mb-4">
-					<div className="bg-primary p-4 rounded-full">
-						<Lightbulb className="w-12 h-12 text-white" />
-					</div>
-				</div>
-				<CardTitle className="text-3xl mb-2">Boîte à Suggestions</CardTitle>
-				<CardDescription className="text-base">
-					Votre avis compte ! Partagez vos idées pour améliorer notre résidence.
-					Chaque suggestion est étudiée avec attention par notre équipe.
-				</CardDescription>
-			</CardHeader>
+			<div className="mb-6">
+                <h2 className="text-3xl font-bold text-white tracking-tight">Boîte à suggestions</h2>
+                <p className="text-gray-400 mt-1">Votre avis compte !</p>
+            </div>
 
-			<CardContent className="space-y-6">
+			<div className="space-y-6">
 				<div className="flex items-start space-x-3 p-4 bg-slate-50 rounded-lg border-2 border-slate-200">
 				<Checkbox
 					id="anonyme"
@@ -229,18 +219,18 @@ export default function NewSuggestionPage() {
 
 				{/* Catégorie */}
 				<div className="space-y-2">
-				<Label htmlFor="categorie">
+				<Label htmlFor="categorie" className="text-gray-300">
 					Catégorie de la suggestion <span className="text-red-500">*</span>
 				</Label>
 				<Select
 					value={formData.categorie}
 					onValueChange={(value) => handleInputChange('categorie', value)}
 				>
-					<SelectTrigger id="categorie">
-					<SelectValue placeholder="Sélectionner une catégorie" />
+					<SelectTrigger id="categorie" className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+					<SelectValue placeholder="Sélectionnez une catégorie" />
 					</SelectTrigger>
 
-					<SelectContent>
+					<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 						{SuggestionsCategoryMappingArray.map(([categoryId, categoryValue]) => (
 							<SelectItem key={categoryId} value={categoryId}>
 								{categoryValue}
@@ -252,7 +242,7 @@ export default function NewSuggestionPage() {
 
 				{/* Titre */}
 				<div className="space-y-2">
-				<Label htmlFor="titre">
+				<Label htmlFor="titre" className="text-gray-300">
 					Titre de votre suggestion <span className="text-red-500">*</span>
 				</Label>
 				<Input
@@ -261,12 +251,13 @@ export default function NewSuggestionPage() {
 					placeholder="Résumez votre idée en quelques mots"
 					value={formData.titre}
 					onChange={(e) => handleInputChange('titre', e.target.value)}
+					className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 				/>
 				</div>
 
 				{/* Description */}
 				<div className="space-y-2">
-				<Label htmlFor="description">
+				<Label htmlFor="description" className="text-gray-300">
 					Description détaillée <span className="text-red-500">*</span>
 				</Label>
 				<Textarea
@@ -275,6 +266,7 @@ export default function NewSuggestionPage() {
 					rows={6}
 					value={formData.description}
 					onChange={(e) => handleInputChange('description', e.target.value)}
+					className="w-full bg-[#2f2014] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 				/>
 				<p className="text-xs text-slate-500">
 					Plus votre description est détaillée, mieux nous pourrons évaluer votre suggestion
@@ -300,8 +292,8 @@ export default function NewSuggestionPage() {
 					par notre équipe de gestion. Leurs auteurs sont informés de l'avancement de la mise en œuvre de leur suggestion.
 				</p>
 				</div>
-			</CardContent>
-			</Card>
+			</div>
+			
 
 			{/* Exemples de suggestions */}
 			<Card className="mt-6 bg-gradient-to-br from-slate-50 to-slate-100">
@@ -331,6 +323,6 @@ export default function NewSuggestionPage() {
 			</CardContent>
 			</Card>
 		</div>
-		</div>
+		
 	);
 }

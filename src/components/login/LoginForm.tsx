@@ -69,7 +69,7 @@ function LoginForm({ className,...props }: React.ComponentProps<"form">)
 						placeholder="Entrez votre identifiant..." 
 						onChange={(e) => setUserID(e.target.value)}
 						required 
-						className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+						className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 					/>
 				</div>
 
@@ -85,7 +85,7 @@ function LoginForm({ className,...props }: React.ComponentProps<"form">)
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							placeholder="Entrez votre mot de passe"
-							className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+							className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 						/>
 					
 						<button

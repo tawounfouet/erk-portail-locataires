@@ -1,5 +1,5 @@
 import { formatISODateToFrenchWithMonth } from "@/lib/date";
-import { getReportPercentageStyle, getReportStatusMessage } from "@/lib/operations";
+import { getReportPercentageStyleFromStatus, getReportStatusMessage } from "@/lib/operations";
 import { IOperationDetail } from "@/types/operations.type";
 import { Link } from "react-router-dom";
 
@@ -27,7 +27,7 @@ export default function ReportView({ report }: IReportViewProps)
 				
 				<div className="mt-4 flex items-center gap-2">
 				<div className="h-1 flex-1 bg-secondary rounded-full overflow-hidden">
-					<div className={`h-full bg-primary ${getReportPercentageStyle(report.completion_percentage as number)} `}></div>
+					<div className={`h-full bg-primary ${getReportPercentageStyleFromStatus(report.status)} `}></div>
 				</div>
 				<span className="text-medium text-primary font-medium">{getReportStatusMessage(report.status)}</span>
 				</div>

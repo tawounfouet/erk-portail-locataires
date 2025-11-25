@@ -223,10 +223,10 @@ export default function NewReportsPage() {
 						value={category}
 						onValueChange={handleCategoryChange}
 					>
-						<SelectTrigger id="category" className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+						<SelectTrigger id="category" className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 							<SelectValue placeholder="Sélectionner une catégorie" />
 						</SelectTrigger>
-						<SelectContent className="w-full bg-[#333337] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+						<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 							{operationCategoriesList.map((category: IOperationCategory) => (
 								<SelectItem key={category.id} value={category.id} className="text-white">
 									{category.name}
@@ -249,10 +249,10 @@ export default function NewReportsPage() {
 								value={selectedBuilding}
 								onValueChange={handleBuildingChange}
 							>
-								<SelectTrigger id="building" className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+								<SelectTrigger id="building" className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 									<SelectValue placeholder="Sélectionner un bâtiment" />
 								</SelectTrigger>
-								<SelectContent className="w-full bg-[#333337] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+								<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 									{buildingsList.map((building: IBuilding, index: number) => (
 										<SelectItem key={`${building.id}-${index}`} value={building.id} className="text-white">
 												{building.name}
@@ -277,14 +277,14 @@ export default function NewReportsPage() {
 								onValueChange={handleFloorChange}
 								disabled={!selectedBuilding}
 							>
-								<SelectTrigger id="floor" className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+								<SelectTrigger id="floor" className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 									<SelectValue placeholder={
 										selectedBuilding
 											? "Sélectionner un étage"
 											: "Sélectionner d'abord un bâtiment"
 									} />
 								</SelectTrigger>
-								<SelectContent className="w-full bg-[#333337] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+								<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 									{floorsList.map((floor: IFloor, index: number) => (
 										<SelectItem key={`${floor.id}${index}`} value={floor.id} className="text-white">
 											{index === 0 ? 'Rez-de-chaussée' : `Etage ${index}`}
@@ -309,14 +309,14 @@ export default function NewReportsPage() {
 								onValueChange={handleUnitChange}
 								disabled={!selectedFloor}
 							>
-								<SelectTrigger id="unit" className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+								<SelectTrigger id="unit" className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 									<SelectValue placeholder={
 										selectedFloor
 											? "Sélectionner une unité"
 											: "Sélectionner d'abord un étage"
 									} />
 								</SelectTrigger>
-								<SelectContent className="w-full bg-[#333337] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+								<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 									{unitsList.map((unit: IUnit, index: number) => (
 										<SelectItem key={`${unit.id}${index}`} value={unit.id} className="text-white">
 											{unit.name}
@@ -339,7 +339,7 @@ export default function NewReportsPage() {
 						placeholder="Résumé du problème"
 						value={operationData.title}
 						onChange={(e) => handleInputChange('title', e.target.value)}
-						className="w-full h-12 bg-[#333337] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+						className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 					/>
 				</div>
 
@@ -354,7 +354,7 @@ export default function NewReportsPage() {
 						rows={5}
 						value={operationData.description}
 						onChange={(e) => handleInputChange('description', e.target.value)}
-						className="w-full bg-[#333337] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+						className="w-full bg-[#2f2014] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 					/>
 				</div>
 
