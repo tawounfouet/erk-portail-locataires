@@ -135,7 +135,7 @@ export default function NewSuggestionPage() {
             </div>
 
 			<div className="space-y-6">
-				<div className="flex items-start space-x-3 p-4 bg-slate-50 rounded-lg border-2 border-slate-200">
+				<div className="flex items-start space-x-3 p-4 bg-primary/30 rounded-lg border-2 border-primary">
 				<Checkbox
 					id="anonyme"
 					checked={formData.anonyme}
@@ -143,12 +143,12 @@ export default function NewSuggestionPage() {
 				/>
 				<div className="space-y-1">
 					<Label
-					htmlFor="anonyme"
-					className="text-base font-medium cursor-pointer leading-none"
+						htmlFor="anonyme"
+						className="text-base font-medium cursor-pointer leading-none text-primary"
 					>
 					Suggestion anonyme
 					</Label>
-					<p className="text-sm text-slate-600">
+					<p className="text-sm text-gray-100">
 					Cochez cette case si vous souhaitez soumettre votre suggestion de manière anonyme
 					</p>
 				</div>
@@ -156,47 +156,50 @@ export default function NewSuggestionPage() {
 
 				{/* Informations personnelles (masquées si anonyme) */}
 				{!formData.anonyme && (
-				<div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-					<h3 className="font-semibold text-slate-900 flex items-center gap-2">
+				<div className="space-y-4 p-4 rounded-lg border border-gray-400 bg-[#2f2014]">
+					<h3 className="font-semibold text-white flex items-center gap-2">
 					<span className="text-blue-600">📋</span>
 					Vos coordonnées
 					</h3>
 					
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					<div className="space-y-2 md:col-span-2">
-						<Label htmlFor="nom">
+						<Label htmlFor="nom" className="text-gray-300">
 						Nom complet <span className="text-red-500">*</span>
 						</Label>
 						<Input
-						id="nom"
-						type="text"
-						placeholder="Eru Eru Pita"
-						value={formData.nom}
-						onChange={(e) => handleInputChange('nom', e.target.value)}
+							id="nom"
+							type="text"
+							placeholder="Eru Eru Pita"
+							value={formData.nom}
+							onChange={(e) => handleInputChange('nom', e.target.value)}
+							className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white text-white  placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 						/>
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="email">
+						<Label htmlFor="email" className="text-gray-300">
 						Email <span className="text-red-500">*</span>
 						</Label>
 						<Input
-						id="email"
-						type="email"
-						placeholder="eru.pita@exemple.com"
-						value={formData.email}
-						onChange={(e) => handleInputChange('email', e.target.value)}
+							id="email"
+							type="email"
+							placeholder="eru.pita@exemple.com"
+							value={formData.email}
+							onChange={(e) => handleInputChange('email', e.target.value)}
+							className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white text-white  placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 						/>
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="telephone">Téléphone (optionnel)</Label>
+						<Label htmlFor="telephone" className="text-gray-300">Téléphone (optionnel)</Label>
 						<Input
-						id="telephone"
-						type="tel"
-						placeholder="+237 699 12 34 56 78"
-						value={formData.telephone}
-						onChange={(e) => handleInputChange('telephone', e.target.value)}
+							id="telephone"
+							type="tel"
+							placeholder="+237 699 12 34 56 78"
+							value={formData.telephone}
+							onChange={(e) => handleInputChange('telephone', e.target.value)}
+							className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white text-white  placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 						/>
 					</div>
 					</div>
@@ -209,7 +212,7 @@ export default function NewSuggestionPage() {
 					/>
 					<Label
 						htmlFor="rappel"
-						className="text-sm cursor-pointer"
+						className="text-sm cursor-pointer text-primary/80"
 					>
 						Je souhaite être contacté(e) pour discuter de ma suggestion
 					</Label>
@@ -226,11 +229,11 @@ export default function NewSuggestionPage() {
 					value={formData.categorie}
 					onValueChange={(value) => handleInputChange('categorie', value)}
 				>
-					<SelectTrigger id="categorie" className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+					<SelectTrigger id="categorie" className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white text-white  placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 					<SelectValue placeholder="Sélectionnez une catégorie" />
 					</SelectTrigger>
 
-					<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
+					<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white text-white  placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 						{SuggestionsCategoryMappingArray.map(([categoryId, categoryValue]) => (
 							<SelectItem key={categoryId} value={categoryId}>
 								{categoryValue}
@@ -251,7 +254,7 @@ export default function NewSuggestionPage() {
 					placeholder="Résumez votre idée en quelques mots"
 					value={formData.titre}
 					onChange={(e) => handleInputChange('titre', e.target.value)}
-					className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+					className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white text-white  placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 				/>
 				</div>
 
@@ -266,7 +269,7 @@ export default function NewSuggestionPage() {
 					rows={6}
 					value={formData.description}
 					onChange={(e) => handleInputChange('description', e.target.value)}
-					className="w-full bg-[#2f2014] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+					className="w-full bg-[#2f2014] border border-white/10 rounded-2xl p-4 text-white text-white  focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 				/>
 				<p className="text-xs text-slate-500">
 					Plus votre description est détaillée, mieux nous pourrons évaluer votre suggestion
@@ -277,7 +280,7 @@ export default function NewSuggestionPage() {
 				<div className="pt-4">
 				<Button
 					onClick={handleSubmit}
-					className="w-full"
+					className="w-full rounded-full shadow-sm shadow-primary/50"
 					size="lg"
 				>
 					<Send className="mr-2 h-5 w-5" />
@@ -312,12 +315,7 @@ export default function NewSuggestionPage() {
 				</li>
 				<li className="flex items-start gap-2">
 					<span className="text-emerald-500 font-bold">•</span>
-					<span>Installation panneau solaire</span>
-				</li>
-				
-				<li className="flex items-start gap-2">
-					<span className="text-emerald-500 font-bold">•</span>
-					<span>Organisation d'événements mensuels pour favoriser la convivialité</span>
+					<span>Installation de panneau solaire</span>
 				</li>
 				</ul>
 			</CardContent>

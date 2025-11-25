@@ -1,43 +1,36 @@
 import FloatingAddButton from "@/components/common/FloatingAddButton";
-import ReportView from "@/components/reports/ReportView";
-import { useMyOperations } from "@/hooks/useOperations";
-import { IOperationDetail } from "@/types/operations.type";
+import { IOperationDetail, IOperationList } from "@/types/operations.type";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import no_report from "@/assets/images/no_report.webp";
-
-
-interface IHomeEmptyStateProps 
-{
-    title: string;
-    description: string;
-    image: string;
-}
-
-function HomeEmptyState({ title, description, image }: IHomeEmptyStateProps)
-{
-    return (
-        <div className="flex flex-col items-center jutify-between gap-4 mt-8">
-            <h1 className="text-2xl font-medium text-white">{title}</h1>
-            
-            <img
-                src={image}
-                alt="relaxing boy"
-                className="opacity-60"
-            />
-
-            <p className="text-center text-gray-400">
-                {description}
-            </p>
-        </div>
-    );
-}
-
+import SearchBar from "@/components/common/SearchBar";
+import { useEffect, useState } from "react";
+import ReportListView from "@/components/reports/ReportListView";
+import { useMyOperations } from "@/hooks/useOperations";
 
 export default function HomeReportsPage()
 {
+    // ==========================================
+	// 				 SERVICE DATA
+	// ==========================================
     const navigate = useNavigate();
     const { operations: reports } = useMyOperations();
+    const [filteredReports, setFilteredReports] = useState<IOperationList[]>([]);
+
+    // ==========================================
+	// 				 APPLY SEARCH
+	// ==========================================
+    useEffect(() => {
+        setFilteredReports(reports);
+        console.log(reports);
+    }, [reports]);
+
+    // ==========================================
+	// 			   REPORT CONDITIONS
+	// ==========================================
+    const IsReport_Personnal = (report: IOperationList) => true;
+    const IsReport_Common = (report: IOperationList) => true;
+    const IsReport_Resolved = (report: IOperationList) => report.status === 'REJECTED' || report.status === 'CANCELLED' || report.status === 'COMPLETED';
 
     return (
         <div className="pt-4 pb-20">
@@ -46,23 +39,65 @@ export default function HomeReportsPage()
                 <p className="text-gray-400 mt-1">C'est ici que vous gérez les incidents</p>
             </div>
 
-            <Tabs defaultValue="actives">
-                <TabsList className="w-full bg-gray-300">
-                    <TabsTrigger value="actives" className="w-full text-gray-800">Actifs</TabsTrigger>
-                    <TabsTrigger value="common" className="w-full text-gray-800">Communs</TabsTrigger>
-                    <TabsTrigger value="resolved" className="w-full text-gray-800">Résolus</TabsTrigger>
+            <SearchBar<IOperationDetail>
+                data={reports as IOperationDetail[]}
+                searchFields={['title', 'description', 'requester_name']}
+                onFilteredResults={setFilteredReports}
+                debounceMs={100}
+                className="w-full my-5"
+            />
+
+            <Tabs defaultValue="personnal">
+                <TabsList className="w-full bg-transparent">
+                    <TabsTrigger value="personnal" className="w-full text-white rounded-full">Personnels</TabsTrigger>
+                    <TabsTrigger value="common" className="w-full text-white rounded-full">Communs</TabsTrigger>
+                    <TabsTrigger value="resolved" className="w-full text-white rounded-full">Résolus</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="actives">
+                <TabsContent value="personnal">
                     {
-                        reports.length < 1 ?
-                        <HomeEmptyState title="0 Signalement !" description="Elle est pas belle la vie à Eureka ?" image={no_report} />
-                        :
-                        reports.map((report, index) => <ReportView key={`${report.id}${index}`} report={report as IOperationDetail} />)
+                        <ReportListView 
+                            emptyStateTitle="We did it !"
+                            emptyStateDescription="Aucun signalement dans l'espace commun"
+                            emptyStateImg={no_report}
+                            reportList={
+                                filteredReports.filter(
+                                    (report) => IsReport_Personnal(report)
+                                ) as IOperationDetail[]
+                            } 
+                        />
                     }
                 </TabsContent>
-                <TabsContent value="common"></TabsContent>
-                <TabsContent value="resolved"></TabsContent>
+
+                <TabsContent value="common">
+                    {
+                        <ReportListView 
+                            emptyStateTitle="We did it !"
+                            emptyStateDescription="Aucun signalement dans l'espace commun"
+                            emptyStateImg={no_report}
+                            reportList={
+                                filteredReports.filter(
+                                    (report) => IsReport_Common(report)
+                                ) as IOperationDetail[]
+                            } 
+                        />
+                    }
+                </TabsContent>
+
+                <TabsContent value="resolved">
+                    {
+                        <ReportListView 
+                            emptyStateTitle="We did it !"
+                            emptyStateDescription="Je t'avais dit qu'on gérait"
+                            emptyStateImg={no_report}
+                            reportList={
+                                filteredReports.filter(
+                                    (report) => IsReport_Resolved(report)
+                                ) as IOperationDetail[]
+                            } 
+                        />
+                    }
+                </TabsContent>
             </Tabs>
 
             <FloatingAddButton onClick={() => navigate('/reports/new')} />

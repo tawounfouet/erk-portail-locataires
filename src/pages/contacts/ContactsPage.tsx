@@ -15,11 +15,7 @@ function ContactCardSection({ category, contacts, bUrgent = false }: { category:
             {contacts.map((contact: IContact) => (
             <div 
                 key={contact.id}
-                className={`relative overflow-hidden rounded-3xl p-5 border transition-all mt-4 
-                    ${bUrgent 
-                    ? 'bg-red-500/10 border-red-500/20' 
-                    : 'bg-[#8a6c4a] border-white/5'}`
-                }
+                className={`relative overflow-hidden rounded-3xl p-5 border transition-all mt-4 bg-[#2f2014] border border-white/5`}
             >
                 <div className="flex justify-between items-start">
                     <div>
@@ -38,10 +34,9 @@ function ContactCardSection({ category, contacts, bUrgent = false }: { category:
 
                     <div className={`
                         w-10 h-10 rounded-full flex items-center justify-center
-                        ${bUrgent 
-                        ? 'bg-red-500/20 text-red-400' 
+                        ${bUrgent
+                        ? 'bg-red-500/20 text-red-400'
                         : 'bg-primary/20 text-primary'}
-                        
                     `}>
                         <User className="w-5 h-5" />
                     </div>
@@ -56,23 +51,44 @@ function ContactCardSection({ category, contacts, bUrgent = false }: { category:
                             size="icon"
                             successMessage="Numéro copié"
                             text={contact.phone_number}
-                            className="bg-[#d6a773] hover:bg-gray-300 rounded-xl w-12 h-12"
+                            className={`
+                                text-primary bg-transparent hover:bg-primary/50 rounded-xl w-12 h-12
+                                ${bUrgent
+                                    ? 'border border-red-500/50 text-red-500/90'
+                                    : 'border border-primary text-primary'}  
+                                `}
                         />
                         <Button
                             size="icon"
-                            className="bg-[#d6a773] hover:bg-gray-300 rounded-xl w-12 h-12"
+                            className={`
+                                bg-transparent hover:bg-gray-300 border border-primary rounded-xl w-12 h-12
+                                ${bUrgent
+                                    ? 'border border-red-500/50'
+                                    : 'border border-primary'}  
+                                `}
                             onClick={() => window.open(`tel:${contact.phone_number}`, '_self')}
                         >
-                            <Phone className="w-5 h-5" />
+                            <Phone className={`
+                                            w-5 h-5 text-primary
+                                            ${bUrgent
+                                                ? 'text-red-500/90'
+                                                : 'text-primary'}  
+                                            `}
+                            />
                         </Button>
 
                         {contact.whatsapp && (
                             <Button
                                 size="icon"
-                                className="bg-[#d6a773] hover:bg-gray-300 rounded-xl w-12 h-12"
+                                className={`
+                                    bg-transparent hover:bg-gray-300  rounded-xl w-12 h-12
+                                    ${bUrgent
+                                    ? 'border border-red-500/20'
+                                    : 'border border-primary'}  
+                                    `}
                                 onClick={() => ShareService.shareToWhatsapp('Bonjour', contact.whatsapp)}
                             >
-                                <WhatsappIcon className="w-5 h-5" />
+                                <WhatsappIcon className="w-5 h-5 text-primary" />
                             </Button>
                         )}
                 </div>

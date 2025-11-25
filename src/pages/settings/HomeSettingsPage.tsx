@@ -1,30 +1,42 @@
 import Redirector from '@/components/common/Redirector';
 import { useAuth } from '@/hooks/useAuth';
 import { obtainInitial } from '@/lib/user';
-import { Users, Bookmark, Bell, Settings, HelpCircle, Heart } from 'lucide-react';
+import { Users, Bookmark, Bell, Settings, HelpCircle, Heart, LogOut } from 'lucide-react';
 import settings_img from "@/assets/images/settings.png";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function HomeSettingsPage()
 {
     // ==========================================
 	// 				 SERVICE DATA 
 	// ==========================================
-    const { user } = useAuth();
+    const navigate = useNavigate();
+    const { user, logout } = useAuth();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
+        // Simulate delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        logout();
+        setIsLoggingOut(false);
+    };
+
 
     const menuItems = [
-        { icon: Users, label: 'Mon compte', color: 'bg-orange-400', path: 'myaccount/' },
-        { icon: Bookmark, label: 'Feedback', color: 'bg-blue-500', path: 'myaccount/' },
+        { icon: Users, label: 'Mon compte', color: 'bg-orange-400', action: () => { navigate('myaccount/'); } },
+        { icon: LogOut, label: isLoggingOut ? 'Déconnexion...' : 'Me déconnecter', color: 'bg-blue-500', action: () => { handleLogout(); } },
     ];
 
     const settingsItems = [
-        { icon: Bell, label: 'Notifications', color: 'bg-green-400', path: 'myaccount/' },
-        { icon: Settings, label: 'Préférences', color: 'bg-gray-500', path: 'myaccount/' },
+        // { icon: Bell, label: 'Notifications', color: 'bg-green-400', path: 'myaccount/' },
+        // { icon: Settings, label: 'Préférences', color: 'bg-gray-500', path: 'myaccount/' },
     ];
 
     const bottomItems = [
-        { icon: HelpCircle, label: 'Aide', color: 'bg-gray-700', path: 'myaccount/' },
-        { icon: Heart, label: 'Recommandation', color: 'bg-pink-500', path: 'myaccount/' },
+        // { icon: HelpCircle, label: 'Aide', color: 'bg-gray-700', path: 'myaccount/' },
+        // { icon: Heart, label: 'Recommandation', color: 'bg-pink-500', path: 'myaccount/' },
     ];
 
     if (!user)
@@ -45,16 +57,16 @@ export default function HomeSettingsPage()
             {/* Menu Items */}
             <div className="space-y-3 mb-6 w-[400px] translate-x-1">
                 {menuItems.map((item, index) => (
-                    <Link
+                    <button
                         key={index}
-                        to={item.path}
+                        onClick={item.action}
                         className="w-full flex items-center gap-4 p-4 bg-white/10 backdrop-blur-sm rounded-2xl hover:bg-white/20 transition-all"
                     >
                         <div className={`${item.color} p-3 rounded-xl`}>
                         <item.icon className="w-6 h-6 text-white" />
                         </div>
                         <span className="text-lg font-medium">{item.label}</span>
-                    </Link>
+                    </button>
                 ))}
             </div>
 
@@ -91,8 +103,11 @@ export default function HomeSettingsPage()
         {/* Illustration */}
         <div className="flex justify-center mb-8">
             <div className="relative w-48 h-48">
-            <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-8xl opacity-40"><img src={settings_img} alt="Paramètres" /></div>
+            <div className="absolute flex flex-col inset-0 flex items-center justify-center">
+                <div className="text-8xl opacity-40">
+                    <img src={settings_img} alt="Paramètres" />
+                </div>
+                <h5 className="text-center text-gray-500">&copy; {new Date().getFullYear()} Eureka Résidences. Tous droits réservés.</h5>    
             </div>
             </div>
         </div>

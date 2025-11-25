@@ -9,8 +9,6 @@ interface ISuggestionDetailProps
 
 export default function SuggestionView({ suggestion }: ISuggestionDetailProps)
 {
-    console.log(suggestion.description)
-
     return (
         <div 
             key={suggestion.id}

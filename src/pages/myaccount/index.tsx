@@ -57,7 +57,7 @@ export default function MyAccountPage()
 						<Check className="w-4 h-4" />
 						Enregistrer
 					</Button>
-					<Button onClick={handleCancel} variant="outline" className="gap-2">
+					<Button onClick={handleCancel} variant="outline" className="gap-2 text-white">
 						<X className="w-4 h-4" />
 						Annuler
 					</Button>
@@ -65,7 +65,7 @@ export default function MyAccountPage()
 			)}
 		</div>
 
-		<div className="bg-gray-500 rounded-xl">
+		<div className="bg-gray-500/50 rounded-xl">
 			<CardHeader>
 				<div className="flex items-center gap-4">
 				<div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-primary-600 flex items-center justify-center text-white text-2xl font-bold">
@@ -81,7 +81,7 @@ export default function MyAccountPage()
 			<CardContent className="space-y-4">
 				<div className="grid gap-4">
 				<div className="space-y-2">
-					<Label htmlFor="name" className="flex items-center gap-2">
+					<Label htmlFor="name" className="flex items-center gap-2 text-gray-200">
 					<User className="w-4 h-4" />
 					Nom complet
 					</Label>
@@ -89,12 +89,12 @@ export default function MyAccountPage()
 					id="name"
 					value={user.full_name}
 					disabled={true}
-					className='bg-gray-50'
+					className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 					/>
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="email" className="flex items-center gap-2">
+					<Label htmlFor="email" className="flex items-center gap-2 text-gray-200">
 					<Mail className="w-4 h-4" />
 					Email
 					</Label>
@@ -103,12 +103,12 @@ export default function MyAccountPage()
 					type="email"
 					value={user.email}
 					disabled={true}
-					className='bg-gray-50'
+					className="w-full h-12 bg-[#2f2014] border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
 					/>
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="phone" className="flex items-center gap-2">
+					<Label htmlFor="phone" className="flex items-center gap-2 text-gray-200">
 					<Phone className="w-4 h-4" />
 					Téléphone
 					</Label>
@@ -117,7 +117,10 @@ export default function MyAccountPage()
 					value={isEditing ? editData.phone : user.phone}
 					onChange={(e) => setEditData({...editData, phone: e.target.value})}
 					disabled={!isEditing}
-					className={!isEditing ? 'bg-gray-50' : ''}
+					className={`
+							w-full h-12 border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all
+							${!isEditing ? 'bg-[#2f2014]' : 'bg-[#2f2014]/80'}
+						`}
 					/>
 				</div>
 
@@ -138,7 +141,7 @@ export default function MyAccountPage()
 			</CardContent>
 		</div>
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Sécurité</CardTitle>
           <CardDescription>Gérez vos paramètres de sécurité</CardDescription>
@@ -153,7 +156,7 @@ export default function MyAccountPage()
             <ChevronRight className="w-4 h-4" />
           </Button>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }
