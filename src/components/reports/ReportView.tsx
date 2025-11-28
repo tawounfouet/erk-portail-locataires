@@ -1,4 +1,5 @@
 import { formatISODateToFrenchWithMonth } from "@/lib/date";
+import { getIconComponent } from "@/lib/icons";
 import { getReportPercentageStyleFromStatus, getReportStatusMessage } from "@/lib/operations";
 import { IOperationDetail } from "@/types/operations.type";
 import { Link } from "react-router-dom";
@@ -9,6 +10,8 @@ interface IReportViewProps {
 
 export default function ReportView({ report }: IReportViewProps) 
 {
+	const Icon = getIconComponent('reports');
+
     return (
 		<Link to={`/reports/1`} state={{ report }}>
 			<div 
@@ -18,6 +21,7 @@ export default function ReportView({ report }: IReportViewProps)
 				<div className="flex justify-between items-start mb-2">
 				<div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent mb-2">
 					{/* <Suggestion className="w-5 h-5" /> */}
+					<Icon className="w-5 h-5 text-primary" />
 				</div>
 				<span className="text-xs text-gray-200">{formatISODateToFrenchWithMonth(report.created_at)}</span>
 				</div>

@@ -22,15 +22,14 @@ export default function HomeReportsPage()
 	// ==========================================
     useEffect(() => {
         setFilteredReports(reports);
-        console.log(reports);
     }, [reports]);
 
     // ==========================================
 	// 			   REPORT CONDITIONS
 	// ==========================================
-    const IsReport_Personnal = (report: IOperationList) => true;
-    const IsReport_Common = (report: IOperationList) => true;
     const IsReport_Resolved = (report: IOperationList) => report.status === 'REJECTED' || report.status === 'CANCELLED' || report.status === 'COMPLETED';
+    const IsReport_Personnal = (report: IOperationList) => !IsReport_Resolved(report) && report.managed_unit_details && report.managed_unit_details.name.includes('Chambre');
+    const IsReport_Common = (report: IOperationList) => !IsReport_Resolved(report) && report.managed_unit_details && !report.managed_unit_details.name.includes('Chambre');
 
     return (
         <div className="pt-4 pb-20">
@@ -57,8 +56,8 @@ export default function HomeReportsPage()
                 <TabsContent value="personnal">
                     {
                         <ReportListView 
-                            emptyStateTitle="We did it !"
-                            emptyStateDescription="Aucun signalement dans l'espace commun"
+                            emptyStateTitle="Aucun signalement"
+                            emptyStateDescription="Tout va bien dans ta chambre"
                             emptyStateImg={no_report}
                             reportList={
                                 filteredReports.filter(
@@ -72,8 +71,8 @@ export default function HomeReportsPage()
                 <TabsContent value="common">
                     {
                         <ReportListView 
-                            emptyStateTitle="We did it !"
-                            emptyStateDescription="Aucun signalement dans l'espace commun"
+                            emptyStateTitle="Chill..."
+                            emptyStateDescription="Tu peux te reposer tranquille"
                             emptyStateImg={no_report}
                             reportList={
                                 filteredReports.filter(
@@ -87,8 +86,8 @@ export default function HomeReportsPage()
                 <TabsContent value="resolved">
                     {
                         <ReportListView 
-                            emptyStateTitle="We did it !"
-                            emptyStateDescription="Je t'avais dit qu'on gérait"
+                            emptyStateTitle="On s'occupe de tout"
+                            emptyStateDescription="Reposes toi donc un peu, non ?"
                             emptyStateImg={no_report}
                             reportList={
                                 filteredReports.filter(

@@ -350,9 +350,6 @@ export default class OperationService
      */
     static async createOperation(data: ICreateOperationPayload | any): Promise<IOperationResponse> 
     {
-        // 🔍 LOG: Payload envoyé avant nettoyage
-        console.log('📤 Payload reçu par createOperation:', JSON.stringify(data, null, 2));
-        
         // ⚠️ VALIDATION: Vérifier que operation_type_code est présent
         if (!data.operation_type_code) {
             console.error('❌ ERREUR: operation_type_code manquant dans le payload');
@@ -385,9 +382,6 @@ export default class OperationService
         if (data.tags && typeof data.tags === 'string') {
             cleanPayload.tags = data.tags;
         }
-        
-        // 🔍 LOG: Payload nettoyé
-        console.log('✅ Payload nettoyé et validé:', JSON.stringify(cleanPayload, null, 2));
         
         return this.request<IOperationResponse>(this.OPERATIONS_URL, {
             method: 'POST',

@@ -53,6 +53,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 			}
 			
 			setUser(currentUser);
+
 		} catch (err) {
 			setError(err as string);
 			AuthService.clearTokens();
@@ -68,40 +69,40 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
 	const login = async (email: string, password: string): Promise<boolean> => {
 		try {
-		setIsLoading(true);
-		
-		const result: ILoginResponse = await AuthService.authenticate(email, password);
-		
-		if (result.success && result.token && result.user) 
-		{
-			setUser(result.user);
-			return true;
-		}
-		else if (!result.success && result.response_status)
-		{
-			switch (result.response_status)
+			setIsLoading(true);
+			
+			const result: ILoginResponse = await AuthService.authenticate(email, password);
+			
+			if (result.success && result.token && result.user) 
 			{
-				case 401:
-					toast({
-					variant: "destructive",
-					title: "Hmmm... Tu es sûre de tes identifiants ?",
-					description: "Vérifies et ressaisies tes identifiants de connexion pour voir.",
-					action: <ToastAction altText="Try again" onClick={() => {login(email, password)}}>Réessayer</ToastAction>,
-					});
-				break;
-
-				case 500:
-					toast({
-					variant: "destructive",
-					title: "Oups ! Il y a eu un problème.",
-					description: "Il y a peut-être un petit soucis avec le serveur...",
-					action: <ToastAction altText="Try again" onClick={() => {login(email, password)}}>Réessayer</ToastAction>,
-					});
-				break;
+				setUser(result.user);
+				return true;
 			}
-		}
+			else if (!result.success && result.response_status)
+			{
+				console.log(result.response_status)
+				
+				if (400 <= result.response_status && result.response_status <= 499)
+				{
+					toast({
+						variant: "destructive",
+						title: "Hmmm... Tu es sûre de tes identifiants ?",
+						description: "Vérifies et ressaisies tes identifiants de connexion pour voir.",
+						action: <ToastAction altText="Try again" onClick={() => {login(email, password)}}>Réessayer</ToastAction>,
+					});
+				}
+				else if (500 <= result.response_status && result.response_status <= 599)
+				{
+					toast({
+						variant: "destructive",
+						title: "Oups ! Il y a eu un problème.",
+						description: "Il y a peut-être un petit soucis avec le serveur...",
+						action: <ToastAction altText="Try again" onClick={() => {login(email, password)}}>Réessayer</ToastAction>,
+					});
+				}
+			}
 
-		return false;
+			return false;
 		} catch (error) {
 		console.error('Login failed:', error);
 		return false;

@@ -1,4 +1,18 @@
-export function formatERKEmailToDisplay(email: string) {
+export function getUserRoom(email: string) 
+{
+    const match = email.match(/^([a-zA-Z]+)-([a-zA-Z0-9]+)@/);
+    
+    if (match) 
+    {
+        const apartment = match[2];
+        return apartment.toUpperCase();
+    }
+    
+    return "NX";
+}
+
+export function formatERKEmailToDisplay(email: string) 
+{
     const match = email.match(/^([a-zA-Z]+)-([a-zA-Z0-9]+)@/);
     
     if (match) 
@@ -7,9 +21,7 @@ export function formatERKEmailToDisplay(email: string) {
         const apartment = match[2];
         
         const buildingFormatted = building.charAt(0).toUpperCase() + building.slice(1);
-        const apartmentFormatted = apartment.toUpperCase().startsWith('N') 
-        ? `Apt ${apartment.toUpperCase()}` 
-        : `Apt ${apartment.toUpperCase()}`;
+        const apartmentFormatted = `Apt ${apartment.toUpperCase()}`;
         
         return `Bâtiment ${buildingFormatted} • ${apartmentFormatted}`;
     }

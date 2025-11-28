@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { AlertCircle, Upload, X, Send, Building2, DoorOpen, Layers } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useMemo, useState } from 'react';
+import { Upload, X, Send, Building2, DoorOpen, Layers } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,10 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useOperationCategories } from '@/hooks/useOperations';
 import { IOperationCategory, ICreateOperationPayload } from '@/types/operations.type';
-import { useBuildingHierarchy, useBuildings } from '@/hooks/usePatrimoine';
+import { useBuildingHierarchy, useBuildings, useUnits } from '@/hooks/usePatrimoine';
 import { IBuilding, IFloor, IUnit } from '@/types/patrimoine.type';
 import OperationService from '@/services/operations';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { getUserRoom } from '@/lib/user';
 
 
 export default function NewReportsPage() {
@@ -35,11 +37,11 @@ export default function NewReportsPage() {
 
 	const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
 	const [operationData, setOperationData] = useState<ICreateOperationPayload>({
-		operation_type_code: 'RENTAL_COMPLAINT',  // ✅ Code du type, pas UUID
+		operation_type_code: 'RENTAL_COMPLAINT',  
 		title: '',
 		description: '',
 		priority: 'NORMAL',
-		managed_unit: null,  // ✅ Bon nom de champ
+		managed_unit: null,
 	});
 	const [isCommon, setIsCommon] = useState(true);
 	const [showSuccess, setShowSuccess] = useState<boolean>(false);
@@ -47,11 +49,17 @@ export default function NewReportsPage() {
 	// ==========================================
 	// 				 SERVICE DATA
 	// ==========================================
+	const { user } = useAuth();
 	const { buildingsList, isLoading } = useBuildings();
-	const { floorsList, unitsList, isLoading: hierarchyIsLoading } = useBuildingHierarchy(selectedBuilding);
+	const { floorsList, unitsList, isLoading: hierarchyIsLoading } = useBuildingHierarchy((isCommon && selectedBuilding) ? selectedBuilding : '');
+	// const { profile: tenantProfile } = useMyTenantProfile();
+	const unitsFilters = useMemo(() => ({
+		search: !isCommon ? getUserRoom(user?.email || "") : ""
+	}), [isCommon, user?.email]);
+	const { units: myUnitMap } = useUnits(unitsFilters);
 	const { operationCategoriesList } = useOperationCategories();
 	const navigate = useNavigate();
-
+	const { toast } = useToast();
 
 	// ==========================================
 	// 				 FORM HANDLERS
@@ -86,9 +94,7 @@ export default function NewReportsPage() {
 
 	const handleCategoryChange = (value: string) => {
 		setCategory(value);
-		// TODO: Récupérer le code du type d'opération depuis la catégorie sélectionnée
-		// Pour l'instant, on utilise un code par défaut
-		handleInputChange('operation_type_code', 'RENTAL_COMPLAINT');
+		handleInputChange('operation_type_code', value);
 	}
 
 	const handleBuildingChange = (value: string) => {
@@ -104,30 +110,41 @@ export default function NewReportsPage() {
 
 	const handleUnitChange = (value: string) => {
 		setSelectedUnit(value);
-		handleInputChange('managed_unit', value);  // ✅ Correction: managed_unit au lieu de managed_unit_details
+		handleInputChange('managed_unit', value);
 	}
 
 	const handleSubmit = async () => {
 		if (!operationData.title || !operationData.description) {
-			alert('Veuillez remplir tous les champs obligatoires');
+			toast({
+				variant: 'destructive',
+				duration: 3000,
+				title: 'Aïe...',
+				description: 'Tu peux remplir tous les champs obligatoires s\'il te plait ? On en a besoin nous 😅.'
+			});
 			return;
 		}
 
 		if (isCommon && !operationData.managed_unit) {
-			alert('Veuillez renseigner l\'identifiant de l\'unité');
+			toast({
+				variant: 'destructive',
+				duration: 3000,
+				title: 'Aïe...',
+				description: 'Tu peux remplir tous les champs obligatoires s\'il te plait ? On en a besoin nous 😅.'
+			});
 			return;
 		}
 
+		const payload = operationData;
+
+		if (!isCommon && myUnitMap.size !== 0) {
+			const myUnit = myUnitMap.values().next().value;
+			payload.managed_unit = myUnit.id;
+		}
+
 		try {
-			console.log('📤 Envoi du signalement:', operationData);
+			const operation = await OperationService.createOperation(payload);
 
-			// 1️⃣ Créer l'opération
-			const operation = await OperationService.createOperation(operationData);
-			console.log('✅ Signalement créé:', operation);
-
-			// 2️⃣ Upload des photos si présentes
 			if (photos.length > 0) {
-				console.log(`📸 Upload de ${photos.length} photo(s)...`);
 				try {
 					const photoFiles = photos.map(p => p.file);
 					const attachments = await OperationService.uploadOperationPhotos(
@@ -135,10 +152,13 @@ export default function NewReportsPage() {
 						photoFiles,
 						'photo_evidence'  // 🎯 Photos de signalement pour les utilisateurs
 					);
-					console.log(`✅ ${attachments.length} photo(s) uploadée(s)`);
 				} catch (photoError) {
-					console.error('⚠️ Erreur lors de l\'upload des photos:', photoError);
-					alert('Le signalement a été créé, mais certaines photos n\'ont pas pu être uploadées.');
+					toast({
+						variant: 'destructive',
+						duration: 3000,
+						title: 'On a un problème...',
+						description: "L'application n'arrive pas à uploader certaines photos."
+					});
 				}
 			}
 
@@ -163,8 +183,12 @@ export default function NewReportsPage() {
 			navigate('/reports');
 
 		} catch (error) {
-			console.error('❌ Erreur lors de la création du signalement:', error);
-			alert('Erreur lors de la création du signalement. Vérifiez la console pour plus de détails.');
+			toast({
+				variant: 'destructive',
+				duration: 3000,
+				title: 'Whoops...',
+				description: 'On a des problèmes avec le serveur. Tu peux réessayer plus tard ?'
+			});
 		}
 	};
 
@@ -172,7 +196,8 @@ export default function NewReportsPage() {
 	// 				 	RENDER
 	// ==========================================
 
-	if (isLoading || hierarchyIsLoading) {
+	const isLoadingState = isLoading || (isCommon && selectedBuilding && hierarchyIsLoading);
+	if (isLoadingState) {
 		return (
 			<div className="flex items-center justify-center py-12">
 				<div className="text-center">
@@ -228,8 +253,8 @@ export default function NewReportsPage() {
 						</SelectTrigger>
 						<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 							{operationCategoriesList.map((category: IOperationCategory) => (
-								<SelectItem key={category.id} value={category.id} className="text-white">
-									{category.name}
+								<SelectItem key={category.id} value={`SIG-${category.code}`} className="text-white">
+									{category.name[0]}{category.name.toLowerCase().slice(1, category.name.length)}
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -243,7 +268,7 @@ export default function NewReportsPage() {
 						<div className="space-y-2">
 							<Label htmlFor="building" className="text-base font-semibold flex items-center gap-2 text-gray-300">
 								<Building2 className="w-4 h-4 text-indigo-600" />
-								Bâtiment
+								Bâtiment <span className="text-red-500">*</span>
 							</Label>
 							<Select
 								value={selectedBuilding}
@@ -270,7 +295,7 @@ export default function NewReportsPage() {
 									}`}
 							>
 								<Layers className="w-4 h-4 text-purple-600" />
-								Étage
+								Étage <span className="text-red-500">*</span>
 							</Label>
 							<Select
 								value={selectedFloor}
@@ -286,7 +311,7 @@ export default function NewReportsPage() {
 								</SelectTrigger>
 								<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
 									{floorsList.map((floor: IFloor, index: number) => (
-										<SelectItem key={`${floor.id}${index}`} value={floor.id} className="text-white">
+										<SelectItem key={`${floor.id}${index}`} value={`${index === 0 ? "RDC" : `Etage ${index}`}`} className="text-white">
 											{index === 0 ? 'Rez-de-chaussée' : `Etage ${index}`}
 										</SelectItem>
 									))}
@@ -302,7 +327,7 @@ export default function NewReportsPage() {
 									}`}
 							>
 								<DoorOpen className="w-4 h-4 text-pink-600" />
-								Unité concernée
+								Unité concernée <span className="text-red-500">*</span>
 							</Label>
 							<Select
 								value={selectedUnit}
@@ -317,7 +342,10 @@ export default function NewReportsPage() {
 									} />
 								</SelectTrigger>
 								<SelectContent className="w-full bg-[#2f2014] border border-white/10 rounded-xl p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all">
-									{unitsList.map((unit: IUnit, index: number) => (
+									{unitsList.map((unit: IUnit, index: number) => 
+									
+													(unit.name && !unit.name.includes('Chambre') && unit.name.includes(selectedFloor)) && 
+									(
 										<SelectItem key={`${unit.id}${index}`} value={unit.id} className="text-white">
 											{unit.name}
 										</SelectItem>

@@ -37,7 +37,7 @@ export default function DetailsReportsPage() {
 *Référence :* ${report.operation_number}
 *Transmis le :* ${formatISODateToFrenchWithMonth(report.created_at)} (${getTimeElapsedStr(report.created_at)})
 
-*📍 Unité concernée :* ${report.managed_unit_details.full_name}
+*📍 Unité concernée :* ${!!report.managed_unit_details ? report.managed_unit_details.full_name : 'Ma chambre'}
 *👤 Auteur du signalement :* ${report.requester_name}
 
 ----
