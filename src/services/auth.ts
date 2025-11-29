@@ -705,4 +705,47 @@ export default class AuthService
 
         return true;
     }
+
+    /**
+     * Partially updates the current user's profile information
+     * @param userData - Partial user data to update
+     * @returns Promise<IUser | null> - Updated user data or null if failed
+     */
+    static async partialUpdateCurrentUser(userData: Partial<{
+        email: string;
+        first_name: string;
+        last_name: string;
+        phone?: string | null;
+        is_active?: boolean;
+        is_tenant?: boolean;
+    }>): Promise<IUser | null> {
+        try {
+            const token = this.getTokens().access;
+            
+            const response = await fetch(`${this.BASE_URL}${this.CURRENT_USER_URL}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                console.error(`User partial update failed: ${response.status}`, await response.text());
+                return null;
+            }
+
+            const updatedUser: IUser = await response.json();
+            
+            // Update the cached current user
+            AuthService.currentUser = updatedUser;
+            
+            return updatedUser;
+
+        } catch (error) {
+            console.error('User partial update failed:', error);
+            return null;
+        }
+    }
 }

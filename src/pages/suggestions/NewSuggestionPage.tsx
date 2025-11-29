@@ -47,6 +47,7 @@ export default function NewSuggestionPage() {
 		// Required field checking
 		if (!formData.titre || !formData.description || !formData.categorie) {
 			toast({
+				variant: 'destructive',
 				title: '',
 				description: 'Veuillez remplir tous les champs obligatoires'
 			});
@@ -56,6 +57,7 @@ export default function NewSuggestionPage() {
 		// Check user info if not incognito
 		if (!formData.anonyme && (!formData.nom || !formData.email)) {
 			toast({
+				variant: 'destructive',
 				title: 'Hey !',
 				description: 'Renseignes tes coordonnées ou coches la case "Suggestion anonyme" si tu ne veux pas qu\'on sâche de qui il s\'agit'
 			});

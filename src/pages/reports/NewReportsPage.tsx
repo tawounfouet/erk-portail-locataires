@@ -32,10 +32,12 @@ export default function NewReportsPage() {
 		id: string;
 		name: string;
 		url: string;
+		size: number;
 		file: File;
 	}
 
 	const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
+	const [error, setError] = useState<string>('');
 	const [operationData, setOperationData] = useState<ICreateOperationPayload>({
 		operation_type_code: 'RENTAL_COMPLAINT',  
 		title: '',
@@ -72,42 +74,28 @@ export default function NewReportsPage() {
 		}));
 	};
 
-	const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const files = Array.from(e.target.files || []);
-		const newPhotos: UploadedPhoto[] = files.map(file => ({
-			id: Math.random().toString(36).substr(2, 9),
-			name: file.name,
-			url: URL.createObjectURL(file),
-			file: file
-		}));
-		setPhotos(prev => [...prev, ...newPhotos]);
-	};
-
-	const removePhoto = (id: string) => {
-		setPhotos(prev => prev.filter(photo => photo.id !== id));
-	};
-
+	
 	const handleCommonChange = (value: boolean) => {
 		setIsCommon(value);
 		// handleUnitChange(user_room);
 	}
-
+	
 	const handleCategoryChange = (value: string) => {
 		setCategory(value);
 		handleInputChange('operation_type_code', value);
 	}
-
+	
 	const handleBuildingChange = (value: string) => {
 		setSelectedBuilding(value);
 		setSelectedFloor('');
 		setSelectedUnit('');
 	};
-
+	
 	const handleFloorChange = (value: string) => {
 		setSelectedFloor(value);
 		setSelectedUnit('');
 	};
-
+	
 	const handleUnitChange = (value: string) => {
 		setSelectedUnit(value);
 		handleInputChange('managed_unit', value);
@@ -135,15 +123,15 @@ export default function NewReportsPage() {
 		}
 
 		const payload = operationData;
-
+		
 		if (!isCommon && myUnitMap.size !== 0) {
 			const myUnit = myUnitMap.values().next().value;
 			payload.managed_unit = myUnit.id;
 		}
-
+		
 		try {
 			const operation = await OperationService.createOperation(payload);
-
+			
 			if (photos.length > 0) {
 				try {
 					const photoFiles = photos.map(p => p.file);
@@ -161,11 +149,11 @@ export default function NewReportsPage() {
 					});
 				}
 			}
-
+			
 			// Afficher le message de succès
 			setShowSuccess(true);
 			setTimeout(() => setShowSuccess(false), 5000);
-
+			
 			// Reset form
 			setOperationData({
 				operation_type_code: 'RENTAL_COMPLAINT',
@@ -179,7 +167,7 @@ export default function NewReportsPage() {
 			setSelectedBuilding('');
 			setSelectedFloor('');
 			setSelectedUnit('');
-
+			
 			navigate('/reports');
 
 		} catch (error) {
@@ -191,11 +179,60 @@ export default function NewReportsPage() {
 			});
 		}
 	};
+	
+	const removePhoto = (id: string) => {
+		setPhotos(prev => prev.filter(photo => photo.id !== id));
+		setError('');
+	};
+	
+	const MAX_SIZE = 4 * 1024 * 1024; // 4Mo en octets
 
+	const calculateTotalSize = (files: UploadedPhoto[]) => {
+		return files.reduce((total, file) => total + file.size, 0);
+	};
+
+	const formatSize = (bytes: number) => {
+		return (bytes / (1024 * 1024)).toFixed(2) + ' Mo';
+	};
+
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newFiles = Array.from(e.target.files || []);
+		const newPhotos: UploadedPhoto[] = newFiles.map(file => ({
+			id: Math.random().toString(36).substr(2, 9),
+			name: file.name,
+			url: URL.createObjectURL(file),
+			file: file,
+			size: file.size
+		}));
+		
+		if (newPhotos.length !== newFiles.length) {
+
+			setError('Seuls les fichiers images sont acceptés');
+			return;
+		}
+
+		const combinedFiles = [...photos, ...newPhotos];
+		const totalSize = calculateTotalSize(combinedFiles);
+
+		if (totalSize > MAX_SIZE) {
+			setError(`La taille totale dépasse 4 Mo. Taille actuelle: ${formatSize(totalSize)}`);
+			return;
+		}
+
+		setPhotos(combinedFiles);
+		setError('');
+		e.target.value = '';
+	};
+
+
+	const totalSize = calculateTotalSize(photos);
+	const remainingSize = MAX_SIZE - totalSize;
+	const percentageUsed = (totalSize / MAX_SIZE) * 100;
+	
 	// ==========================================
 	// 				 	RENDER
 	// ==========================================
-
+	
 	const isLoadingState = isLoading || (isCommon && selectedBuilding && hierarchyIsLoading);
 	if (isLoadingState) {
 		return (
@@ -388,13 +425,33 @@ export default function NewReportsPage() {
 
 				{/* Photos */}
 				<div className="space-y-2 text-gray-300">
-					<Label>Photos</Label>
+					<Label>Photos (max 4Mo)</Label>
+					{/* Barre de progression */}
+					{photos.length > 0 && (
+						<div>
+						<div className="flex justify-between text-sm text-gray-600 mb-2">
+							<span>Espace utilisé: {formatSize(totalSize)} / 4 Mo</span>
+							<span>{percentageUsed.toFixed(1)}%</span>
+						</div>
+						<div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+							<div
+							className={`h-full transition-all duration-300 ${
+								percentageUsed > 90 ? 'bg-red-500' : percentageUsed > 70 ? 'bg-yellow-500' : 'bg-green-500'
+							}`}
+							style={{ width: `${Math.min(percentageUsed, 100)}%` }}
+							/>
+						</div>
+						<p className="text-xs text-gray-500 mt-1">
+							Espace restant: {formatSize(remainingSize)}
+						</p>
+						</div>
+					)}
 					<div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors">
 						<input
 							type="file"
 							accept="image/*"
 							multiple
-							onChange={handlePhotoUpload}
+							onChange={handleFileChange}
 							className="hidden"
 							id="photo-upload"
 						/>
@@ -412,6 +469,13 @@ export default function NewReportsPage() {
 						</label>
 					</div>
 
+					{/* Message d'erreur */}
+					{error && (
+						<Alert variant="destructive">
+							<AlertDescription>{error}</AlertDescription>
+						</Alert>
+					)}
+
 					{/* Aperçu des photos */}
 					{photos.length > 0 && (
 						<div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
@@ -426,7 +490,7 @@ export default function NewReportsPage() {
 										type="button"
 										variant="destructive"
 										size="icon"
-										className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+										className="absolute top-2 right-2 h-6 w-6"
 										onClick={() => removePhoto(photo.id)}
 									>
 										<X className="h-4 w-4" />

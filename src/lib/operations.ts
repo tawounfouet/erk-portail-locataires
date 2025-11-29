@@ -63,11 +63,11 @@ export function getReportPercentageStyleFromStatus(status: TOperationStatus)
         
         case 'APPROVED': return "w-2/5";
         
-        case 'REJECTED': return "w-3/5";
-
-        case 'ON_HOLD':
-        case 'IN_PROGRESS': return "w-4/5";
-        
+        case 'IN_PROGRESS': return "w-3/5";
+         
+        case 'ON_HOLD': return "w-4/5";
+            
+        case 'REJECTED': 
         case 'COMPLETED':
         case 'CANCELLED': return "w-full";
     }

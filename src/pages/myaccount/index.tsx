@@ -1,27 +1,68 @@
 import { useState } from 'react';
-import { User, ChevronRight, Mail, Phone, Edit2, Check, X } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { User, Mail, Phone, Edit2, Check, X } from 'lucide-react';
+import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import Redirector from '@/components/common/Redirector';
+import AuthService from '@/services/auth';
 
 
 export default function MyAccountPage()
 {
-    const { user } = useAuth();
+    let { user } = useAuth();
 
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({...user});
-
+	const { toast } = useToast();
 
     const handleEdit = () => {
         setIsEditing(true);
         setEditData({...user});
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        const phoneRegex = /^6[0-9]{8}$/;
+    
+        if (!editData.phone) 
+		{
+			toast({
+				variant: 'destructive',
+				duration: 3000,
+				description: 'Si tu veux sauvegarder il faut quand même écrire quelque chose non ? 😅'
+			});
+            return;
+        }
+
+		if (editData.phone === user.phone)
+		{
+			setIsEditing(false);
+			return;
+		}
+
+        if (!phoneRegex.test(editData.phone)) 
+		{
+			toast({
+				variant: 'destructive',
+				duration: 3000,
+				description: 'Saisies un numéro camerounais valide (9 chiffres commançant par 6)'
+			});
+			return;
+        }
+		
+		const payload = editData;
+		payload.phone = `+237${editData.phone}`;
+		user.phone = payload.phone;
+
+		await AuthService.partialUpdateCurrentUser(payload);
         setIsEditing(false);
+		toast({
+			variant: 'default',
+			duration: 3000,
+			description: 'Super ! Ton numéro a été mis à jour maintenant.'
+		});
     };
 
     const handleCancel = () => {
@@ -29,13 +70,28 @@ export default function MyAccountPage()
         setIsEditing(false);
     };
 
+	const handlePhoneChange = (e) => {
+		const value = e.target.value.replace(/\D/g, '');
+		
+		// 9 digits limits for Cameroonian numbers
+		if (value.length <= 9) 
+		{ 
+			setEditData({...editData, phone: value})
+		}
+	};
+
+	const formatNumber = (phone_number: string) => {
+		const numb = phone_number.replace(/\+237/g, ""); // remove +237
+		return numb;
+		// if (numb.length < 2)
+		// 	return numb;
+
+		// return `${numb[0]} ${numb.substring(1).replace(/([0-9]{2})/g, '$1 ')}`;
+	}
+
     if (!user)
     {
-        return (
-            <div>
-                Utilisateur non connecté
-            </div>
-        );
+        return <Redirector />;
     }
 
     return (
@@ -47,17 +103,17 @@ export default function MyAccountPage()
 		
 		<div className="flex items-center justify-end">
 			{!isEditing ? (
-				<Button onClick={handleEdit} className="gap-2 shadow-md shadom-primary/20">
+				<Button onClick={handleEdit} className="gap-2 shadow-md shadom-primary/20 rounded-full">
 					<Edit2 className="w-4 h-4" />
 					Modifier
 				</Button>
 				) : (
 				<div className="flex gap-2">
-					<Button onClick={handleSave} className="gap-2 bg-green-600 hover:bg-green-700">
+					<Button onClick={handleSave} className="gap-2 bg-green-600 hover:bg-green-700 rounded-full">
 						<Check className="w-4 h-4" />
 						Enregistrer
 					</Button>
-					<Button onClick={handleCancel} variant="outline" className="gap-2 text-white">
+					<Button onClick={handleCancel} variant="outline" className="gap-2 text-white rounded-full">
 						<X className="w-4 h-4" />
 						Annuler
 					</Button>
@@ -112,16 +168,26 @@ export default function MyAccountPage()
 					<Phone className="w-4 h-4" />
 					Téléphone
 					</Label>
-					<Input
-					id="phone"
-					value={isEditing ? editData.phone : user.phone}
-					onChange={(e) => setEditData({...editData, phone: e.target.value})}
-					disabled={!isEditing}
-					className={`
-							w-full h-12 border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all
-							${!isEditing ? 'bg-[#2f2014]' : 'bg-[#2f2014]/80'}
-						`}
-					/>
+					
+					<div className="flex gap-2">
+						<div className="flex items-center justify-center px-4 py-2 rounded-full bg-[#2f2014]/80 text-gray-300">
+							+237
+						</div>
+
+						<Input
+							id="phone"
+							type="tel"
+							value={formatNumber( isEditing ? editData.phone : user.phone )}
+							onChange={handlePhoneChange}
+							disabled={!isEditing}
+							placeholder="6 XX XX XX XX"
+							className={`
+								w-full h-12 border border-white/10 rounded-full p-4 text-white placeholder:text-white-600 placeholder:text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all
+								${!isEditing ? 'bg-[#2f2014]' : 'bg-[#2f2014]/80'}
+							`}
+						/>
+					</div>
+					
 				</div>
 
 				{/* <div className="space-y-2">
