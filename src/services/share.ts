@@ -54,7 +54,7 @@ export default class ShareService
                 shareUrl = `${this.WHATSAPP_API_URL}?text=${encodedMessage}`;
             }
 
-            this.openShareWindow(shareUrl, 'whatsapp-share');
+            this.openShareWindow(shareUrl, 'whatsapp-share', 3000);
             
         } catch (error) {
             console.error('Erreur lors du partage WhatsApp:', error);
@@ -196,13 +196,22 @@ ${urgencyEmoji} Espace privé : ${reportData.id}
      * @param url - Sharing URL
      * @param featureName - Name of the feature for tracking
      */
-    private static openShareWindow(url: string, featureName: string): void {
+    private static openShareWindow(url: string, featureName: string, autoCloseDelay: number | null = 5000): void {
         const windowFeatures = 'width=600,height=700,resizable=yes,scrollbars=yes';
         
-        window.open(url, '_blank', windowFeatures);
+        const shareWindow = window.open(url, '_blank', windowFeatures);
+
+         // Auto-close after delay if specified
+        if (autoCloseDelay && shareWindow) {
+            setTimeout(() => {
+                if (shareWindow && !shareWindow.closed) {
+                    shareWindow.close();
+                }
+            }, autoCloseDelay);
+        }
         
         // Optional: Tracking analytics
-        console.log(`Share action: ${featureName}`);
+        // console.log(`Share action: ${featureName}`);
     }
 
     /**

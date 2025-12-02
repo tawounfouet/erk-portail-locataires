@@ -17,7 +17,7 @@ export default function DetailsReportsPage() {
 	const [showShareAlert, setShowShareAlert] = useState(false);
 	const location = useLocation();
 
-	const { report, previousPage } = location.state as { report: IOperationDetail, previousPage: string };
+	const { report } = location.state as { report: IOperationDetail };
 
 	const etapes = [
 		{ nom: 'Reçu', status: 'complete', date: '03/10/2025 14:30', remarque: 'Nous avons bien reçu votre demande.' },

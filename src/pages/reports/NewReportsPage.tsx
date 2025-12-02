@@ -150,10 +150,6 @@ export default function NewReportsPage() {
 				}
 			}
 			
-			// Afficher le message de succès
-			setShowSuccess(true);
-			setTimeout(() => setShowSuccess(false), 5000);
-			
 			// Reset form
 			setOperationData({
 				operation_type_code: 'RENTAL_COMPLAINT',
@@ -168,8 +164,19 @@ export default function NewReportsPage() {
 			setSelectedFloor('');
 			setSelectedUnit('');
 			
-			navigate('/reports');
+			
+			// Afficher le message de succès
+			setShowSuccess(true);
+			setTimeout(() => {
+				setShowSuccess(false);
 
+				toast({
+					variant: 'default',
+					duration: 3000,
+					description: 'On a bien reçu ton signalement. Merci.'
+				});
+				navigate('/reports');
+			}, 3000);
 		} catch (error) {
 			toast({
 				variant: 'destructive',

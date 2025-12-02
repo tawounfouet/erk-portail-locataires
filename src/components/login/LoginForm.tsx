@@ -55,7 +55,7 @@ function LoginForm({ className,...props }: React.ComponentProps<"form">)
 			<div className="flex flex-col items-center gap-2 text-center">
 				<h1 className="text-2xl font-bold text-white">Connectez-vous à votre espace.</h1>
 				<p className="text-gray-300 text-sm text-balance">
-				Créer de meilleures relations entre les propriétaires et les locataires !
+				Créez de meilleures relations entre les propriétaires et les locataires !
 				</p>
 				<h6 className="text-sm text-white">- Eureka</h6>
 			</div>
