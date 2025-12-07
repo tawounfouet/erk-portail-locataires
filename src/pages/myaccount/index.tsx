@@ -81,6 +81,9 @@ export default function MyAccountPage()
 	};
 
 	const formatNumber = (phone_number: string) => {
+		if (!phone_number)
+			return "";
+		
 		const numb = phone_number.replace(/\+237/g, ""); // remove +237
 		return numb;
 		// if (numb.length < 2)
