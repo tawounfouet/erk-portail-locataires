@@ -12,7 +12,6 @@ Some TODOs are marked with the tag `@TODO` in the code in comments. Just search 
 
 - [ ] Review SEO in `index.html`
 
-
 # How to 
 
 ## Run locally
