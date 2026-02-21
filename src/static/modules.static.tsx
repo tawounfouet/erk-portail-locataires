@@ -1,4 +1,5 @@
-import { ContactsPage, DetailsReportsPage, DocsPage, HomeReportsPage, NewReportsPage, NewSuggestionPage } from "@/pages";
+import { ContactsPage, DetailsReportsPage, DocsPage, DocsWithCardsPage, HomeReportsPage, InventoryValidationPage, NewReportsPage, NewSuggestionPage } from "@/pages";
+import HomeAnnouncementsPage from "@/pages/announcements/HomeAnnoucementsPage";
 import HomeSuggestionWithCardPage from "@/pages/suggestions/HomeSuggestionWithCardPage";
 import type { TERKModuleRegistry, TERKModuleCategoryRegistry, IERKModule, IERKRoute } from "@/types/module.type";
 
@@ -48,8 +49,13 @@ const DocsModule: IERKModule = {
     routes: [
         {
             path: '/docs',
-            element: <DocsPage />,
-            children: []
+            element: <DocsWithCardsPage />,
+            children: [
+                {
+                    path: 'inventory-validation',
+                    element: <InventoryValidationPage />
+                }
+            ]
         }
     ],
 
@@ -105,7 +111,27 @@ const SuggestionsModule: IERKModule = {
     // Optionnal
     // context: SuggestionsContext,
     // contextProvider: SuggestionsProvider
-}
+};
+
+const AnnouncementsModule: IERKModule = {
+    id: "announcements",
+    category_id: 'basic',
+    title: "Annonces",
+    description: "Infos importantes",
+    color: 'bg-rose-100',
+    icon: 'announcements',
+
+    routes: [
+        {
+            path: '/annoucements',
+            element: <HomeAnnouncementsPage />
+        }
+    ],
+
+    // Optionnal
+    // context: SuggestionsContext,
+    // contextProvider: SuggestionsProvider
+};
 
 export const ERKModuleCategories: TERKModuleCategoryRegistry = new Map([
     ['basic', 'Modules de base'],
@@ -114,12 +140,13 @@ export const ERKModuleCategories: TERKModuleCategoryRegistry = new Map([
 
 export const ERKModules: TERKModuleRegistry = new Map([
     [
-        'basic', 
+        'basic',
         [
             ReportModule,
             DocsModule,
             ContactsModule,
-            SuggestionsModule
+            SuggestionsModule,
+            //AnnouncementsModule,
         ]
     ]
 ]);

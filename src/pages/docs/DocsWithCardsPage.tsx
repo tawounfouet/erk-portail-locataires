@@ -1,34 +1,51 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ChevronDown, ChevronUp, FileText, Lock } from "lucide-react";
 import { useState } from "react";
+import SearchBar from "@/components/common/SearchBar";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "react-router-dom";
 
 // Document Card Component
-const DocumentCard = ({ document }) => {
+const DocumentCard = ({ document }: { document: any }) => {
+  const navigate = useNavigate();
+
+  const handleAction = () => {
+    if (document.title.includes("Etat des lieux")) {
+      navigate("inventory-validation");
+    }
+  };
+
   return (
-    <div className="bg-slate-750 rounded-xl p-4 flex items-center gap-4">
-      <div className="bg-slate-200 rounded-lg p-3">
-        <FileText className="w-6 h-6" />
+    <div className="group bg-secondary/20 hover:bg-secondary/40 border border-input/50 rounded-xl p-4 flex items-center gap-4 transition-all duration-300">
+      <div className="bg-primary/10 rounded-lg p-3 group-hover:bg-primary/20 transition-colors">
+        <FileText className="w-6 h-6 text-primary" />
       </div>
-      
-      <div className="flex-1">
-        <h3 className="font-semibold">{document.title}</h3>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm text-slate-400">Effectif depuis :</span>
-          <span className="text-sm text-slate-300">{document.effective}</span>
+
+      <div className="flex-1 min-w-0">
+        <h3 className="font-semibold text-white truncate">{document.title}</h3>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xs text-gray-500 uppercase tracking-wider font-medium">Effectif depuis :</span>
+          <span className="text-xs text-gray-300 font-medium">{document.effective}</span>
         </div>
 
-        <span className={`${document.statusColor} px-3 py-1 text-white rounded-md text-sm font-medium`}>
+        <Badge
+          variant="outline"
+          className={`${document.status === 'Signé' ? 'border-green-500/50 text-green-400 bg-green-500/10' : 'border-yellow-500/50 text-yellow-400 bg-yellow-500/10'} font-medium`}
+        >
           {document.status}
-        </span>
+        </Badge>
       </div>
 
       <div className="flex items-center gap-3">
         <Button
-          variant="secondary"
-          className="bg-slate-400 hover:bg-slate-600 text-white"
+          variant="outline"
+          size="sm"
+          onClick={handleAction}
+          className="text-white border-white/20 hover:bg-white/10"
         >
-          Voir
+          {document.status === 'À valider' ? 'Vérifier' : 'Voir'}
         </Button>
       </div>
     </div>
@@ -36,27 +53,34 @@ const DocumentCard = ({ document }) => {
 };
 
 // Document Section Component
-const DocumentSection = ({ title, count, expanded, onToggle, documents }) => {
+const DocumentSection = ({ title, count, expanded, onToggle, documents }: any) => {
   return (
-    <Card className="border-grey-700 overflow-hidden">
+    <Card className="bg-secondary/10 border-white/5 overflow-hidden transition-all duration-300">
       <button
         onClick={onToggle}
-        className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-750 transition-colors"
+        className="w-full px-6 py-4 flex items-center justify-between hover:bg-white/5 transition-colors"
       >
-        <h2 className="text-lg font-semibold">{title} ({count})</h2>
-        {expanded ? (
-          <ChevronUp className="w-5 h-5" />
-        ) : (
-          <ChevronDown className="w-5 h-5" />
-        )}
+        <div className="flex items-center gap-3">
+          <div className={`p-1 rounded-md ${expanded ? 'bg-primary/20 text-primary' : 'bg-gray-800 text-gray-400'}`}>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} />
+          </div>
+          <h2 className="text-lg font-bold text-white tracking-tight">{title}</h2>
+          <Badge variant="secondary" className="bg-white/10 text-gray-300">{count}</Badge>
+        </div>
       </button>
 
-      {expanded && documents.length > 0 && (
-        <div className="px-4 pb-4 space-y-3">
-          {documents.map(doc => (
-            <DocumentCard key={doc.id} document={doc} />
-          ))}
-        </div>
+      {expanded && (
+        <CardContent className="px-4 pb-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+          {documents.length > 0 ? (
+            documents.map((doc: any) => (
+              <DocumentCard key={doc.id} document={doc} />
+            ))
+          ) : (
+            <div className="py-8 text-center border-2 border-dashed border-white/5 rounded-xl">
+              <p className="text-gray-500 text-sm">Aucun document dans cette catégorie</p>
+            </div>
+          )}
+        </CardContent>
       )}
     </Card>
   );
@@ -66,116 +90,104 @@ const DocumentSection = ({ title, count, expanded, onToggle, documents }) => {
 // Empty State Component
 const EmptyState = () => {
   return (
-    <Card className="border-slate-200 p-8">
-      <div className="flex flex-col items-center text-center space-y-4">
-        <div className="bg-slate-100 rounded-full p-6">
-          <FileText className="w-12 h-12" strokeWidth={1.5} />
+    <div className="bg-secondary/5 border-2 border-dashed border-white/5 rounded-2xl p-12 mt-4 transition-all hover:border-white/10 group">
+      <div className="flex flex-col items-center text-center space-y-5">
+        <div className="bg-secondary/40 rounded-full p-8 group-hover:scale-110 transition-transform duration-500">
+          <FileText className="w-16 h-16 text-gray-400" strokeWidth={1} />
         </div>
-        <h3 className="text-xl font-semibold">Aucun autre document</h3>
-        <p className="text-slate-400 max-w-sm">
-          Vos documents apparaîtront ici une fois qu'ils auront été téléchargés par le personnel de la résidence.
-        </p>
-        <div className="flex items-center gap-2 text-slate-500 text-sm">
-          <Lock className="w-4 h-4" />
-          <span>Stockage sécurisé</span>
+        <div>
+          <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Aucun autre document</h3>
+          <p className="text-gray-400 max-w-sm mx-auto leading-relaxed">
+            Vos documents personnels et complémentaires apparaîtront ici une fois validés par l'équipe de gestion.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full text-gray-500 text-xs font-medium uppercase tracking-widest">
+          <Lock className="w-3.5 h-3.5" />
+          <span>Stockage hautement sécurisé</span>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 
 
-export default function DocsWithCardsPage()
-{
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filters, setFilters] = useState({
-        statuses: { signed: true, pending: true },
-        sortBy: 'date-desc'
-    });
-    const [expandedSections, setExpandedSections] = useState({
-        leaseAgreements: true,
-        bills: false,
-        stateOfAffairs: false
-    });
+export default function DocsWithCardsPage() {
+  const [expandedSections, setExpandedSections] = useState({
+    leaseAgreements: true,
+    bills: false,
+    stateOfAffairs: false
+  });
 
-    const allDocuments = [
-        {
-        id: 1,
-        title: 'Contrat de bail 2025-2026',
-        effective: '01/09/2025',
-        effectiveDate: new Date('2023-09-01'),
-        status: 'Signé',
-        statusColor: 'bg-green-300',
-        category: 'leaseAgreements'
-        },
-        {
-        id: 2,
-        title: 'Etat des lieux',
-        effective: '01/09/2025',
-        effectiveDate: new Date('2023-10-15'),
-        status: 'Signé',
-        statusColor: 'bg-green-300',
-        category: 'leaseAgreements'
-        }
-    ];
+  const allDocuments = [
+    {
+      id: 1,
+      title: 'Contrat de bail 2025-2026',
+      effective: '01/09/2025',
+      effectiveDate: new Date('2023-09-01'),
+      status: 'Signé',
+      category: 'leaseAgreements'
+    },
+    {
+      id: 2,
+      title: 'Etat des lieux d\'entrée',
+      effective: '23/02/2026',
+      effectiveDate: new Date('2026-02-23'),
+      status: 'À valider',
+      category: 'leaseAgreements'
+    }
+  ];
 
-    const toggleSection = (section) => {
-        setExpandedSections(prev => ({
-        ...prev,
-        [section]: !prev[section]
-        }));
-    };
+  const [filteredDocuments, setFilteredDocuments] = useState(allDocuments);
 
-    // Filter documents based on search and filters
-    const filteredDocuments = allDocuments.filter(doc => {
-        // Search filter
-        const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            doc.effective.includes(searchTerm);
-        
-        // Status filter
-        const matchesStatus = 
-        (filters.statuses.signed && doc.status === 'Signé') ||
-        (filters.statuses.pending && doc.status === 'Pending');
-        
-        return matchesSearch && matchesStatus;
-    });
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      // @ts-ignore
+      [section]: !prev[section]
+    }));
+  };
 
-    // Sort documents
-    const sortedDocuments = [...filteredDocuments].sort((a, b) => {
-        if (filters.sortBy === 'date-desc') {
-        return b.effectiveDate - a.effectiveDate;
-        } else if (filters.sortBy === 'date-asc') {
-        return a.effectiveDate - b.effectiveDate;
-        } else if (filters.sortBy === 'name') {
-        return a.title.localeCompare(b.title);
-        }
-        return 0;
-    });
+  const leaseDocuments = filteredDocuments.filter(doc => doc.category === 'leaseAgreements');
+  const billsDocuments = filteredDocuments.filter(doc => doc.category === 'bills');
 
-    const leaseDocuments = sortedDocuments.filter(doc => doc.category === 'leaseAgreements');
+  return (
+    <div className="pt-4 pb-24">
+      <div className="mb-8">
+        <h2 className="text-4xl font-extrabold text-white tracking-tighter mb-2">Documents</h2>
+        <p className="text-gray-400 text-lg">Consultez et gérez vos documents administratifs</p>
+      </div>
 
-        
-    return (
-        <>
-            <div className="space-y-4">
-                <DocumentSection
-                    title="Location"
-                    count={leaseDocuments.length}
-                    expanded={expandedSections.leaseAgreements}
-                    onToggle={() => toggleSection('leaseAgreements')}
-                    documents={leaseDocuments}
-                />
+      <div className="mb-8 pt-4">
+        <SearchBar
+          data={allDocuments}
+          searchFields={['title', 'effective']}
+          onFilteredResults={setFilteredDocuments}
+          placeholder="Rechercher un document..."
+          className="w-full"
+        />
+      </div>
 
-                <DocumentSection
-                    title="Factures"
-                    count={0}
-                    expanded={expandedSections.bills}
-                    onToggle={() => toggleSection('bills')}
-                    documents={[]}
-                />
+      <div className="space-y-6">
+        <DocumentSection
+          title="Location & Bail"
+          count={leaseDocuments.length}
+          expanded={expandedSections.leaseAgreements}
+          onToggle={() => toggleSection('leaseAgreements')}
+          documents={leaseDocuments}
+        />
 
-                <EmptyState />
-            </div>
-        </>
-    )
+        <DocumentSection
+          title="Quittances & Factures"
+          count={billsDocuments.length}
+          expanded={expandedSections.bills}
+          onToggle={() => toggleSection('bills')}
+          documents={billsDocuments}
+        />
+
+        <Separator className="bg-white/5 my-8" />
+
+        <EmptyState />
+      </div>
+    </div>
+  )
 }

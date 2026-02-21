@@ -1,25 +1,25 @@
-import { IBuilding, IBuildingStatistics, IFloor, IPaginatedResponse, IUnit, TUnitStatus } from "@/types/patrimoine.type";
+import { IBuilding, IBuildingStatistics, IFloor, IPaginatedResponse, IUnit, TUnitStatus, IInventoryItem, IInventoryItemWrite, TInventoryCategory } from "@/types/patrimoine.type";
 import AuthService from "./auth";
 import { ERK_API_URL } from "@/static/dev.static";
 
 /**
- * Patrimoine service for managing buildings, floors and units
+ * Patrimoine service for managing buildings, floors, units and inventory
  * Provides CRUD operations and statistics for real estate assets
  */
-export default class PatrimoineService 
-{
+export default class PatrimoineService {
     // Base URLs for the patrimoine API endpoints
     private static readonly BASE_URL: string = ERK_API_URL;
     private static readonly BUILDINGS_URL: string = "/patrimoine/buildings/";
     private static readonly FLOORS_URL: string = "/patrimoine/floors/";
     private static readonly UNITS_URL: string = "/patrimoine/units/";
+    private static readonly INVENTORY_URL: string = "/patrimoine/inventory/";
 
     /**
      * Generic request method for all API calls with error handling
      */
     private static async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
         const url = `${this.BASE_URL}${endpoint}`;
-        
+
         // Get authentication token
         const tokens = AuthService.getTokens();
         const accessToken = tokens.access !== 'no_access_token' ? tokens.access : null;
@@ -36,7 +36,7 @@ export default class PatrimoineService
 
         try {
             const response = await fetch(url, config);
-            
+
             if (!response.ok) {
                 // Handle token expiration
                 if (response.status === 401 && accessToken) {
@@ -47,7 +47,7 @@ export default class PatrimoineService
                             ...config.headers,
                             'Authorization': `Bearer ${newTokens.access}`
                         };
-                        
+
                         // Retry request with new token
                         const retryResponse = await fetch(url, config);
                         if (!retryResponse.ok) {
@@ -60,7 +60,7 @@ export default class PatrimoineService
                         throw new Error('Session expired, please reconnect');
                     }
                 }
-                
+
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
@@ -88,7 +88,7 @@ export default class PatrimoineService
         page?: number;
     } = {}): Promise<IPaginatedResponse<IBuilding>> {
         const params = new URLSearchParams();
-        
+
         if (filters?.manager) params.append('manager', filters.manager);
         if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
         if (filters?.search) params.append('search', filters.search);
@@ -135,7 +135,7 @@ export default class PatrimoineService
         page?: number;
     } = {}): Promise<IPaginatedResponse<IFloor>> {
         const params = new URLSearchParams();
-        
+
         if (filters?.building) params.append('building', filters.building);
         if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
         if (filters?.search) params.append('search', filters.search);
@@ -189,7 +189,7 @@ export default class PatrimoineService
         page?: number;
     } = {}): Promise<IPaginatedResponse<IUnit>> {
         const params = new URLSearchParams();
-        
+
         if (filters?.floor) params.append('floor', filters.floor);
         if (filters?.floor__building) params.append('floor__building', filters.floor__building);
         if (filters?.unit_type) params.append('unit_type', filters.unit_type);
@@ -265,9 +265,8 @@ export default class PatrimoineService
         // This would typically be a separate endpoint, but we can aggregate from existing data
         if (buildingId) {
             const building = await this.getBuildingById(buildingId);
-            const floors = await this.getFloorsByBuilding(buildingId);
             const units = await this.getUnitsByBuilding(buildingId);
-            
+
             return {
                 total_area_m2: building.total_area_m2 || 0,
                 floors_count: building.floors_count || 0,
@@ -279,7 +278,7 @@ export default class PatrimoineService
             // Global statistics across all buildings
             const buildings = await this.getActiveBuildings();
             const units = await this.getUnits({ is_active: true });
-            
+
             return {
                 total_area_m2: buildings.results.reduce((sum, building) => sum + (building.total_area_m2 || 0), 0),
                 floors_count: buildings.results.reduce((sum, building) => sum + (building.floors_count || 0), 0),
@@ -288,5 +287,131 @@ export default class PatrimoineService
                 occupied_units: units.results.filter(unit => unit.current_status === 'OCCUPIED').length
             };
         }
+    }
+
+    // =========================================================================
+    // INVENTORY MANAGEMENT
+    // =========================================================================
+
+    /**
+     * Retrieves inventory items with optional filtering and pagination
+     */
+    static async getInventory(filters: {
+        category?: TInventoryCategory;
+        is_active?: boolean;
+        search?: string;
+        ordering?: string;
+        page?: number;
+    } = {}): Promise<IPaginatedResponse<IInventoryItem>> {
+        const params = new URLSearchParams();
+
+        if (filters?.category) params.append('category', filters.category);
+        if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
+        if (filters?.search) params.append('search', filters.search);
+        if (filters?.ordering) params.append('ordering', filters.ordering);
+        if (filters?.page) params.append('page', filters.page.toString());
+
+        const queryString = params.toString();
+        const endpoint = queryString ? `${this.INVENTORY_URL}?${queryString}` : this.INVENTORY_URL;
+
+        return this.request<IPaginatedResponse<IInventoryItem>>(endpoint);
+    }
+
+    /**
+     * Retrieves inventory items grouped by condition
+     */
+    static async getInventoryByCondition(filters: {
+        category?: TInventoryCategory;
+        is_active?: boolean;
+        search?: string;
+        ordering?: string;
+        page?: number;
+    } = {}): Promise<IPaginatedResponse<IInventoryItem>> {
+        const params = new URLSearchParams();
+
+        if (filters?.category) params.append('category', filters.category);
+        if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
+        if (filters?.search) params.append('search', filters.search);
+        if (filters?.ordering) params.append('ordering', filters.ordering);
+        if (filters?.page) params.append('page', filters.page.toString());
+
+        const queryString = params.toString();
+        const endpoint = queryString
+            ? `${this.INVENTORY_URL}by_condition/?${queryString}`
+            : `${this.INVENTORY_URL}by_condition/`;
+
+        return this.request<IPaginatedResponse<IInventoryItem>>(endpoint);
+    }
+
+    /**
+     * Retrieves inventory items under warranty
+     */
+    static async getInventoryUnderWarranty(filters: {
+        category?: TInventoryCategory;
+        is_active?: boolean;
+        search?: string;
+        ordering?: string;
+        page?: number;
+    } = {}): Promise<IPaginatedResponse<IInventoryItem>> {
+        const params = new URLSearchParams();
+
+        if (filters?.category) params.append('category', filters.category);
+        if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
+        if (filters?.search) params.append('search', filters.search);
+        if (filters?.ordering) params.append('ordering', filters.ordering);
+        if (filters?.page) params.append('page', filters.page.toString());
+
+        const queryString = params.toString();
+        const endpoint = queryString
+            ? `${this.INVENTORY_URL}under_warranty/?${queryString}`
+            : `${this.INVENTORY_URL}under_warranty/`;
+
+        return this.request<IPaginatedResponse<IInventoryItem>>(endpoint);
+    }
+
+    /**
+     * Retrieves a specific inventory item by ID
+     */
+    static async getInventoryItemById(id: string): Promise<IInventoryItem> {
+        return this.request<IInventoryItem>(`${this.INVENTORY_URL}${id}/`);
+    }
+
+    /**
+     * Creates a new inventory item
+     */
+    static async createInventoryItem(data: IInventoryItemWrite): Promise<IInventoryItem> {
+        return this.request<IInventoryItem>(this.INVENTORY_URL, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    /**
+     * Updates an existing inventory item
+     */
+    static async updateInventoryItem(id: string, data: IInventoryItemWrite): Promise<IInventoryItem> {
+        return this.request<IInventoryItem>(`${this.INVENTORY_URL}${id}/`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    }
+
+    /**
+     * Partially updates an existing inventory item
+     */
+    static async partialUpdateInventoryItem(id: string, data: Partial<IInventoryItemWrite>): Promise<IInventoryItem> {
+        return this.request<IInventoryItem>(`${this.INVENTORY_URL}${id}/`, {
+            method: 'PATCH',
+            body: JSON.stringify(data)
+        });
+    }
+
+    /**
+     * Deletes an inventory item
+     */
+    static async deleteInventoryItem(id: string): Promise<void> {
+        return this.request<void>(`${this.INVENTORY_URL}${id}/`, {
+            method: 'DELETE'
+        });
     }
 }

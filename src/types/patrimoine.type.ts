@@ -1,5 +1,4 @@
-export interface IPaginatedResponse<T> 
-{
+export interface IPaginatedResponse<T> {
     count: number;
     next: string | null;
     previous: string | null;
@@ -7,8 +6,7 @@ export interface IPaginatedResponse<T>
 }
 
 // Building types
-export interface IBuilding 
-{
+export interface IBuilding {
     id: string;
     name: string;
     code?: string;
@@ -28,8 +26,7 @@ export interface IBuilding
 }
 
 // Floor types
-export interface IFloor 
-{
+export interface IFloor {
     id: string;
     building: string;
     building_name?: string;
@@ -47,8 +44,7 @@ export interface IFloor
 }
 
 // Unit types
-export interface IUnit 
-{
+export interface IUnit {
     id: string;
     floor: string;
     building_name?: string;
@@ -73,8 +69,7 @@ export interface IUnit
 }
 
 // Media file types
-export interface IPatrimoineMediaFile 
-{
+export interface IPatrimoineMediaFile {
     id: string;
     title?: string;
     description?: string;
@@ -90,11 +85,52 @@ export interface IPatrimoineMediaFile
 export type TUnitStatus = 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'MAINTENANCE' | 'OUT_OF_SERVICE';
 
 // Statistics types
-export interface IBuildingStatistics 
-{
+export interface IBuildingStatistics {
     total_area_m2: number;
     floors_count: number;
     units_count: number;
     available_units: number;
     occupied_units: number;
+}
+
+// Inventory types
+export type TInventoryCategory =
+    | 'FURNITURE' | 'APPLIANCE' | 'PLUMBING' | 'LIGHTING'
+    | 'HEATING' | 'IT' | 'SECURITY' | 'DECORATION' | 'OTHER';
+
+export interface IInventoryItem {
+    id: string;
+    name: string;
+    category: TInventoryCategory;
+    category_display: string;
+    brand?: string;
+    model?: string;
+    reference: string;
+    description?: string;
+    stock_quantity: number;
+    unit_price?: string;
+    technical_specs?: Record<string, any>;
+    notes?: string;
+    images: string[];
+    images_details: IPatrimoineMediaFile[];
+    main_image?: string;
+    main_image_url?: string;
+    main_image_thumbnail_url?: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface IInventoryItemWrite {
+    name: string;
+    category: TInventoryCategory;
+    brand?: string;
+    model?: string;
+    description?: string;
+    stock_quantity?: number;
+    unit_price?: string;
+    technical_specs?: Record<string, any>;
+    notes?: string;
+    images?: string[];
+    is_active?: boolean;
 }

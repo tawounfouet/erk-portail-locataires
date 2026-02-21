@@ -1,6 +1,6 @@
 import LoginPage from './login';
 import { HomeReportsPage, NewReportsPage, DetailsReportsPage, HomeReportsWithCardsPage } from './reports';
-import { DocsPage, DocsWithCardsPage } from './docs';
+import { DocsPage, DocsWithCardsPage, InventoryValidationPage } from './docs';
 import { ContactsPage, ContactsWithCardsPage } from './contacts';
 import { NewSuggestionPage } from './suggestions';
 import MyAccountPage from './myaccount';
@@ -17,5 +17,6 @@ export {
 
     MobileHomePage,
     HomeReportsWithCardsPage,
-    DocsWithCardsPage
+    DocsWithCardsPage,
+    InventoryValidationPage
 };
